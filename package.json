@@ -1,0 +1,24 @@
+{
+  "name": "zinf-tc39",
+  "version": "1.0.0",
+  "description": "ZINF-TC39 group project for spring 2024, UIB.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "dev:watch": "npx electronmon --trace-warnings ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brageaasen/ZINF-TC39.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brageaasen/ZINF-TC39/issues"
+  },
+  "homepage": "https://github.com/brageaasen/ZINF-TC39#readme",
+  "devDependencies": {
+    "electron": "^28.1.3"
+  }
+}
