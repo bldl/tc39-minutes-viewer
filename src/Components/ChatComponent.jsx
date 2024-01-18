@@ -81,6 +81,7 @@ const ChatComponent = () => {
     const modelName = 'gpt-4';
     const maxTokens = 200;
 
+
     try {
       const response = await axios.post(
         'https://api.openai.com/v1/chat/completions',
@@ -95,7 +96,8 @@ const ChatComponent = () => {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer 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`,
+            Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY}`,
+
           },
         }
       );
