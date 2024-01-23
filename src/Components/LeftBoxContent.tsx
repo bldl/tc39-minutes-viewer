@@ -1,17 +1,19 @@
-import React from 'react';
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const LeftBoxCont = styled.div`
-  position: absolute;    
+  position: absolute;
   width: 50%; /* Set the width to 100% */
 `;
 
-const LeftBoxContent = () => {
+interface Props {
+  text: String;
+}
 
+const LeftBoxContent = ({ text }: Props) => {
   return (
     <div>
       <LeftBoxCont>
-        <p>Github files go here test test test test</p>
+        <p>{text}</p>
       </LeftBoxCont>
 
       {/* Add any additional content for the LeftBox */}
