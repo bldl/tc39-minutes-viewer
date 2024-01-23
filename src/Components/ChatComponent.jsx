@@ -135,7 +135,7 @@ const ChatComponent = () => {
         </InputContainer>
       </SearchBar>
       <MainContent>
-        <LeftBoxContent>
+        <LeftBoxContent text = "hallo">
           {/* Content for the left box */}
         </LeftBoxContent>
         <DiagonalLine />
