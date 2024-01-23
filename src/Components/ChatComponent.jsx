@@ -20,19 +20,18 @@ const MainContent = styled.div`
   width: 100%;
   flex: 1;
   border-top: 1px solid #ccc;
+  position: relative;
 
   
 `;
 
-const LeftBox = styled.div`
-  flex: 1;
-  border-right: 1px solid #ccc;
-  border-top: 1px solid #ccc;
-
-`;
 
 const RightBox = styled.div`
-  flex: 2;
+  flex: 1;
+  position: relative;
+  overflow-y: auto;
+  width: 50%:
+
 `;
 
 const InputContainer = styled.div`
@@ -62,6 +61,8 @@ const InputContainer = styled.div`
 const MessageContainer = styled.div`
   margin-bottom: 10px;
   padding: 10px;
+  width: 45%;
+  margin-left: auto;
   &.user {
     text-align: right;
     color: #007bff;
