@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
 
+const LeftBoxCont = styled.div`
+  position: absolute;    
+  width: 50%; /* Set the width to 100% */
+`;
+
 const LeftBoxContent = () => {
-  const LeftBoxCont = styled.div`
-    position: absolute;    
-    width: 50%; /* Set the width to 100% */
-  `;
 
   return (
     <div>
