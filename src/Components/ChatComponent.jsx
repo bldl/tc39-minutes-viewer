@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import LeftBoxContent from './LeftBoxContainer';
+import LeftBoxContent from './LeftBoxContent';
 
 const Container = styled.div`
   display: flex;
@@ -76,11 +76,12 @@ const MessageContainer = styled.div`
 const DiagonalLine = styled.div`
 height: 90%;
 position: absolute;
-bottom: 0;
 left: 50%;
 border-left: 1px solid #ccc;
-transform: translateX(-50%);
+
 `;
+
+
 
 const ChatComponent = () => {
   const [input, setInput] = useState('');
@@ -136,9 +137,7 @@ const ChatComponent = () => {
         <LeftBoxContent>
           {/* Content for the left box */}
         </LeftBoxContent>
-
-          <DiagonalLine/>
-
+        <DiagonalLine />
         <RightBox>  
           {messages.map((message, index) => (
             <MessageContainer key={index} className={message.role}>
