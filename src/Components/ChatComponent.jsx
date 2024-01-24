@@ -1,103 +1,42 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import styled from 'styled-components';
 import LeftBoxContent from './LeftBoxContent';
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100%;
-`;
-
-const SearchBar = styled.div`
-  padding: 10px;
-`;
-
-const MainContent = styled.div`
-  flex: 1;
-  display: flex;
-  width: 100%;
-  flex: 1;
-  border-top: 1px solid #ccc;
-  position: relative;
-
-  
-`;
+import {
+  Container,
+  AppBar,
+  Toolbar,
+  InputBase,
+  Button,
+  Grid,
+  Paper,
+  Divider,
+  Typography,
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 
-const RightBox = styled.div`
-  flex: 1;
-  position: relative;
-  overflow-y: auto;
-  width: 50%:
-
-`;
-
-const InputContainer = styled.div`
-  display: flex;
-  margin-top: 20px;
-
-  input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-right: 10px;
-    font-size: 16px; 
-  }
-
-  button {
-    background-color: #007bff;
-    color: #fff;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-`;
-
-
-const MessageContainer = styled.div`
-  margin-bottom: 10px;
-  padding: 10px;
-  width: 45%;
-  margin-left: auto;
-  &.user {
-    text-align: right;
-    color: #007bff;
-  }
-
-  &.assistant {
-    text-align: left;
-    color: #28a745;
-  }
-`;
-
-const DiagonalLine = styled.div`
-height: 90%;
-position: absolute;
-left: 50%;
-border-left: 1px solid #ccc;
-
-`;
 
 
 
 const ChatComponent = () => {
+  {/* State for user input and chat messages */} 
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
 
+  {/* Handler for updating input state on user input change */}
   const handleInputChange = (e) => {
     setInput(e.target.value);
   };
 
+  {/*Handler for sending a message to the OpenAI API*/}
   const handleSendMessage = async () => {
     const modelName = 'gpt-4';
     const maxTokens = 200;
 
 
     try {
+    /* Send a POST request to the OpenAI chat completion endpoint */
       const response = await axios.post(
         'https://api.openai.com/v1/chat/completions',
         {
@@ -109,6 +48,7 @@ const ChatComponent = () => {
           max_tokens: maxTokens,
         },
         {
+          /* Include OpenAI API key for authorization */ 
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY}`,
@@ -117,36 +57,68 @@ const ChatComponent = () => {
         }
       );
 
-      console.log(response);
-
+      // can use console log for debugging
+      // console.log(response);
+ 
+      // Update the messages state with the assistant's response
       setMessages([...messages, { role: 'assistant', content: response.data.choices[0].message.content }]);
+      // Clear the input field after sending the message
       setInput('');
     } catch (error) {
+      // Return an error message if there is an issue sending the message
       console.error('Error sending message:', error);
     }
   };
 
   return (
     <Container>
-      <SearchBar>
-        <InputContainer>
-          <input type="text" value={input} onChange={handleInputChange} />
-          <button onClick={handleSendMessage}>Send</button>
-        </InputContainer>
-      </SearchBar>
-      <MainContent>
-        <LeftBoxContent text = "hallo">
-          {/* Content for the left box */}
-        </LeftBoxContent>
-        <DiagonalLine />
-        <RightBox>  
-          {messages.map((message, index) => (
-            <MessageContainer key={index} className={message.role}>
-              {message.content}
-            </MessageContainer>
-          ))}
-        </RightBox>
-      </MainContent>
+      {/* AppBar is the where the search bar is located. It contains a toolbar with the search bar.*/} 
+      <AppBar position="static" style={{
+          background: 'black',
+          borderRadius: '20px',
+          padding: '10px'
+        }}> 
+      <Toolbar>
+          {/* This is the search bar*/} 
+          <InputBase
+            placeholder="What do you want to know?"
+            inputProps={{ 'aria-label': 'type your message' }}
+            value={input}
+            onChange={handleInputChange}
+            style={{ borderRadius: '20px', padding: '10px', color: 'black', flex: 1, marginRight: '10px'}}
+          />
+          <Button variant="contained" color="primary" onClick={handleSendMessage}>
+            <SearchIcon></SearchIcon>
+          </Button>
+        </Toolbar>
+      </AppBar>
+       {/* This where left and right box is placed inside a grid/container */} 
+      <Grid container spacing={1} style={{ marginTop: '10px' }}>
+        {/* This is where LeftBoxContent is placed */} 
+        <LeftBoxContent/> 
+
+        {/* This where the GPT's response is output */} 
+        <Grid item xs={6}>
+          <Divider orientation="vertical" flexItem />
+          <Paper elevation={3} style={{ padding: '20px', overflowY: 'auto', height: '70vh' }}>
+
+             {/* This is test-text for the right box */} 
+            <p style={{ textAlign: 'left' }}>This is just text for testing this box, so you dont have to ask GPT. But if you ask, the response will return under.</p>
+            
+            {/* Mapping through messages and displaying them in the right box */} 
+            {messages.map((message, index) => (
+              <Typography
+                key={index}
+                variant="body1"
+                align='left'
+                color={message.role === 'user' ? 'primary' : 'success'}
+              >
+                {message.content}
+              </Typography>
+            ))}
+          </Paper>
+        </Grid>
+      </Grid>
     </Container>
   );
 };
