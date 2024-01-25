@@ -1,23 +1,17 @@
-import styled from "styled-components";
+import {
+  Grid,
+  Paper,
+  Typography,
+} from '@mui/material';
 
-const LeftBoxCont = styled.div`
-  position: absolute;
-  width: 50%; /* Set the width to 100% */
-`;
 
-interface Props {
-  text: String;
-}
-
-const LeftBoxContent = ({ text }: Props) => {
+const LeftBoxContent = () => {
   return (
-    <div>
-      <LeftBoxCont>
-        <p>{text}</p>
-      </LeftBoxCont>
-
-      {/* Add any additional content for the LeftBox */}
-    </div>
+    <Grid item xs={6}>
+      <Paper elevation={3} style={{ padding: '20px', overflowY: 'auto', height: '70vh'}}>
+        <Typography variant="body1" align="left">Here goes meeting notes</Typography>
+      </Paper>
+    </Grid>
   );
 };
 
