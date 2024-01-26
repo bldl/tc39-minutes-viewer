@@ -31,7 +31,7 @@ const ChatComponent = () => {
 
   {/*Handler for sending a message to the OpenAI API*/}
   const handleSendMessage = async () => {
-    const modelName = 'gpt-4';
+    const modelName = 'gpt-3.5-turbo';
     const maxTokens = 200;
 
 
