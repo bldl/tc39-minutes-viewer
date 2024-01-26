@@ -1,4 +1,5 @@
 import { Grid, Paper, Typography } from "@mui/material";
+import RenderMarkdown from "./RenderLeftbox";
 
 const LeftBoxContent = () => {
   return (
@@ -7,9 +8,7 @@ const LeftBoxContent = () => {
         elevation={3}
         style={{ padding: "20px", overflowY: "auto", height: "70vh" }}
       >
-        <Typography variant="body1" align="left">
-          Here goes meeting notes
-        </Typography>
+        <RenderMarkdown />
       </Paper>
     </Grid>
   );
