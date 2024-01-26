@@ -1,6 +1,5 @@
 import ChatComponent from "./ChatComponent";
 
-
 import "../App.css";
 
 function App() {
