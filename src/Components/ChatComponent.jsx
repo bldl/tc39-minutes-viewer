@@ -74,7 +74,7 @@ const ChatComponent = () => {
     <Container>
       {/* AppBar is the where the search bar is located. It contains a toolbar with the search bar.*/} 
       <AppBar position="static" style={{
-          background: 'black',
+          background: 'white',
           borderRadius: '20px',
           padding: '10px'
         }}> 
