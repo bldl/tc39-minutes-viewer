@@ -15,28 +15,31 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
+// Define the shape of the message object
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
 
+interface ChatComponentProps {}
 
+const ChatComponent: React.FC<ChatComponentProps> = (props) => {
+  // State for user input and chat messages
+  const [input, setInput] = useState<string>('');
+  const [messages, setMessages] = useState<Message[]>([]);
 
-
-const ChatComponent = () => {
-  {/* State for user input and chat messages */} 
-  const [input, setInput] = useState('');
-  const [messages, setMessages] = useState([]);
-
-  {/* Handler for updating input state on user input change */}
-  const handleInputChange = (e) => {
+  // Handler for updating input state on user input change
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
-  {/*Handler for sending a message to the OpenAI API*/}
+  // Handler for sending a message to the OpenAI API
   const handleSendMessage = async () => {
     const modelName = 'gpt-3.5-turbo';
     const maxTokens = 200;
 
-
     try {
-    /* Send a POST request to the OpenAI chat completion endpoint */
+      // Send a POST request to the OpenAI chat completion endpoint
       const response = await axios.post(
         'https://api.openai.com/v1/chat/completions',
         {
@@ -48,18 +51,14 @@ const ChatComponent = () => {
           max_tokens: maxTokens,
         },
         {
-          /* Include OpenAI API key for authorization */ 
+          // Include OpenAI API key for authorization
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY}`,
-
           },
         }
       );
 
-      // can use console log for debugging
-      // console.log(response);
- 
       // Update the messages state with the assistant's response
       setMessages([...messages, { role: 'assistant', content: response.data.choices[0].message.content }]);
       // Clear the input field after sending the message
@@ -68,7 +67,8 @@ const ChatComponent = () => {
       // Return an error message if there is an issue sending the message
       console.error('Error sending message:', error);
     }
-  };
+    };
+
 
   return (
     <Container>
