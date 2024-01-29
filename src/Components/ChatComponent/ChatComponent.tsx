@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import LeftBoxContent from '../LeftBox/LeftBoxContent';
 
 import {
   Container,
@@ -14,6 +13,7 @@ import {
   Typography,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import LeftBoxContent from '../LeftBox/LeftBoxContent';
 
 // Define the shape of the message object
 interface Message {
@@ -21,9 +21,11 @@ interface Message {
   content: string;
 }
 
-interface ChatComponentProps {}
+interface ChatComponentProps {
+  link: string | null;
+}
 
-const ChatComponent: React.FC<ChatComponentProps> = (props) => {
+const ChatComponent: React.FC<ChatComponentProps> = ({link = "../public/meetings/2012-05/may-21.md"}) => {
   // State for user input and chat messages
   const [input, setInput] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
@@ -72,12 +74,11 @@ const ChatComponent: React.FC<ChatComponentProps> = (props) => {
 
   return (
     <Container>
-      <div style={{ paddingTop: '20px' }}> {/* Adjust the value as needed */}
       {/* AppBar is the where the search bar is located. It contains a toolbar with the search bar.*/} 
       <AppBar position="static" style={{
           background: 'white',
           borderRadius: '20px',
-          padding: '10px',
+          padding: '10px'
         }}> 
       <Toolbar>
           {/* This is the search bar*/} 
@@ -93,11 +94,10 @@ const ChatComponent: React.FC<ChatComponentProps> = (props) => {
           </Button>
         </Toolbar>
       </AppBar>
-      </div>
        {/* This where left and right box is placed inside a grid/container */} 
-      <Grid container spacing={1} style={{ marginTop: '20px' }}>
+      <Grid container spacing={1} style={{ marginTop: '10px' }}>
         {/* This is where LeftBoxContent is placed */} 
-        <LeftBoxContent/> 
+        <LeftBoxContent link={link}/> 
 
         {/* This where the GPT's response is output */} 
         <Grid item xs={6}>
