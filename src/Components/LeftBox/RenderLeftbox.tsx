@@ -1,16 +1,26 @@
-import { useState, useEffect } from "react";
-// import MarkDown from "markdown-to-jsx";
+import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import "../../App.css";
+// import "../App.css";
 
-const RenderMarkdown = () => {
+interface Props {
+  link: string | null;
+}
+
+const RenderMarkdown: React.FC<Props> = ({ link }) => {
   const [markdownContent, setMarkdownContent] = useState("");
-  const file_name = "../../public/meetings/2015-11/nov-17.md";
 
   useEffect(() => {
     const fetchMarkdown = async () => {
+      if (!link) {
+        const welcomeMessage =
+          "## Welcome! Use the navigation bar to the left to select which files you want browse";
+        setMarkdownContent(welcomeMessage);
+        return;
+      }
+
       try {
-        const response = await fetch(file_name);
+        console.log(link); // Correctly using link here
+        const response = await fetch(link);
         const text = await response.text();
         setMarkdownContent(text);
       } catch (error) {
@@ -19,7 +29,7 @@ const RenderMarkdown = () => {
     };
 
     fetchMarkdown();
-  }, [file_name]);
+  }, [link]); // Use link as the dependency for useEffect
 
   return (
     <div>
