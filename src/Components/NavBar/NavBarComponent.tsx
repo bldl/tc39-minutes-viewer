@@ -1,5 +1,5 @@
 import React from 'react';
-import { Autocomplete, TextField } from '@mui/material';
+import { Autocomplete, Grid, Paper, TextField } from '@mui/material';
 
 interface NavBarComponentProps {
     options: string[];
@@ -14,17 +14,29 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({ options, label, onSel
     };
 
     return (
-        <Autocomplete
-            options={options}
-            onChange={handleChange}
-            renderInput={(params) => (
-                <TextField
-                    {...params}
-                    label={label}
-                    variant="outlined"
-                />
-            )}
-        />
+        <>
+        <Grid item xs={1}>
+            <Paper
+            elevation={3}
+            style={{ padding: "20px", overflowY: "auto", height: "81.5vh", width: "10%", position:"absolute"}}
+            >
+                <Autocomplete
+                    options={options}
+                    onChange={handleChange}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label={label}
+                            variant="outlined"
+                        />
+                    )}
+                    PaperComponent={(props) => (
+                        <Paper {...props} style={{ maxHeight: 480, overflow:"auto"}} />
+                      )}
+                    />
+            </Paper>
+        </Grid>
+        </>
     );
 }
 
