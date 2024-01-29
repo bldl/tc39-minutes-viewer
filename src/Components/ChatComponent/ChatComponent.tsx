@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import LeftBoxContent from './LeftBoxContent';
+import LeftBoxContent from '../LeftBox/LeftBoxContent';
 
 import {
   Container,
@@ -72,11 +72,12 @@ const ChatComponent: React.FC<ChatComponentProps> = (props) => {
 
   return (
     <Container>
+      <div style={{ paddingTop: '20px' }}> {/* Adjust the value as needed */}
       {/* AppBar is the where the search bar is located. It contains a toolbar with the search bar.*/} 
       <AppBar position="static" style={{
           background: 'white',
           borderRadius: '20px',
-          padding: '10px'
+          padding: '10px',
         }}> 
       <Toolbar>
           {/* This is the search bar*/} 
@@ -92,8 +93,9 @@ const ChatComponent: React.FC<ChatComponentProps> = (props) => {
           </Button>
         </Toolbar>
       </AppBar>
+      </div>
        {/* This where left and right box is placed inside a grid/container */} 
-      <Grid container spacing={1} style={{ marginTop: '10px' }}>
+      <Grid container spacing={1} style={{ marginTop: '20px' }}>
         {/* This is where LeftBoxContent is placed */} 
         <LeftBoxContent/> 
 

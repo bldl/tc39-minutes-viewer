@@ -1,7 +1,7 @@
-import ChatComponent from "./ChatComponent";
+import ChatComponent from "./ChatComponent/ChatComponent";
 import "../App.css";
 import { useState } from "react";
-import NavBarComponent from "./NavBarComponent";
+import NavBarComponent from "./NavBar/NavBarComponent";
 
 const options = ['meeting 1', 'meeting 2', 'meeting 3'];
 
@@ -19,8 +19,8 @@ function App() {
         <ChatComponent />
       </div>
       <div>
-        <h1>Hore jævel: {selectedOption}</h1>
-        <NavBarComponent options={options} label="Select an Option" onSelect={handleSelect} />
+        <h1>NavBar Test: {selectedOption}</h1>
+        <NavBarComponent options={options} label="Select a meeting: " onSelect={handleSelect} />
       </div>
     </>
   );
