@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 // import MarkDown from "markdown-to-jsx";
 import ReactMarkdown from "react-markdown";
-import "../App.css";
+import "../../App.css";
 
 const RenderMarkdown = () => {
   const [markdownContent, setMarkdownContent] = useState("");
-  const file_name = "../public/meetings/2015-11/nov-17.md";
+  const file_name = "../../public/meetings/2015-11/nov-17.md";
 
   useEffect(() => {
     const fetchMarkdown = async () => {
