@@ -73,12 +73,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({link = "../public/meetings
 
 
   return (
-    <Container>
+    <Container style={{ maxWidth: 'none'}}>
       {/* AppBar is the where the search bar is located. It contains a toolbar with the search bar.*/} 
       <AppBar position="static" style={{
           background: 'white',
           borderRadius: '20px',
-          padding: '10px'
+          padding: '10px',
+          marginLeft: "10%",
+          width: "90%",
         }}> 
       <Toolbar>
           {/* This is the search bar*/} 
@@ -87,22 +89,23 @@ const ChatComponent: React.FC<ChatComponentProps> = ({link = "../public/meetings
             inputProps={{ 'aria-label': 'type your message' }}
             value={input}
             onChange={handleInputChange}
-            style={{ borderRadius: '20px', padding: '10px', color: 'black', flex: 1, marginRight: '10px'}}
+            style={{ borderRadius: '20px', padding: '10px', color: 'black', flex: 1}}
           />
-          <Button variant="contained" color="primary" onClick={handleSendMessage}>
+
+          <Button variant="contained" color="primary" onClick={handleSendMessage} >
             <SearchIcon></SearchIcon>
           </Button>
         </Toolbar>
       </AppBar>
        {/* This where left and right box is placed inside a grid/container */} 
-      <Grid container spacing={1} style={{ marginTop: '10px' }}>
+      <Grid container spacing={1} style={{ marginTop: '10px'}}>
         {/* This is where LeftBoxContent is placed */} 
         <LeftBoxContent link={link}/> 
 
         {/* This where the GPT's response is output */} 
         <Grid item xs={6}>
           <Divider orientation="vertical" flexItem />
-          <Paper elevation={3} style={{ padding: '20px', overflowY: 'auto', height: '70vh' }}>
+          <Paper elevation={3} style={{ padding: '20px', overflowY: 'auto', height: '70vh'}}>
 
              {/* This is test-text for the right box */} 
             <p style={{ textAlign: 'left' }}>This is just text for testing this box, so you dont have to ask GPT. But if you ask, the response will return under.</p>
