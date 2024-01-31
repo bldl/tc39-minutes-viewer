@@ -83,7 +83,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         handleSendMessage={handleSendMessage}
         handleClearMessages={handleClearMessages}
       />
-      <Grid container spacing={1} style={{ marginTop: "10px" }}>
+      <Grid container spacing={1} style={{ marginTop: "10px" } }>
         <LeftBoxContent link={link} />
         <ChatMessages messages={messages} />
       </Grid>
