@@ -23,7 +23,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         borderRadius: "20px",
         padding: "10px",
         marginLeft: "10%",
-        width: "90%",
+        width: "88%",
       }}
     >
       <Toolbar>
