@@ -1,5 +1,43 @@
-import { app, BrowserWindow, screen } from 'electron'
-import path from 'node:path'
+import { app, BrowserWindow, screen, ipcMain } from 'electron'
+const fs = require('fs').promises;
+const path = require('path');
+
+
+// Logic for reading directory
+ipcMain.handle('read-directory', async (event, basePath) => {
+  const hashTable = {};
+  try {
+    const directories = await fs.readdir(basePath, { withFileTypes: true });
+    for (const directory of directories) {
+      if (directory.isDirectory()) {
+        // Directory name as date key
+        const dirName = directory.name;
+        const dirPath = path.join(basePath, dirName);
+        const filesInDir = await fs.readdir(dirPath, { withFileTypes: true });
+        const mdFiles = {};
+
+        for (const file of filesInDir) {
+          if (file.isFile() && file.name.endsWith('.md')) {
+            // Use file's date (or name) as key, and file path as value
+            const fileName = file.name;
+            // Assuming file names can be directly used as date keys
+            // Adjust this logic if file names need parsing or formatting
+            const filePath = path.join(dirPath, fileName);
+            mdFiles[fileName] = filePath;
+          }
+        }
+
+        hashTable[dirName] = mdFiles; // Assign directory of MD files to the date key
+      }
+    }
+    return hashTable;
+  } catch (error) {
+    console.error('Error reading directory:', error);
+    throw error; // Rethrow or handle as needed
+  }
+});
+// End
+
 
 // The built directory structure
 //
@@ -27,6 +65,8 @@ function createWindow() {
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
     },
     
     
