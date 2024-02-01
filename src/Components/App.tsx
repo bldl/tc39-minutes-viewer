@@ -1,8 +1,9 @@
 
 // import "src/App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ChatComponent from "./ChatComponent/ChatComponent";
 import NavBarComponent from "./NavBar/NavBarComponent";
+import { fetchHashTable } from "./NavBar/FetchMeetings";
 
 const options = [
   "public/meetings/2012-05/may-21.md",
@@ -12,6 +13,22 @@ const options = [
 
 function App() {
   const [selectedOption, setSelectedOption] = useState<string | null>("");
+  const [options, setOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadHashTable = async () => {
+      try {
+        const hashTable = await fetchHashTable(); // Fetch hash table on startup
+        // Assuming hashTable is an object where keys are the options you want to display
+        const newOptions = Object.keys(hashTable); // Or any other transformation you need
+        setOptions(newOptions);
+      } catch (error) {
+        console.error('Error fetching hash table:', error);
+      }
+    };
+
+    loadHashTable();
+  }, []);
 
   const handleSelect = (value: string | null) => {
     setSelectedOption(value);
