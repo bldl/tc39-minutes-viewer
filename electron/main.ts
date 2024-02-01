@@ -30,7 +30,6 @@ ipcMain.handle('read-directory', async (event, basePath) => {
         hashTable[dirName] = mdFiles; // Assign directory of MD files to the date key
       }
     }
-    console.log(hashTable); // Optional: Log to verify structure
     return hashTable;
   } catch (error) {
     console.error('Error reading directory:', error);
