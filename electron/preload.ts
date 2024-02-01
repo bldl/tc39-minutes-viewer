@@ -1,4 +1,16 @@
-import { contextBridge, ipcRenderer } from 'electron'
+const { contextBridge, ipcRenderer } = require('electron');
+
+// For dynamic fetch of meetings
+contextBridge.exposeInMainWorld(
+  'electronAPI', // This is the name you'll use to access in the renderer
+  {
+    fetchHashTable: () => {
+      const basePath = 'public/meetings/'; // Hard-code the base path here
+      return ipcRenderer.invoke('read-directory', basePath);
+    }
+  }
+);
+// End
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', withPrototype(ipcRenderer))
