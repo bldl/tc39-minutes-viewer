@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Autocomplete,
   Grid,
@@ -83,24 +83,16 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
   return (
     <>
       <Grid item xs={1}>
-        <IconButton
-          onClick={handleButtonClick}
+        <Paper
+          elevation={3}
           style={{
-            backgroundColor: "#1876d2",
-            color: "white",
-            borderRadius: buttonStyles.borderRadius,
-            padding: "10px",
-            position: "fixed",
-            marginLeft: buttonStyles.marginLeft,
-            top: buttonStyles.top,
-            height: buttonStyles.height,
-            width: buttonStyles.width,
-            whiteSpace: "nowrap",
-            flexDirection: "column",
-            border: isNavBarVisible ? "3px solid black" : "none",
+            padding: "20px",
+            overflowY: "auto",
+            top: "3.5%",
+            height: "88.5%",
+            width: "13%",
+            position: "absolute",
             zIndex: 1000,
-            transition: 'transform 0.2s', 
-            transform: isNavBarVisible ? 'scale(0.9)' : 'scale(1)',
           }}
         >
           {isNavBarVisible ? (
