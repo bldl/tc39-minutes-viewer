@@ -4,13 +4,18 @@ import NavBarComponent from "./NavBar/NavBarComponent";
 import { fetchHashTable } from "./NavBar/FetchMeetings";
 
 function App() {
-  const [folderOptions, setFolderOptions] = useState<{ label: string, value: string }[]>([]);
-  const [fileOptions, setFileOptions] = useState<Record<string, { label: string, value: string }[]>>({});
+  const [folderOptions, setFolderOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [fileOptions, setFileOptions] = useState<
+    Record<string, { label: string; value: string }[]>
+  >({});
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [hashTable, setHashTable] = useState<Record<string, Record<string, string>>>({});
+  const [hashTable, setHashTable] = useState<
+    Record<string, Record<string, string>>
+  >({});
   const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null);
-
 
   // Fetch hash table on component mount
   useEffect(() => {
@@ -18,7 +23,7 @@ function App() {
       const table = await fetchHashTable();
       setHashTable(table);
       // Construct folderOptions from the hash table
-      const newFolderOptions = Object.keys(table).map(folderName => ({
+      const newFolderOptions = Object.keys(table).map((folderName) => ({
         label: folderName,
         value: folderName, // Assuming the folder name is used as the key in the hashTable
       }));
@@ -35,8 +40,8 @@ function App() {
         ...fileOptions,
         [selectedFolder]: Object.entries(files).map(([fileName, filePath]) => ({
           label: fileName, // File name for visual representation
-          value: filePath // File path to use as the value
-        }))
+          value: filePath, // File path to use as the value
+        })),
       });
     }
     // No else clause needed, as we keep the previous state of fileOptions for other folders
@@ -54,7 +59,7 @@ function App() {
     setSelectedFilePath(filePath); // Store the selected file's path
     // If needed, update selectedFile as well
     if (filePath) {
-      const fileName = filePath.split('/').pop();
+      const fileName = filePath.split("/").pop();
       setSelectedFile(fileName || null);
     } else {
       setSelectedFile(null);
