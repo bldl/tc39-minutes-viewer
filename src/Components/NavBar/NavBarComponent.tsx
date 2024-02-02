@@ -22,9 +22,9 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({ options, label, onSel
           style={{
             padding: "20px",
             overflowY: "auto",
-            top: "18.5%",
-            height: "70%",
-            width: "10%",
+            top: "3.5%",
+            height: "88.5%",
+            width: "13%",
             position: "absolute",
             zIndex: 1000,
           }}
