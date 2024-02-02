@@ -1,5 +1,11 @@
 import React from "react";
-import { Autocomplete, Grid, Paper, TextField, IconButton } from "@mui/material";
+import {
+  Autocomplete,
+  Grid,
+  Paper,
+  TextField,
+  IconButton,
+} from "@mui/material";
 import DensityMediumIcon from "@mui/icons-material/DensityMedium";
 
 interface NavBarComponentProps {
@@ -8,8 +14,11 @@ interface NavBarComponentProps {
   onSelect: (value: string | null) => void;
 }
 
-const NavBarComponent: React.FC<NavBarComponentProps> = ({ options, label, onSelect }) => {
-
+const NavBarComponent: React.FC<NavBarComponentProps> = ({
+  options,
+  label,
+  onSelect,
+}) => {
   const handleChange = (_event: React.SyntheticEvent, value: string | null) => {
     onSelect(value);
   };
