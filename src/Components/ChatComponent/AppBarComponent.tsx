@@ -22,8 +22,8 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         background: "white",
         borderRadius: "20px",
         padding: "10px",
-        marginLeft: "10%",
-        width: "88%",
+        marginLeft: "0%",
+        width: "100%",
       }}
     >
       <Toolbar>
@@ -34,7 +34,6 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           onChange={handleInputChange}
           style={{
             borderRadius: "20px",
-            padding: "10px",
             color: "black",
             flex: 1,
           }}
@@ -42,7 +41,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         <Button variant="contained" color="primary" onClick={handleSendMessage}>
           <SearchIcon></SearchIcon>
         </Button>
-        <Button
+        <Button style={{marginLeft: "5px"}}
           variant="contained"
           color="primary"
           onClick={handleClearMessages}
