@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Autocomplete,
   Grid,
@@ -11,12 +11,12 @@ import {
   Collapse,
 } from "@mui/material";
 import DensityMediumIcon from "@mui/icons-material/DensityMedium";
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 
 interface NavBarComponentProps {
-  folderOptions: { label: string, value: string }[];
-  fileOptions: Record<string, { label: string, value: string }[]>; // Record of folder path to array of files
+  folderOptions: { label: string; value: string }[];
+  fileOptions: Record<string, { label: string; value: string }[]>; // Record of folder path to array of files
   label: string;
   onSelectFolder: (value: string | null) => void;
   onSelectFile: (value: string | null) => void;
@@ -42,7 +42,10 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
 
   const handleFolderClick = (folder: string) => {
-    setOpenFolders(prevOpenFolders => ({ ...prevOpenFolders, [folder]: !prevOpenFolders[folder] }));
+    setOpenFolders((prevOpenFolders) => ({
+      ...prevOpenFolders,
+      [folder]: !prevOpenFolders[folder],
+    }));
     onSelectFolder(folder);
   };
 
@@ -76,75 +79,87 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
     setButtonText(() => (isNavBarVisible ? "NavBar" : "CLOSE"));
   };
 
-  const handleChange = (_event: React.SyntheticEvent, value: string | null) => {
-    onSelect(value);
-  };
-
   return (
-    <>
-      <Grid item xs={1}>
+    <Grid item xs={1} style={{ position: "relative" }}>
+      {" "}
+      {/* Ensure Grid has a relative position */}
+      <IconButton
+        onClick={handleButtonClick}
+        style={{
+          backgroundColor: "#1876d2",
+          color: "white",
+          borderRadius: buttonStyles.borderRadius,
+          padding: "10px",
+          position: "fixed",
+          marginLeft: buttonStyles.marginLeft,
+          top: buttonStyles.top,
+          height: buttonStyles.height,
+          width: buttonStyles.width,
+          whiteSpace: "nowrap",
+          flexDirection: "column",
+          border: isNavBarVisible ? "3px solid black" : "none",
+          zIndex: 1000,
+          transition: "transform 0.2s",
+          transform: isNavBarVisible ? "scale(0.9)" : "scale(1)",
+        }}
+      >
+        {isNavBarVisible ? (
+          buttonText.split("").map((letter, index) => (
+            <span key={index} style={{ lineHeight: 1.2, fontSize: "1.3rem" }}>
+              {letter}
+            </span>
+          ))
+        ) : (
+          <DensityMediumIcon />
+        )}
+      </IconButton>
+      {isNavBarVisible && (
         <Paper
           elevation={3}
           style={{
             padding: "20px",
             overflowY: "auto",
-            top: "3.5%",
-            height: "88.5%",
-            width: "13%",
+            height: "81.5vh",
+            width: "10%",
             position: "absolute",
+            top: "10%", // Adjusted to not overlap with IconButton
             zIndex: 1000,
           }}
         >
-          {isNavBarVisible ? (
-            buttonText.split("").map((letter, index) => (
-              <span key={index} style={{ lineHeight: 1.2, fontSize: "1.3rem" }}>
-                {letter}
-              </span>
-            ))
-          ) : (
-            <DensityMediumIcon />
-          )}
-        </IconButton>
-        {isNavBarVisible && (
-          <Paper
-            elevation={3}
-            style={{
-              padding: "20px",
-              overflowY: "auto",
-              height: "81.5vh",
-              width: "10%",
-              position: "absolute",
-              zIndex: 1000,
-            }}
-          >
-                        <List>
-              {folderOptions.map((folder) => (
-                <React.Fragment key={folder.value}>
-                  <ListItem button onClick={() => handleFolderClick(folder.value)}>
-                    <ListItemText primary={folder.label} />
-                    {openFolders[folder.value] ? <ExpandLess /> : <ExpandMore />}
-                  </ListItem>
-                  <Collapse in={openFolders[folder.value]} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                      {fileOptions[folder.value]?.map((file) => (
-                        <ListItem 
-                          key={file.value}
-                          button 
-                          onClick={() => handleFileClick(file.value)}
-                          style={{ paddingLeft: "32px" }}
-                        >
-                          <ListItemText primary={file.label} />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Collapse>
-                </React.Fragment>
-              ))}
-            </List>
-          </Paper>
-        )}
-      </Grid>
-    </>
+          <List>
+            {folderOptions.map((folder) => (
+              <React.Fragment key={folder.value}>
+                <ListItem
+                  button
+                  onClick={() => handleFolderClick(folder.value)}
+                >
+                  <ListItemText primary={folder.label} />
+                  {openFolders[folder.value] ? <ExpandLess /> : <ExpandMore />}
+                </ListItem>
+                <Collapse
+                  in={openFolders[folder.value]}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <List component="div" disablePadding>
+                    {fileOptions[folder.value]?.map((file) => (
+                      <ListItem
+                        key={file.value}
+                        button
+                        onClick={() => handleFileClick(file.value)}
+                        style={{ paddingLeft: "32px" }}
+                      >
+                        <ListItemText primary={file.label} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Collapse>
+              </React.Fragment>
+            ))}
+          </List>
+        </Paper>
+      )}
+    </Grid>
   );
 };
 
