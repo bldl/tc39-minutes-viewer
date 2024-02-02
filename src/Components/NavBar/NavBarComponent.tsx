@@ -5,19 +5,29 @@ import {
   Paper,
   TextField,
   IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Collapse,
 } from "@mui/material";
 import DensityMediumIcon from "@mui/icons-material/DensityMedium";
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 
 interface NavBarComponentProps {
-  options: string[];
+  folderOptions: { label: string, value: string }[];
+  fileOptions: Record<string, { label: string, value: string }[]>; // Record of folder path to array of files
   label: string;
-  onSelect: (value: string | null) => void;
+  onSelectFolder: (value: string | null) => void;
+  onSelectFile: (value: string | null) => void;
 }
 
 const NavBarComponent: React.FC<NavBarComponentProps> = ({
-  options,
+  folderOptions,
+  fileOptions,
   label,
-  onSelect,
+  onSelectFolder,
+  onSelectFile,
 }) => {
   const [isNavBarVisible, setIsNavBarVisible] = useState(false);
   const [buttonStyles, setButtonStyles] = useState({
@@ -28,6 +38,17 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
     top: "7.5%",
   });
   const [buttonText, setButtonText] = useState("NavBar"); // Added state for button text
+
+  const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
+
+  const handleFolderClick = (folder: string) => {
+    setOpenFolders(prevOpenFolders => ({ ...prevOpenFolders, [folder]: !prevOpenFolders[folder] }));
+    onSelectFolder(folder);
+  };
+
+  const handleFileClick = (filePath: string) => {
+    onSelectFile(filePath);
+  };
 
   const handleButtonClick = () => {
     setIsNavBarVisible((prev) => !prev);
@@ -104,19 +125,30 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
               zIndex: 1000,
             }}
           >
-            <Autocomplete
-              options={options}
-              onChange={handleChange}
-              renderInput={(params) => (
-                <TextField {...params} label={label} variant="outlined" />
-              )}
-              PaperComponent={(props) => (
-                <Paper
-                  {...props}
-                  style={{ maxHeight: 480, overflow: "auto" }}
-                />
-              )}
-            />
+                        <List>
+              {folderOptions.map((folder) => (
+                <React.Fragment key={folder.value}>
+                  <ListItem button onClick={() => handleFolderClick(folder.value)}>
+                    <ListItemText primary={folder.label} />
+                    {openFolders[folder.value] ? <ExpandLess /> : <ExpandMore />}
+                  </ListItem>
+                  <Collapse in={openFolders[folder.value]} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {fileOptions[folder.value]?.map((file) => (
+                        <ListItem 
+                          key={file.value}
+                          button 
+                          onClick={() => handleFileClick(file.value)}
+                          style={{ paddingLeft: "32px" }}
+                        >
+                          <ListItemText primary={file.label} />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Collapse>
+                </React.Fragment>
+              ))}
+            </List>
           </Paper>
         )}
       </Grid>
