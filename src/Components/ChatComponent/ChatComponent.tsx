@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Container, Grid } from "@mui/material";
+import { Container, Divider, Grid, Paper} from "@mui/material";
 import AppBarComponent from "./AppBarComponent"; // Importing the AppBarComponent
-import ChatMessages from "./ChatMessages"; // Importing the ChatMessages component
 import LeftBoxContent from "../LeftBox/LeftBoxContent"; // Assuming LeftBoxContent is already a separate component
+import TabsComponent from "../TabComponent/TabComponent";
 
 // Define the shape of the message object
 interface Message {
@@ -85,7 +85,26 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
       />
       <Grid container spacing={1} style={{ marginTop: "10px" }}>
         <LeftBoxContent link={link} />
-        <ChatMessages messages={messages} />
+
+        <Grid item xs={6}>
+          <Divider orientation="vertical" flexItem />
+          <Paper
+            elevation={3}
+            style={{
+              padding: "20px",
+              overflowY: "auto",
+              height: "77vh",
+              width: "37.8vw",
+              maxWidth: "100%",
+              borderRadius: "20px",
+            }}
+
+          >
+            <TabsComponent messages={messages}/>
+          </Paper>
+        </Grid>
+
+        
       </Grid>
     </Container>
   );

@@ -15,13 +15,14 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
     <Grid item xs={6}>
       <Divider orientation="vertical" flexItem />
       <Paper
-        elevation={3}
+        elevation={0}
         style={{
           padding: "20px",
           overflowY: "auto",
-          height: "77vh",
-          width: "37.8vw",
-          maxWidth: "100%",
+          height: "68vh",
+          width: "192%",
+          borderRadius: "20px"
+
         }}
       >
         {messages.map((message, index) => (
