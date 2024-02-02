@@ -76,14 +76,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   };
 
   return (
-    <Container style={{maxWidth: "none", marginLeft: "17.5%"}}>
+    <Container style={{ maxWidth: "none", marginLeft: "17.5%" }}>
       <AppBarComponent
         input={input}
         handleInputChange={handleInputChange}
         handleSendMessage={handleSendMessage}
         handleClearMessages={handleClearMessages}
       />
-      <Grid container spacing={1} style={{ marginTop: "10px"} }>
+      <Grid container spacing={1} style={{ marginTop: "10px" }}>
         <LeftBoxContent link={link} />
         <ChatMessages messages={messages} />
       </Grid>

@@ -41,7 +41,8 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         <Button variant="contained" color="primary" onClick={handleSendMessage}>
           <SearchIcon></SearchIcon>
         </Button>
-        <Button style={{marginLeft: "5px"}}
+        <Button
+          style={{ marginLeft: "5px" }}
           variant="contained"
           color="primary"
           onClick={handleClearMessages}
