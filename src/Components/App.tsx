@@ -4,24 +4,25 @@ import NavBarComponent from "./NavBar/NavBarComponent";
 import { fetchHashTable } from "./NavBar/FetchMeetings";
 
 function App() {
-  const [folderOptions, setFolderOptions] = useState<string[]>([]);
-  const [fileOptions, setFileOptions] = useState<
-    { label: string; value: string }[]
-  >([]);
+  const [folderOptions, setFolderOptions] = useState<{ label: string, value: string }[]>([]);
+  const [fileOptions, setFileOptions] = useState<Record<string, { label: string, value: string }[]>>({});
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [hashTable, setHashTable] = useState<
-    Record<string, Record<string, string>>
-  >({});
-  // State for storing the selected file's path
+  const [hashTable, setHashTable] = useState<Record<string, Record<string, string>>>({});
   const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null);
+
 
   // Fetch hash table on component mount
   useEffect(() => {
     const loadHashTable = async () => {
       const table = await fetchHashTable();
       setHashTable(table);
-      setFolderOptions(Object.keys(table));
+      // Construct folderOptions from the hash table
+      const newFolderOptions = Object.keys(table).map(folderName => ({
+        label: folderName,
+        value: folderName, // Assuming the folder name is used as the key in the hashTable
+      }));
+      setFolderOptions(newFolderOptions);
     };
     loadHashTable();
   }, []);
@@ -30,46 +31,45 @@ function App() {
   useEffect(() => {
     if (selectedFolder) {
       const files = hashTable[selectedFolder];
-      const newFileOptions = Object.entries(files).map(
-        ([fileName, filePath]) => ({
+      setFileOptions({
+        ...fileOptions,
+        [selectedFolder]: Object.entries(files).map(([fileName, filePath]) => ({
           label: fileName, // File name for visual representation
-          value: filePath, // File path to use as the value
-        })
-      );
-      setFileOptions(newFileOptions);
-    } else {
-      setFileOptions([]); // Reset file options if no folder is selected
+          value: filePath // File path to use as the value
+        }))
+      });
     }
+    // No else clause needed, as we keep the previous state of fileOptions for other folders
   }, [selectedFolder, hashTable]);
 
   // Handle folder selection
-  const handleFolderSelect = (folder: string | null) => {
-    setSelectedFolder(folder);
+  const handleFolderSelect = (folderValue: string | null) => {
+    setSelectedFolder(folderValue);
     setSelectedFile(null); // Reset file selection
+    setSelectedFilePath(null); // Also reset the file path
   };
 
   // Handler for file selection
-  const handleFileSelect = (
-    selection: { label: string; value: string } | null
-  ) => {
-    // You need to ensure only the value (file path) is stored
-    setSelectedFilePath(selection ? selection.value : null);
+  const handleFileSelect = (filePath: string | null) => {
+    setSelectedFilePath(filePath); // Store the selected file's path
+    // If needed, update selectedFile as well
+    if (filePath) {
+      const fileName = filePath.split('/').pop();
+      setSelectedFile(fileName || null);
+    } else {
+      setSelectedFile(null);
+    }
   };
 
   return (
     <>
       <NavBarComponent
-        options={folderOptions}
+        folderOptions={folderOptions}
+        fileOptions={fileOptions}
         label="Select Folder"
-        onSelect={handleFolderSelect}
+        onSelectFolder={handleFolderSelect}
+        onSelectFile={handleFileSelect}
       />
-      {selectedFolder && (
-        <NavBarComponent
-          options={fileOptions}
-          label="Select File"
-          onSelect={handleFileSelect}
-        />
-      )}
       <ChatComponent link={selectedFilePath} />
     </>
   );
