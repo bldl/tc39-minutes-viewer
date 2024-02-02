@@ -76,7 +76,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   };
 
   return (
-    <Container style={{ maxWidth: "none"}}>
+    <Container style={{ maxWidth: "none", marginLeft: "20vh"}}>
       <AppBarComponent
         input={input}
         handleInputChange={handleInputChange}
