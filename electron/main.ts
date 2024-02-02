@@ -4,36 +4,62 @@ const path = require('path');
 
 
 // Logic for reading directory
+// Helper function to capitalize the first letter of a month's name
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+const monthNames = {
+  "01": "January", "02": "February", "03": "March", "04": "April",
+  "05": "May", "06": "June", "07": "July", "08": "August",
+  "09": "September", "10": "October", "11": "November", "12": "December"
+};
+
 ipcMain.handle('read-directory', async (event, basePath) => {
   const hashTable = {};
   try {
     const directories = await fs.readdir(basePath, { withFileTypes: true });
     for (const directory of directories) {
       if (directory.isDirectory()) {
-        // Directory name as date key
-        const dirName = directory.name;
-        const dirPath = path.join(basePath, dirName);
-        const filesInDir = await fs.readdir(dirPath, { withFileTypes: true });
-        const mdFiles = {};
+        // Match the directory name to the "YYYY-MM" pattern
+        const dirMatch = directory.name.match(/^(\d{4})-(\d{2})$/);
+        if (dirMatch) {
+          const year = dirMatch[1];
+          const month = dirMatch[2];
+          const monthName = monthNames[month];
+          if (monthName) {
+            const formattedDirName = `${year} - ${monthName}`;
+            const dirPath = path.join(basePath, directory.name);
+            const filesInDir = await fs.readdir(dirPath, { withFileTypes: true });
+            const mdFiles = {};
 
-        for (const file of filesInDir) {
-          if (file.isFile() && file.name.endsWith('.md')) {
-            // Use file's date (or name) as key, and file path as value
-            const fileName = file.name;
-            // Assuming file names can be directly used as date keys
-            // Adjust this logic if file names need parsing or formatting
-            const filePath = path.join(dirPath, fileName);
-            mdFiles[fileName] = filePath;
+            for (const file of filesInDir) {
+              if (file.isFile()) {
+                // Match the file name to the "monthName-DD.md" pattern
+                const fileMatch = file.name.match(/^(\w+)-(\d{2})\.md$/);
+                if (fileMatch) {
+                  const fileMonthName = capitalize(fileMatch[1]);
+                  const fileDay = fileMatch[2];
+                  // Check if the month name from the file matches the directory's month name
+                  if (fileMonthName.toLowerCase() === monthName.toLowerCase()) {
+                    const formattedFileName = `${fileMonthName} - ${fileDay}`;
+                    const filePath = path.join(dirPath, file.name);
+                    mdFiles[formattedFileName] = filePath;
+                  }
+                }
+              }
+            }
+
+            if (Object.keys(mdFiles).length > 0) {
+              hashTable[formattedDirName] = mdFiles;
+            }
           }
         }
-
-        hashTable[dirName] = mdFiles; // Assign directory of MD files to the date key
       }
     }
+    console.log("HashTable:", hashTable); // Log for debugging
     return hashTable;
   } catch (error) {
     console.error('Error reading directory:', error);
-    throw error; // Rethrow or handle as needed
+    throw error;
   }
 });
 // End
