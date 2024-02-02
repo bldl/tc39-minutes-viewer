@@ -22,7 +22,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         background: "white",
         borderRadius: "20px",
         padding: "10px",
-        marginLeft: "10%",
+        marginLeft: "0%",
         width: "88%",
       }}
     >
