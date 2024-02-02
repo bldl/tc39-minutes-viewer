@@ -20,11 +20,10 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
           padding: "20px",
           overflowY: "auto",
           height: "77vh",
-          width: "37.8vw",       
+          width: "37.8vw",
           maxWidth: "100%",
         }}
       >
-
         {messages.map((message, index) => (
           <Typography
             key={index}

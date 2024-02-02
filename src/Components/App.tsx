@@ -5,10 +5,14 @@ import { fetchHashTable } from "./NavBar/FetchMeetings";
 
 function App() {
   const [folderOptions, setFolderOptions] = useState<string[]>([]);
-  const [fileOptions, setFileOptions] = useState<{ label: string, value: string }[]>([]);
+  const [fileOptions, setFileOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [hashTable, setHashTable] = useState<Record<string, Record<string, string>>>({});
+  const [hashTable, setHashTable] = useState<
+    Record<string, Record<string, string>>
+  >({});
   // State for storing the selected file's path
   const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null);
 
@@ -26,16 +30,17 @@ function App() {
   useEffect(() => {
     if (selectedFolder) {
       const files = hashTable[selectedFolder];
-      const newFileOptions = Object.entries(files).map(([fileName, filePath]) => ({
-        label: fileName, // File name for visual representation
-        value: filePath // File path to use as the value
-      }));
+      const newFileOptions = Object.entries(files).map(
+        ([fileName, filePath]) => ({
+          label: fileName, // File name for visual representation
+          value: filePath, // File path to use as the value
+        })
+      );
       setFileOptions(newFileOptions);
     } else {
       setFileOptions([]); // Reset file options if no folder is selected
     }
   }, [selectedFolder, hashTable]);
-
 
   // Handle folder selection
   const handleFolderSelect = (folder: string | null) => {
@@ -44,7 +49,9 @@ function App() {
   };
 
   // Handler for file selection
-  const handleFileSelect = (selection: { label: string, value: string } | null) => {
+  const handleFileSelect = (
+    selection: { label: string; value: string } | null
+  ) => {
     // You need to ensure only the value (file path) is stored
     setSelectedFilePath(selection ? selection.value : null);
   };
@@ -62,7 +69,7 @@ function App() {
           label="Select File"
           onSelect={handleFileSelect}
         />
-        )}
+      )}
       <ChatComponent link={selectedFilePath} />
     </>
   );
