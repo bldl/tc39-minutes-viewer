@@ -15,6 +15,7 @@ const LeftBoxContent = ({ link }: Props) => {
           overflowY: "auto",
           height: "77vh",
           width: "37.8vw",
+          borderRadius: "20px"
         }}
       >
         <RenderMarkdown link={link} />

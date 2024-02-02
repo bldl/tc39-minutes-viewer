@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 import {
-  Autocomplete,
   Grid,
   Paper,
-  TextField,
-  IconButton,
   List,
   ListItem,
   ListItemText,
   Collapse,
 } from "@mui/material";
-import DensityMediumIcon from "@mui/icons-material/DensityMedium";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
@@ -29,15 +25,6 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
   onSelectFolder,
   onSelectFile,
 }) => {
-  const [isNavBarVisible, setIsNavBarVisible] = useState(false);
-  const [buttonStyles, setButtonStyles] = useState({
-    marginLeft: "4%",
-    height: "8vh",
-    width: "10vh",
-    borderRadius: "10px",
-    top: "7.5%",
-  });
-  const [buttonText, setButtonText] = useState("NavBar"); // Added state for button text
 
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
 
@@ -53,77 +40,19 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
     onSelectFile(filePath);
   };
 
-  const handleButtonClick = () => {
-    setIsNavBarVisible((prev) => !prev);
-
-    setButtonStyles((prevStyles) =>
-      prevStyles.marginLeft === "4%"
-        ? {
-            ...prevStyles,
-            marginLeft: "12.5%",
-            height: "20vh",
-            width: "5vh",
-            borderRadius: "5px",
-            top: "6.7%",
-          }
-        : {
-            ...prevStyles,
-            marginLeft: "4%",
-            height: "8vh",
-            width: "10vh",
-            borderRadius: "10px",
-            top: "7.5%",
-          }
-    );
-
-    setButtonText(() => (isNavBarVisible ? "NavBar" : "CLOSE"));
-  };
 
   return (
     <Grid item xs={1} style={{ position: "relative" }}>
-      {" "}
-      {/* Ensure Grid has a relative position */}
-      <IconButton
-        onClick={handleButtonClick}
-        style={{
-          backgroundColor: "#1876d2",
-          color: "white",
-          borderRadius: buttonStyles.borderRadius,
-          padding: "10px",
-          position: "fixed",
-          marginLeft: buttonStyles.marginLeft,
-          top: buttonStyles.top,
-          height: buttonStyles.height,
-          width: buttonStyles.width,
-          whiteSpace: "nowrap",
-          flexDirection: "column",
-          border: isNavBarVisible ? "3px solid black" : "none",
-          zIndex: 1000,
-          transition: "transform 0.2s",
-          transform: isNavBarVisible ? "scale(0.9)" : "scale(1)",
-        }}
-      >
-        {isNavBarVisible ? (
-          buttonText.split("").map((letter, index) => (
-            <span key={index} style={{ lineHeight: 1.2, fontSize: "1.3rem" }}>
-              {letter}
-            </span>
-          ))
-        ) : (
-          <DensityMediumIcon />
-        )}
-      </IconButton>
-      {isNavBarVisible && (
         <Paper
           elevation={3}
           style={{
             padding: "20px",
             overflowY: "auto",
-            height: "81.5vh",
-            width: "10%",
+            height: "89vh",
+            width: "15%",
             position: "absolute",
-            top: "10%", // Adjusted to not overlap with IconButton
-            zIndex: 1000,
+            top: "10%",
+            borderRadius: "20px"
           }}
         >
           <List>
@@ -158,7 +87,6 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
             ))}
           </List>
         </Paper>
-      )}
     </Grid>
   );
 };

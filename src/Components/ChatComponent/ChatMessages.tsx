@@ -22,6 +22,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
           height: "77vh",
           width: "37.8vw",
           maxWidth: "100%",
+          borderRadius: "20px"
         }}
       >
         {messages.map((message, index) => (
