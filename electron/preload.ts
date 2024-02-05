@@ -10,7 +10,7 @@ contextBridge.exposeInMainWorld(
     },
   }
 );
-// End
+// End For dynamic fetch of meetings
 
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld("ipcRenderer", withPrototype(ipcRenderer));

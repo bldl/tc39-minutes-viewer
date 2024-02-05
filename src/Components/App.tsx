@@ -18,6 +18,7 @@ function App() {
     loadHashTable();
   }, []);
 
+  // Handle for year select
   const handleYearSelect = (year) => {
     setSelectedYear(year);
     setSelectedMonth(null);
@@ -25,6 +26,7 @@ function App() {
     setSelectedFilePath(null);
   };
 
+  // Handle for month select
   const handleMonthSelect = (year, month) => {
     setSelectedYear(year);
     setSelectedMonth(month);
@@ -32,6 +34,7 @@ function App() {
     setSelectedFilePath(null);
   };
 
+  // Handle for day select
   const handleDaySelect = (filePath) => {
     setSelectedFilePath(filePath);
   };

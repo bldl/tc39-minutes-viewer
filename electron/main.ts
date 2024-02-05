@@ -3,9 +3,6 @@ const fs = require("fs").promises;
 const path = require("path");
 
 // Logic for reading directory
-// Helper function to capitalize the first letter of a month's name
-const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
-
 const monthNames = {
   "01": "January",
   "02": "February",
@@ -65,8 +62,7 @@ ipcMain.handle("read-directory", async (event, basePath) => {
     throw error;
   }
 });
-
-// End
+// End Logic for reading directory
 
 // The built directory structure
 //
