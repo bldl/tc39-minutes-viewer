@@ -10,7 +10,7 @@ import {
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
-// Update the interface to match the new structure
+// Interface
 interface NavBarComponentProps {
   hashTable: Record<string, Record<string, Record<string, string>>>;
   onSelectYear: (year: string) => void;
@@ -27,6 +27,7 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
   const [openYears, setOpenYears] = useState<Record<string, boolean>>({});
   const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({});
 
+  // Handle for year
   const handleYearClick = (year: string) => {
     setOpenYears((prevOpenYears) => ({
       ...prevOpenYears,
@@ -35,6 +36,7 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
     onSelectYear(year);
   };
 
+  // Handle for month
   const handleMonthClick = (year: string, month: string) => {
     setOpenMonths((prevOpenMonths) => ({
       ...prevOpenMonths,
