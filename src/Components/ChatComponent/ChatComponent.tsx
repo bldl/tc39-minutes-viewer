@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Container, Divider, Grid, Paper} from "@mui/material";
+import {
+  CircularProgress,
+  Container,
+  Divider,
+  Grid,
+  Paper,
+} from "@mui/material";
 import AppBarComponent from "./AppBarComponent"; // Importing the AppBarComponent
 import LeftBoxContent from "../LeftBox/LeftBoxContent"; // Assuming LeftBoxContent is already a separate component
 import TabsComponent from "../TabComponent/TabComponent";
@@ -20,24 +26,36 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 }) => {
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [clearMessages, setClearMessages] = useState<boolean>(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
+  {
+    /* Clear messages when clearMessages is true */
+  }
   const handleClearMessages = () => {
+    setIsLoading(false);
     setMessages([]);
     setClearMessages(true);
   };
 
+  {
+    /* Clear messages when clearMessages is true */
+  }
   useEffect(() => {
     if (clearMessages) {
       setClearMessages(false);
     }
   }, [clearMessages]);
 
+  {
+    /* Send message to the assistant */
+  }
   const handleSendMessage = async () => {
+    setIsLoading(true);
     const modelName = "gpt-3.5-turbo";
     const maxTokens = 200;
 
@@ -72,6 +90,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
       setInput("");
     } catch (error) {
       console.error("Error sending message:", error);
+    } finally {
+      setIsLoading(false); // Stop loading regardless of success or error
     }
   };
 
@@ -98,13 +118,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
               maxWidth: "100%",
               borderRadius: "20px",
             }}
-
           >
-            <TabsComponent messages={messages}/>
+            {isLoading ? (
+              <CircularProgress />
+            ) : (
+              <TabsComponent messages={messages} />
+            )}
           </Paper>
         </Grid>
-
-        
       </Grid>
     </Container>
   );
