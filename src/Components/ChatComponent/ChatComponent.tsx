@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Container, Divider, Grid, Paper} from "@mui/material";
+import {
+  CircularProgress,
+  Container,
+  Divider,
+  Grid,
+  Paper,
+} from "@mui/material";
 import AppBarComponent from "./AppBarComponent"; // Importing the AppBarComponent
 import LeftBoxContent from "../LeftBox/LeftBoxContent"; // Assuming LeftBoxContent is already a separate component
-import TabsComponent from "../TabComponent/TabComponent";
+import TabsComponent from "../TabComponent/TabComponent"; // Assuming TabsComponent is already a separate component
 
 // Define the shape of the message object
 interface Message {
@@ -11,37 +17,54 @@ interface Message {
   content: string;
 }
 
+// Props for the ChatComponent.
 interface ChatComponentProps {
   link: string | null;
 }
 
+// ChatComponent is the main component for the chat interface.
 const ChatComponent: React.FC<ChatComponentProps> = ({
   link = "../public/meetings/2012-05/may-21.md",
 }) => {
+  // State variables for the chat component.
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [clearMessages, setClearMessages] = useState<boolean>(false);
 
+  // Handles changes in the chat input field.
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
+  {
+    // Clears all messages from the chat.
+  }
   const handleClearMessages = () => {
+    setIsLoading(false);
     setMessages([]);
     setClearMessages(true);
   };
 
+  {
+    // Effect to reset the clearMessages flag.
+  }
   useEffect(() => {
     if (clearMessages) {
       setClearMessages(false);
     }
   }, [clearMessages]);
 
+  {
+    // Handles sending a message to the chatbot.
+  }
   const handleSendMessage = async () => {
+    setIsLoading(true);
     const modelName = "gpt-3.5-turbo";
     const maxTokens = 200;
 
     try {
+      // Making a POST request to the OpenAI API.
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         {
@@ -61,7 +84,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
           },
         }
       );
-
+      // Updating the messages state with the response.
       setMessages([
         ...messages,
         {
@@ -72,9 +95,12 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
       setInput("");
     } catch (error) {
       console.error("Error sending message:", error);
+    } finally {
+      setIsLoading(false); // Stop loading regardless of success or error
     }
   };
 
+  // Render the chat component UI.
   return (
     <Container style={{ maxWidth: "none", marginLeft: "17.5%" }}>
       <AppBarComponent
@@ -98,13 +124,23 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
               maxWidth: "100%",
               borderRadius: "20px",
             }}
-
           >
-            <TabsComponent messages={messages}/>
+            {isLoading ? (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <CircularProgress />
+              </div>
+            ) : (
+              <TabsComponent messages={messages} />
+            )}
           </Paper>
         </Grid>
-
-        
       </Grid>
     </Container>
   );
