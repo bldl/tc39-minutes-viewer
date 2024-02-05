@@ -17,24 +17,28 @@ interface Message {
   content: string;
 }
 
+// Props for the ChatComponent.
 interface ChatComponentProps {
   link: string | null;
 }
 
+// ChatComponent is the main component for the chat interface.
 const ChatComponent: React.FC<ChatComponentProps> = ({
   link = "../public/meetings/2012-05/may-21.md",
 }) => {
+  // State variables for the chat component.
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [clearMessages, setClearMessages] = useState<boolean>(false);
 
+  // Handles changes in the chat input field.
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
   {
-    /* Clear messages when clearMessages is true */
+    // Clears all messages from the chat.
   }
   const handleClearMessages = () => {
     setIsLoading(false);
@@ -43,7 +47,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   };
 
   {
-    /* Clear messages when clearMessages is true */
+    // Effect to reset the clearMessages flag.
   }
   useEffect(() => {
     if (clearMessages) {
@@ -52,7 +56,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   }, [clearMessages]);
 
   {
-    /* Send message to the assistant */
+    // Handles sending a message to the chatbot.
   }
   const handleSendMessage = async () => {
     setIsLoading(true);
@@ -60,6 +64,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
     const maxTokens = 200;
 
     try {
+      // Making a POST request to the OpenAI API.
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         {
@@ -79,7 +84,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
           },
         }
       );
-
+      // Updating the messages state with the response.
       setMessages([
         ...messages,
         {
@@ -95,6 +100,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
     }
   };
 
+  // Render the chat component UI.
   return (
     <Container style={{ maxWidth: "none", marginLeft: "17.5%" }}>
       <AppBarComponent
