@@ -137,7 +137,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
                 <CircularProgress />
               </div>
             ) : (
-              <TabsComponent messages={messages} />
+              <TabsComponent messages={messages} link={link} />
             )}
           </Paper>
         </Grid>
