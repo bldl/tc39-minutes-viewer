@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import AppBarComponent from "./AppBarComponent"; // Importing the AppBarComponent
 import LeftBoxContent from "../LeftBox/LeftBoxContent"; // Assuming LeftBoxContent is already a separate component
-import TabsComponent from "../TabComponent/TabComponent";
+import TabsComponent from "../TabComponent/TabComponent"; // Assuming TabsComponent is already a separate component
 
 // Define the shape of the message object
 interface Message {
