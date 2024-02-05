@@ -120,7 +120,16 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
             }}
           >
             {isLoading ? (
-              <CircularProgress />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <CircularProgress />
+              </div>
             ) : (
               <TabsComponent messages={messages} />
             )}
