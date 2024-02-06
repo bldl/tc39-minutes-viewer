@@ -10,6 +10,7 @@ import {
 import AppBarComponent from "./AppBarComponent"; // Importing the AppBarComponent
 import LeftBoxContent from "../LeftBox/LeftBoxContent"; // Assuming LeftBoxContent is already a separate component
 import TabsComponent from "../TabComponent/TabComponent"; // Assuming TabsComponent is already a separate component
+import ChatMessages from "./ChatMessages"; // Importing the ChatMessages component
 
 // Define the shape of the message object
 interface Message {
@@ -125,20 +126,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
               borderRadius: "20px",
             }}
           >
-            {isLoading ? (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
-                }}
-              >
-                <CircularProgress />
-              </div>
-            ) : (
+            
               <TabsComponent messages={messages} link={link} />
-            )}
+              <ChatMessages messages={messages} isLoading={isLoading} />
+            
           </Paper>
         </Grid>
       </Grid>
