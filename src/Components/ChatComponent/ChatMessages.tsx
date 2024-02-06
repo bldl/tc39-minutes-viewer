@@ -1,5 +1,11 @@
 import React from "react";
-import { Grid, Paper, Typography, Divider } from "@mui/material";
+import {
+  Grid,
+  Paper,
+  Typography,
+  Divider,
+  CircularProgress,
+} from "@mui/material";
 
 interface Message {
   role: "user" | "assistant";
@@ -8,9 +14,10 @@ interface Message {
 
 interface ChatMessagesProps {
   messages: Message[];
+  isLoading: boolean;
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
+const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
   return (
     <Grid item xs={6}>
       <Divider orientation="vertical" flexItem />
@@ -21,23 +28,34 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
           overflowY: "auto",
           height: "68vh",
           width: "192%",
-          borderRadius: "20px"
-
+          borderRadius: "20px",
         }}
       >
-        {messages.map((message, index) => (
-          <Typography
-            key={index}
-            variant="body1"
-            align="left"
-            color={message.role === "user" ? "primary" : "success"}
+        {isLoading ? ( // Conditional rendering based on isLoading
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+            }}
           >
-            {message.content}
-          </Typography>
-        ))}
+            <CircularProgress />
+          </div>
+        ) : (
+          messages.map((message, index) => (
+            <Typography
+              key={index}
+              variant="body1"
+              align="left"
+              color={message.role === "user" ? "primary" : "success"}
+            >
+              {message.content}
+            </Typography>
+          ))
+        )}
       </Paper>
     </Grid>
   );
 };
-
 export default ChatMessages;
