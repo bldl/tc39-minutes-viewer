@@ -12,11 +12,13 @@ interface Message {
 interface TabBoxProps {
   messages: Message[];
   link: string | null;
+  isLoading: true | false;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
   messages,
   link,
+  isLoading
 }: TabBoxProps) => {
   return (
     <Tabs>
@@ -32,7 +34,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
       {/* ChatGPT tab */}
       <TabPanel>
-        <ChatMessages messages={messages} />
+        <ChatMessages messages={messages} isLoading={isLoading}/>
       </TabPanel>
 
       {/* Second tab */}

@@ -21,6 +21,7 @@ interface Message {
 // Props for the ChatComponent.
 interface ChatComponentProps {
   link: string | null;
+  isLoading: true | false;
 }
 
 // ChatComponent is the main component for the chat interface.
@@ -127,8 +128,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
             }}
           >
             
-              <TabsComponent messages={messages} link={link} />
-              <ChatMessages messages={messages} isLoading={isLoading} />
+              <TabsComponent messages={messages} link={link} isLoading={isLoading}/>
+              
             
           </Paper>
         </Grid>
