@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  CircularProgress,
-  Container,
-  Divider,
-  Grid,
-  Paper,
-} from "@mui/material";
+import { Container, Divider, Grid, Paper } from "@mui/material";
 import AppBarComponent from "./AppBarComponent"; // Importing the AppBarComponent
 import LeftBoxContent from "../LeftBox/LeftBoxContent"; // Assuming LeftBoxContent is already a separate component
 import TabsComponent from "../TabComponent/TabComponent"; // Assuming TabsComponent is already a separate component
@@ -20,6 +14,7 @@ interface Message {
 // Props for the ChatComponent.
 interface ChatComponentProps {
   link: string | null;
+  isLoading: true | false;
 }
 
 // ChatComponent is the main component for the chat interface.
@@ -125,20 +120,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
               borderRadius: "20px",
             }}
           >
-            {isLoading ? (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
-                }}
-              >
-                <CircularProgress />
-              </div>
-            ) : (
-              <TabsComponent messages={messages} link={link} />
-            )}
+            <TabsComponent
+              messages={messages}
+              link={link}
+              isLoading={isLoading}
+            />
           </Paper>
         </Grid>
       </Grid>
