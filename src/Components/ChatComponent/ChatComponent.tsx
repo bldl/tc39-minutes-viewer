@@ -27,6 +27,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [clearMessages, setClearMessages] = useState<boolean>(false);
 
+  const [highlightedText, setHighlightedText] = useState<string>("");
+
+  const handleHighlightedText = (text: string) => {
+    setHighlightedText(text);
+  };
   // Handles changes in the chat input field.
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
@@ -65,7 +70,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         {
           messages: [
             { role: "system", content: "You are a helpful assistant." },
-            { role: "user", content: input },
+            {
+              role: "user",
+              content: `${input}\n\nHighlighted Text: ${highlightedText}`,
+            },
           ],
           model: modelName,
           max_tokens: maxTokens,
@@ -88,6 +96,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         },
       ]);
       setInput("");
+      setHighlightedText("");
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
@@ -105,7 +114,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         handleClearMessages={handleClearMessages}
       />
       <Grid container spacing={1} style={{ marginTop: "10px" }}>
-        <LeftBoxContent link={link} />
+        <LeftBoxContent link={link} onHighlight={handleHighlightedText} />
 
         <Grid item xs={6}>
           <Divider orientation="vertical" flexItem />

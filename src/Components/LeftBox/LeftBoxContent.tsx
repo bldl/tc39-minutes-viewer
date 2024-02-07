@@ -3,9 +3,10 @@ import RenderMarkdown from "./RenderLeftbox";
 
 interface Props {
   link: string | null;
+  onHighlight: (highlightedText: string) => void;
 }
 
-const LeftBoxContent = ({ link }: Props) => {
+const LeftBoxContent = ({ link, onHighlight }: Props) => {
   return (
     <Grid item xs={6}>
       <Paper
@@ -15,10 +16,10 @@ const LeftBoxContent = ({ link }: Props) => {
           overflowY: "auto",
           height: "77vh",
           width: "37.8vw",
-          borderRadius: "20px"
+          borderRadius: "20px",
         }}
       >
-        <RenderMarkdown link={link} />
+        <RenderMarkdown link={link} onHighlight={onHighlight} />
       </Paper>
     </Grid>
   );
