@@ -4,9 +4,10 @@ import ReactMarkdown from "react-markdown";
 
 interface Props {
   link: string | null;
+  onHighlight: (highlightedText: string) => void;
 }
 
-const RenderMarkdown: React.FC<Props> = ({ link }) => {
+const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   const [markdownContent, setMarkdownContent] = useState("");
 
   useEffect(() => {
@@ -31,8 +32,16 @@ const RenderMarkdown: React.FC<Props> = ({ link }) => {
     fetchMarkdown();
   }, [link]); // Use link as the dependency for useEffect
 
+  const handleTextHighlight = (_e: React.MouseEvent<HTMLDivElement>) => {
+    const selection = window.getSelection()?.toString();
+    if (selection) {
+      console.log(selection);
+      onHighlight(selection); // Pass highlighted text to the parent component
+    }
+  };
+
   return (
-    <div>
+    <div onMouseUp={handleTextHighlight}>
       <ReactMarkdown className="md">{markdownContent}</ReactMarkdown>
     </div>
   );
