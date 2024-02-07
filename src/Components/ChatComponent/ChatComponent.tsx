@@ -96,6 +96,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         },
       ]);
       setInput("");
+      setHighlightedText("");
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
