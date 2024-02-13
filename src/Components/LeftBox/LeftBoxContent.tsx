@@ -7,6 +7,8 @@ interface Props {
 }
 
 const LeftBoxContent = ({ link, onHighlight }: Props) => {
+
+  
   return (
     <Grid item xs={6}>
       <Paper
@@ -18,7 +20,7 @@ const LeftBoxContent = ({ link, onHighlight }: Props) => {
           width: "37.8vw",
           borderRadius: "20px",
         }}
-      >
+      > 
         <RenderMarkdown link={link} onHighlight={onHighlight} />
       </Paper>
     </Grid>
