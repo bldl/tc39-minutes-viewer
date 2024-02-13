@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeSlug from "rehype-slug";
 // import "../App.css";
 
 interface Props {
@@ -40,9 +41,11 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     }
   };
 
+  
+
   return (
     <div onMouseUp={handleTextHighlight}>
-      <ReactMarkdown className="md">{markdownContent}</ReactMarkdown>
+      <ReactMarkdown className="md" rehypePlugins={[rehypeSlug]}>{markdownContent}</ReactMarkdown>
     </div>
   );
 };
