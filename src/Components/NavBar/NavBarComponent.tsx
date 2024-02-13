@@ -52,7 +52,7 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
         style={{
           padding: "20px",
           overflowY: "auto",
-          height: "89vh",
+          height: "90.2vh",
           width: "15%",
           position: "absolute",
           top: "10%",

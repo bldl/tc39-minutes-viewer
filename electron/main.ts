@@ -2,7 +2,8 @@ import { app, BrowserWindow, screen, ipcMain } from "electron";
 const fs = require("fs").promises;
 const path = require("path");
 
-// Logic for reading directory
+//// Logic for reading directory
+// Monthnames lookup table
 const monthNames = {
   "01": "January",
   "02": "February",
@@ -18,6 +19,7 @@ const monthNames = {
   "12": "December",
 };
 
+// Handle read-directory event
 ipcMain.handle("read-directory", async (event, basePath) => {
   const hashTable = {};
   try {
@@ -44,18 +46,17 @@ ipcMain.handle("read-directory", async (event, basePath) => {
               file.name.endsWith(".md") &&
               !file.name.startsWith("toc")
             ) {
-              const dayMatch = file.name.match(/^(\w+)-(\d{2})\.md$/);
+              // Regex for matched correct files
+              const dayMatch = file.name.match(/^(\w+)-(\d{1,2})\.md$/);
               if (dayMatch) {
                 const day = dayMatch[2];
-                const filePath = path.join(dirPath, file.name); // Path will be correctly formed with single backslashes
+                const filePath = path.join(dirPath, file.name);
                 hashTable[year][monthName][day] = filePath;
-              }
             }
           }
         }
       }
     }
-    console.log("HashTable:", hashTable);
     return hashTable;
   } catch (error) {
     console.error("Error reading directory:", error);
