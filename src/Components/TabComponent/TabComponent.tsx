@@ -20,6 +20,22 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   link,
   isLoading,
 }: TabBoxProps) => {
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    console.log(element)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  function toSlug(topic: string): string {
+    return topic
+      .toLowerCase() // Convert to lowercase
+      .replace(/[\s]+/g, '-') // Replace spaces with hyphens
+      .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+      .replace(/\-\-+/g, '-') // Replace multiple hyphens with a single hyphen
+      .replace(/^-+/, '') // Trim hyphen from start
+      .replace(/-+$/, ''); // Trim hyphen from end
+  }
   return (
     <Tabs>
       {/* List of tabs */}
@@ -42,7 +58,8 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         {" "}
         <TopicList
           onTopicClick={function (topic: string): void {
-            throw new Error("Function not implemented.");
+
+            scrollToSection(toSlug(topic))
           }}
           link={link}
         />
