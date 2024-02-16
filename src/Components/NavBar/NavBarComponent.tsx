@@ -9,8 +9,10 @@ import {
 } from "@mui/material";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import { TreeView, TreeItem } from "@mui/x-tree-view";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-// Interface
 interface NavBarComponentProps {
   hashTable: Record<string, Record<string, Record<string, string>>>;
   onSelectYear: (year: string) => void;
@@ -24,25 +26,31 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
   onSelectMonth,
   onSelectDay,
 }) => {
-  const [openYears, setOpenYears] = useState<Record<string, boolean>>({});
-  const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({});
-
-  // Handle for year
-  const handleYearClick = (year: string) => {
-    setOpenYears((prevOpenYears) => ({
-      ...prevOpenYears,
-      [year]: !prevOpenYears[year],
-    }));
-    onSelectYear(year);
+  const handleNodeSelect = (event: React.SyntheticEvent, nodeId: string) => {
+    const parts = nodeId.split("-");
+    if (parts.length === 1) {
+      onSelectYear(parts[0]);
+    } else if (parts.length === 2) {
+      onSelectMonth(parts[0], parts[1]);
+    } else if (parts.length === 3) {
+      onSelectDay(hashTable[parts[0]][parts[1]][parts[2]]);
+    }
   };
-
-  // Handle for month
-  const handleMonthClick = (year: string, month: string) => {
-    setOpenMonths((prevOpenMonths) => ({
-      ...prevOpenMonths,
-      [month]: !prevOpenMonths[month],
-    }));
-    onSelectMonth(year, month);
+  const renderTreeItems = (
+    data: Record<string, any>,
+    prefix = ""
+  ): JSX.Element[] => {
+    return Object.keys(data).map((key) => {
+      const newPrefix = prefix ? `${prefix}-${key}` : key;
+      if (typeof data[key] === "object") {
+        return (
+          <TreeItem key={newPrefix} nodeId={newPrefix} label={key}>
+            {renderTreeItems(data[key], newPrefix)}
+          </TreeItem>
+        );
+      }
+      return <TreeItem key={newPrefix} nodeId={newPrefix} label={key} />;
+    });
   };
 
   return (
@@ -59,52 +67,15 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
           borderRadius: "20px",
         }}
       >
-        <List>
-          {Object.keys(hashTable).map((year) => (
-            <React.Fragment key={year}>
-              <ListItem button onClick={() => handleYearClick(year)}>
-                <ListItemText primary={year} />
-                {openYears[year] ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
-              <Collapse in={openYears[year]} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {Object.keys(hashTable[year]).map((month) => (
-                    <React.Fragment key={month}>
-                      <ListItem
-                        button
-                        onClick={() => handleMonthClick(year, month)}
-                        style={{ paddingLeft: 32 }}
-                      >
-                        <ListItemText primary={month} />
-                        {openMonths[month] ? <ExpandLess /> : <ExpandMore />}
-                      </ListItem>
-                      <Collapse
-                        in={openMonths[month]}
-                        timeout="auto"
-                        unmountOnExit
-                      >
-                        <List component="div" disablePadding>
-                          {Object.keys(hashTable[year][month]).map((day) => (
-                            <ListItem
-                              button
-                              onClick={() =>
-                                onSelectDay(hashTable[year][month][day])
-                              }
-                              style={{ paddingLeft: 64 }}
-                              key={day}
-                            >
-                              <ListItemText primary={day} />
-                            </ListItem>
-                          ))}
-                        </List>
-                      </Collapse>
-                    </React.Fragment>
-                  ))}
-                </List>
-              </Collapse>
-            </React.Fragment>
-          ))}
-        </List>
+        <TreeView
+          aria-label="file system navigator"
+          defaultCollapseIcon={<ExpandMoreIcon />}
+          defaultExpandIcon={<ChevronRightIcon />}
+          onNodeSelect={handleNodeSelect}
+          sx={{ height: 700, flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
+        >
+          {renderTreeItems(hashTable)}
+        </TreeView>
       </Paper>
     </Grid>
   );
