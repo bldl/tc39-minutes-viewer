@@ -58,10 +58,12 @@ ipcMain.handle("read-directory", async (event, basePath) => {
       }
     }
     return hashTable;
-  } catch (error) {
-    console.error("Error reading directory:", error);
-    throw error;
-  }
+  } 
+}
+catch (error) {
+  console.error("Error reading directory:", error);
+  throw error;
+}
 });
 // End Logic for reading directory
 
