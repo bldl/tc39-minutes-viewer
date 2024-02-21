@@ -52,18 +52,18 @@ ipcMain.handle("read-directory", async (event, basePath) => {
                 const day = dayMatch[2];
                 const filePath = path.join(dirPath, file.name);
                 hashTable[year][monthName][day] = filePath;
+              }
             }
           }
         }
       }
     }
+    // For testing: console.log(hashTable);
     return hashTable;
-  } 
-}
-catch (error) {
-  console.error("Error reading directory:", error);
-  throw error;
-}
+  } catch (error) {
+    console.error("Error reading directory:", error);
+    throw error;
+  }
 });
 // End Logic for reading directory
 
