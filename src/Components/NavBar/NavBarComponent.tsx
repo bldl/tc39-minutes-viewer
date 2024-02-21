@@ -12,6 +12,10 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import { TreeView, TreeItem } from "@mui/x-tree-view";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank"; // Corrected
+import CheckBoxIcon from "@mui/icons-material/CheckBox"; // Added
 
 interface NavBarComponentProps {
   hashTable: Record<string, Record<string, Record<string, string>>>;
@@ -26,6 +30,28 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
   onSelectMonth,
   onSelectDay,
 }) => {
+  const [expanded, setExpanded] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
+    setExpanded(nodeIds);
+  };
+
+  const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
+    setSelected(nodeIds);
+  };
+
+  const handleExpandClick = () => {
+    setExpanded((oldExpanded) =>
+      oldExpanded.length > 0 ? [] : Object.keys(hashTable)
+    );
+  };
+
+  const handleSelectClick = () => {
+    setSelected((oldSelected) =>
+      oldSelected.length > 0 ? [] : Object.keys(hashTable)
+    );
+  };
   const handleNodeSelect = (event: React.SyntheticEvent, nodeId: string) => {
     const parts = nodeId.split("-");
     if (parts.length === 1) {
@@ -67,10 +93,65 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
           borderRadius: "20px",
         }}
       >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: 2,
+          }}
+        >
+          <Button
+            onClick={handleExpandClick}
+            size="small"
+            variant="text"
+            sx={{
+              color: "grey.900",
+              padding: "2px 2px", // Reduced padding
+              minWidth: "initial", // Override minimum width to allow the button to be smaller
+              fontSize: "0.7rem", // Smaller font size
+              "&:hover": {
+                backgroundColor: "grey.100",
+              },
+              "&:focus": {
+                outline: "none",
+              },
+              "&.MuiButtonBase-root:focus": {
+                outline: "none",
+              },
+            }}
+          >
+            {expanded.length > 0 ? "Collapse All" : "Expand All"}
+          </Button>
+          <Button
+            onClick={handleSelectClick}
+            size="small"
+            variant="text"
+            sx={{
+              color: "grey.900",
+              padding: "2px 2px", // Reduced padding
+              minWidth: "initial", // Override minimum width to allow the button to be smaller
+              fontSize: "0.7rem", // Smaller font size
+              "&:hover": {
+                backgroundColor: "grey.100",
+              },
+              "&:focus": {
+                outline: "none",
+              },
+              "&.MuiButtonBase-root:focus": {
+                outline: "none",
+              },
+            }}
+          >
+            {selected.length > 0 ? "Deselect All" : "Select All"}
+          </Button>
+        </Box>
         <TreeView
           aria-label="file system navigator"
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
+          expanded={expanded}
+          selected={selected}
+          onNodeToggle={handleToggle}
           onNodeSelect={handleNodeSelect}
           sx={{ height: 700, flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
         >
