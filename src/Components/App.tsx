@@ -21,17 +21,22 @@ function App() {
   // Handle for year select
   const handleYearSelect = (year) => {
     setSelectedYear(year);
-    setSelectedMonth(null);
-    setSelectedDay(null);
-    setSelectedFilePath(null);
+    if (selectedYear !== year) {
+      // Only reset these if a different year is selected
+      setSelectedMonth(null);
+      setSelectedDay(null);
+      // Do not reset setSelectedFilePath here to keep the file open
+    }
   };
 
   // Handle for month select
   const handleMonthSelect = (year, month) => {
     setSelectedYear(year);
-    setSelectedMonth(month);
-    setSelectedDay(null);
-    setSelectedFilePath(null);
+    if (selectedMonth !== month) {
+      // Only reset these if a different month is selected
+      setSelectedDay(null);
+      // Do not reset setSelectedFilePath here to keep the file open
+    }
   };
 
   // Handle for day select
