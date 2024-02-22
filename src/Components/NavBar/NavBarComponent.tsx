@@ -49,6 +49,7 @@ function CloseSquare(props: SvgIconProps) {
 
 function TransitionComponent(props: TransitionProps) {
   const style = useSpring({
+    reset: true,
     to: {
       opacity: props.in ? 1 : 0,
       transform: `translate3d(${props.in ? 0 : 20}px,0,0)`,
@@ -65,15 +66,11 @@ function TransitionComponent(props: TransitionProps) {
 
 interface NavBarComponentProps {
   hashTable: Record<string, Record<string, Record<string, string>>>;
-  onSelectYear: (year: string) => void;
-  onSelectMonth: (year: string, month: string) => void;
   onSelectDay: (filePath: string) => void;
 }
 
 const NavBarComponent: React.FC<NavBarComponentProps> = ({
   hashTable,
-  onSelectYear,
-  onSelectMonth,
   onSelectDay,
 }) => {
   const CustomTreeItem = React.forwardRef(
@@ -98,15 +95,13 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
       borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`,
     },
   }));
+
+  //// Handle select / Expand functionality
   const [expanded, setExpanded] = useState<string[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
 
   const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
     setExpanded(nodeIds);
-  };
-
-  const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
-    setSelected(nodeIds);
   };
 
   const handleExpandClick = () => {
@@ -115,21 +110,27 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
     );
   };
 
+  const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
+    setSelected(nodeIds);
+  };
+
   const handleSelectClick = () => {
     setSelected((oldSelected) =>
       oldSelected.length > 0 ? [] : Object.keys(hashTable)
     );
   };
+  //// End
+
+  // This handles the user clicking on md files in the Tree
   const handleNodeSelect = (event: React.SyntheticEvent, nodeId: string) => {
     const parts = nodeId.split("-");
-    if (parts.length === 1) {
-      onSelectYear(parts[0]);
-    } else if (parts.length === 2) {
-      onSelectMonth(parts[0], parts[1]);
-    } else if (parts.length === 3) {
+    // Check if the user clicked on a meeting file
+    if (parts.length === 3) {
       onSelectDay(hashTable[parts[0]][parts[1]][parts[2]]);
     }
   };
+
+  // Iterate through the hashtable, and populate the Tree with StyledTreeItems
   const renderTreeItems = (
     data: Record<string, any>,
     prefix = ""
@@ -147,6 +148,7 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
     });
   };
 
+  // Return the Component
   return (
     <Grid item xs={12} style={{ position: "relative" }}>
       <Paper
@@ -168,15 +170,15 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
             marginBottom: 2,
           }}
         >
-          {/* <Button
+          <Button // This button is for the handling of expand click
             onClick={handleExpandClick}
             size="small"
             variant="text"
             sx={{
               color: "grey.900",
-              padding: "2px 2px", // Reduced padding
+              padding: "2px 2px",
               minWidth: "initial", // Override minimum width to allow the button to be smaller
-              fontSize: "0.7rem", // Smaller font size
+              fontSize: "0.7rem",
               "&:hover": {
                 backgroundColor: "grey.100",
               },
@@ -190,15 +192,15 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
           >
             {expanded.length > 0 ? "Collapse All" : "Expand All"}
           </Button>
-          <Button
+          <Button // This button is for the handling of select click
             onClick={handleSelectClick}
             size="small"
             variant="text"
             sx={{
               color: "grey.900",
-              padding: "2px 2px", // Reduced padding
+              padding: "2px 2px",
               minWidth: "initial", // Override minimum width to allow the button to be smaller
-              fontSize: "0.7rem", // Smaller font size
+              fontSize: "0.7rem",
               "&:hover": {
                 backgroundColor: "grey.100",
               },
@@ -211,7 +213,7 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
             }}
           >
             {selected.length > 0 ? "Deselect All" : "Select All"}
-          </Button> */}
+          </Button>
         </Box>
         <Box sx={{ minHeight: 270, flexGrow: 1, maxWidth: 300 }}>
           <TreeView
@@ -220,40 +222,14 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
             defaultCollapseIcon={<MinusSquare />}
             defaultExpandIcon={<PlusSquare />}
             defaultEndIcon={<CloseSquare />}
+            //// Expansion of tree is functional, but removes animation. I think it is because of the use of "UseState"
             //expanded={expanded}
             //selected={selected}
             //onNodeToggle={handleToggle}
-            //onNodeSelect={handleNodeSelect}
-            //sx={{ height: 700, flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
+            onNodeSelect={handleNodeSelect}
             sx={{ overflowX: "hidden" }}
           >
             {renderTreeItems(hashTable)}
-          </TreeView>
-        </Box>
-
-        <Box sx={{ minHeight: 270, flexGrow: 1, maxWidth: 300 }}>
-          <TreeView
-            aria-label="customized"
-            defaultExpanded={["2"]}
-            defaultCollapseIcon={<MinusSquare />}
-            defaultExpandIcon={<PlusSquare />}
-            defaultEndIcon={<CloseSquare />}
-            sx={{ overflowX: "hidden" }}
-          >
-            <StyledTreeItem nodeId="1" label="Main">
-              <StyledTreeItem nodeId="2" label="Hello" />
-              <StyledTreeItem nodeId="3" label="Subtree with children">
-                <StyledTreeItem nodeId="6" label="Hello" />
-                <StyledTreeItem nodeId="7" label="Sub-subtree with children">
-                  <StyledTreeItem nodeId="9" label="Child 1" />
-                  <StyledTreeItem nodeId="10" label="Child 2" />
-                  <StyledTreeItem nodeId="11" label="Child 3" />
-                </StyledTreeItem>
-                <StyledTreeItem nodeId="8" label="Hello" />
-              </StyledTreeItem>
-              <StyledTreeItem nodeId="4" label="World" />
-              <StyledTreeItem nodeId="5" label="Something something" />
-            </StyledTreeItem>
           </TreeView>
         </Box>
       </Paper>
