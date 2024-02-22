@@ -1,26 +1,20 @@
-import React, { useState, forwardRef } from "react";
-import { Grid, Paper, List, ListItem, ListItemText } from "@mui/material";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import { TreeView } from "@mui/x-tree-view";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank"; // Corrected
-import CheckBoxIcon from "@mui/icons-material/CheckBox"; // Added
 import { useSpring, animated } from "@react-spring/web";
 import SvgIcon, { SvgIconProps } from "@mui/material/SvgIcon";
 import { TransitionProps } from "@mui/material/transitions";
-import { alpha, styled } from "@mui/material/styles";
 import Collapse from "@mui/material/Collapse";
-
+import { alpha, styled } from "@mui/material/styles";
+import { TreeView } from "@mui/x-tree-view/TreeView";
 import {
   TreeItem,
   TreeItemProps,
   treeItemClasses,
 } from "@mui/x-tree-view/TreeItem";
+import { Grid, Paper } from "@mui/material";
+import Button from "@mui/material/Button";
 
+// Functions
 function MinusSquare(props: SvgIconProps) {
   return (
     <SvgIcon fontSize="inherit" style={{ width: 14, height: 14 }} {...props}>
@@ -67,6 +61,7 @@ function TransitionComponent(props: TransitionProps) {
     </animated.div>
   );
 }
+// End functions
 
 interface NavBarComponentProps {
   hashTable: Record<string, Record<string, Record<string, string>>>;
@@ -81,37 +76,26 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
   onSelectMonth,
   onSelectDay,
 }) => {
-  // CustomTreeItem using forwardRef
-  const CustomTreeItem = forwardRef((props: TreeItemProps, ref) => (
-    <TreeItem {...props} TransitionComponent={TransitionComponent} ref={ref} />
-  ));
+  const CustomTreeItem = React.forwardRef(
+    (props: TreeItemProps, ref: React.Ref<HTMLLIElement>) => (
+      <TreeItem
+        {...props}
+        TransitionComponent={TransitionComponent}
+        ref={ref}
+      />
+    )
+  );
 
-  const TransitionComponent = (props) => {
-    const style = useSpring({
-      from: { opacity: 0, transform: "translate3d(20px,0,0)" },
-      to: {
-        opacity: props.in ? 1 : 0,
-        transform: `translate3d(${props.in ? 0 : 20}px,0,0)`,
-      },
-      config: { friction: 40, tension: 170 }, // Adjust for desired effect
-    });
-
-    return (
-      <animated.div style={style}>
-        <Collapse {...props} />
-      </animated.div>
-    );
-  };
-
-  // StyledTreeItem for custom styling
   const StyledTreeItem = styled(CustomTreeItem)(({ theme }) => ({
     [`& .${treeItemClasses.iconContainer}`]: {
-      "& .close": { opacity: 0.3 },
+      "& .close": {
+        opacity: 0.3,
+      },
     },
     [`& .${treeItemClasses.group}`]: {
       marginLeft: 15,
       paddingLeft: 18,
-      borderLeft: `1px dashed ${theme.palette.text.primary}`,
+      borderLeft: `1px dashed ${alpha(theme.palette.text.primary, 0.4)}`,
     },
   }));
   const [expanded, setExpanded] = useState<string[]>([]);
@@ -184,7 +168,7 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
             marginBottom: 2,
           }}
         >
-          <Button
+          {/* <Button
             onClick={handleExpandClick}
             size="small"
             variant="text"
@@ -227,22 +211,51 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
             }}
           >
             {selected.length > 0 ? "Deselect All" : "Select All"}
-          </Button>
+          </Button> */}
         </Box>
-        <TreeView
-          aria-label="file system navigator"
-          defaultExpanded={["1"]}
-          defaultCollapseIcon={<MinusSquare />}
-          defaultExpandIcon={<PlusSquare />}
-          defaultEndIcon={<CloseSquare />}
-          expanded={expanded}
-          selected={selected}
-          onNodeToggle={handleToggle}
-          onNodeSelect={handleNodeSelect}
-          sx={{ height: 700, flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
-        >
-          {renderTreeItems(hashTable)}
-        </TreeView>
+        <Box sx={{ minHeight: 270, flexGrow: 1, maxWidth: 300 }}>
+          <TreeView
+            aria-label="file system navigator"
+            defaultExpanded={["1"]}
+            defaultCollapseIcon={<MinusSquare />}
+            defaultExpandIcon={<PlusSquare />}
+            defaultEndIcon={<CloseSquare />}
+            //expanded={expanded}
+            //selected={selected}
+            //onNodeToggle={handleToggle}
+            //onNodeSelect={handleNodeSelect}
+            //sx={{ height: 700, flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
+            sx={{ overflowX: "hidden" }}
+          >
+            {renderTreeItems(hashTable)}
+          </TreeView>
+        </Box>
+
+        <Box sx={{ minHeight: 270, flexGrow: 1, maxWidth: 300 }}>
+          <TreeView
+            aria-label="customized"
+            defaultExpanded={["2"]}
+            defaultCollapseIcon={<MinusSquare />}
+            defaultExpandIcon={<PlusSquare />}
+            defaultEndIcon={<CloseSquare />}
+            sx={{ overflowX: "hidden" }}
+          >
+            <StyledTreeItem nodeId="1" label="Main">
+              <StyledTreeItem nodeId="2" label="Hello" />
+              <StyledTreeItem nodeId="3" label="Subtree with children">
+                <StyledTreeItem nodeId="6" label="Hello" />
+                <StyledTreeItem nodeId="7" label="Sub-subtree with children">
+                  <StyledTreeItem nodeId="9" label="Child 1" />
+                  <StyledTreeItem nodeId="10" label="Child 2" />
+                  <StyledTreeItem nodeId="11" label="Child 3" />
+                </StyledTreeItem>
+                <StyledTreeItem nodeId="8" label="Hello" />
+              </StyledTreeItem>
+              <StyledTreeItem nodeId="4" label="World" />
+              <StyledTreeItem nodeId="5" label="Something something" />
+            </StyledTreeItem>
+          </TreeView>
+        </Box>
       </Paper>
     </Grid>
   );
