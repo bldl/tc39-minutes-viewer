@@ -53,7 +53,11 @@ const TopicList: React.FC<TopicListProps> = ({ onTopicClick, link }) => {
       <h2>{topics.length > 0 ? "Topics" : "No md file selected"}</h2>
       <ul>
         {topics.map((topic) => (
-          <li key={topic.id} onClick={() => handleTopicClick(topic.name)}>
+          <li
+            style={{ cursor: "pointer" }}
+            key={topic.id}
+            onClick={() => handleTopicClick(topic.name)}
+          >
             {topic.name}
           </li>
         ))}
