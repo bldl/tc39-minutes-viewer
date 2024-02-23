@@ -12,6 +12,15 @@ contextBridge.exposeInMainWorld(
 );
 // End For dynamic fetch of meetings
 
+// Sentiment
+contextBridge.exposeInMainWorld("api", {
+  performSentimentAnalysis: (text: string) =>
+    ipcRenderer.send("performSentimentAnalysis", text),
+  receiveSentimentAnalysis: (func: (event: any, arg: any) => void) => {
+    ipcRenderer.on("sentimentAnalysisResult", (event, arg) => func(event, arg));
+  },
+});
+
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld("ipcRenderer", withPrototype(ipcRenderer));
 

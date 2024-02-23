@@ -1,6 +1,8 @@
 import { app, BrowserWindow, screen, ipcMain } from "electron";
 const fs = require("fs").promises;
 const path = require("path");
+// Import 'child_process' for executing Python scripts
+import { spawn } from "child_process";
 
 //// Logic for reading directory
 // Monthnames lookup table
@@ -110,6 +112,25 @@ function createWindow() {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(process.env.DIST, "index.html"));
   }
+
+  ipcMain.on("performSentimentAnalysis", (event, arg) => {
+    console.log(`Received text for analysis: ${arg}`); // Debug log
+    const pythonProcess = spawn("python3", [
+      "electron/sentiment_analysis.py",
+      arg,
+    ]);
+    pythonProcess.stdout.on("data", (data) => {
+      console.log(`Analysis result: ${data}`); // Debug log
+      event.reply("sentimentAnalysisResult", data.toString());
+    });
+    pythonProcess.stderr.on("data", (data) => {
+      console.error(`stderr: ${data}`);
+    });
+
+    pythonProcess.on("error", (error) => {
+      console.error(`Failed to start subprocess: ${error}`);
+    });
+  });
 }
 
 // Quit when all windows are closed, except on macOS. There, it's common
