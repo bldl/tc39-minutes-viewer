@@ -4,8 +4,6 @@ import "react-tabs/style/react-tabs.css";
 import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
 
-import { useSelectedText } from "../SelectedTextContext"; // Adjust the path as necessary
-
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -23,38 +21,13 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   isLoading,
 }: TabBoxProps) => {
   // Sentiment start
-  const [inputText, setInputText] = useState("");
   const [sentimentResult, setSentimentResult] = useState<string | null>(null);
-
-  const { selectedText } = useSelectedText(); // Access the selected text from the context
-
-  useEffect(() => {
-    // Check if there's selected text
-    if (selectedText) {
-      // Trigger the sentiment analysis for the selected text
-      window.api.performSentimentAnalysis(selectedText);
-
-      // Optionally, clear the selected text after sending it for analysis
-      // This step depends on your application's logic and user experience design
-      // setSelectedText(''); // Uncomment and implement if necessary
-    }
-  }, [selectedText]); // Re-run the effect when selectedText changes
 
   useEffect(() => {
     window.api.receiveSentimentAnalysis((event, arg) => {
       setSentimentResult(`Sentiment analysis result: ${arg}`);
     });
   }, []);
-
-  const handleAnalyzeText = () => {
-    if (inputText) {
-      window.api.performSentimentAnalysis(inputText);
-    }
-  };
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputText(event.target.value);
-  };
   // Sentiment end
 
   const scrollToSection = (id: string) => {
