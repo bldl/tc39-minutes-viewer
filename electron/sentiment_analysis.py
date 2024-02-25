@@ -1,9 +1,10 @@
 import stanza
+from stanza import DownloadMethod
 import sys
 import json
 
-# Initialize Stanza pipeline
-nlp = stanza.Pipeline(lang='en', processors='tokenize,sentiment')
+# Initialize Stanza pipeline with download_method=DownloadMethod.REUSE_RESOURCES
+nlp = stanza.Pipeline(lang='en', processors='tokenize,sentiment', download_method=DownloadMethod.REUSE_RESOURCES)
 
 def get_sentiment(text):
     doc = nlp(text)
