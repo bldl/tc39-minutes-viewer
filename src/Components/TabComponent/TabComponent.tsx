@@ -21,13 +21,43 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   isLoading,
 }: TabBoxProps) => {
   // Sentiment start
-  const [sentimentResult, setSentimentResult] = useState<string | null>(null);
+  const [sentimentResult, setSentimentResult] = useState<string[]>([]);
+  const [overallSentiment, setOverallSentiment] = useState<string>("");
 
+  // Calculate and set overall sentiment based on scores
   useEffect(() => {
     window.api.receiveSentimentAnalysis((event, arg) => {
-      setSentimentResult(`Sentiment analysis result: ${arg}`);
+      const scores = JSON.parse(arg); // Assuming arg is a JSON string that represents an array, e.g., "[1, 1]"
+      const sentimentDescriptions = scores.map((score) =>
+        interpretSentiment(score)
+      );
+      setSentimentResult(sentimentDescriptions); // Update the state with an array of descriptions
+
+      const overall = interpretOverallSentiment(scores);
+      setOverallSentiment(overall);
     });
   }, []);
+
+  // Convert sentiment analysis numeric result to a descriptive message
+  const interpretSentiment = (score) => {
+    const sentimentMap = {
+      "0": "Negative",
+      "1": "Neutral",
+      "2": "Positive",
+    };
+    return sentimentMap[score] || "Unknown"; // Default to 'Unknown' if score is not in the map
+  };
+
+  const interpretOverallSentiment = (scores) => {
+    if (scores.length === 0) return "No sentiment analysis performed yet.";
+    const averageScore =
+      scores.reduce((acc, cur) => acc + cur, 0) / scores.length;
+    // Define thresholds for categorizing sentiment
+    if (averageScore < 0.5) return "Overall sentiment is Negative.";
+    else if (averageScore >= 0.5 && averageScore < 1.5)
+      return "Overall sentiment is Neutral.";
+    else return "Overall sentiment is Positive.";
+  };
   // Sentiment end
 
   const scrollToSection = (id: string) => {
@@ -76,8 +106,21 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
       {/* Sentiment tab */}
       <TabPanel>
-        {/* Display the sentiment analysis result directly */}
-        {sentimentResult && <p>{sentimentResult}</p>}
+        <h2>Sentiment Analysis</h2>
+        {sentimentResult.length > 0 ? (
+          <>
+            <ul>
+              {sentimentResult.map((sentiment, index) => (
+                <li key={index}>{sentiment}</li>
+              ))}
+            </ul>
+            <p>
+              <strong>Overall Sentiment:</strong> {overallSentiment}
+            </p>
+          </>
+        ) : (
+          <p>No sentiment analysis has been performed yet.</p>
+        )}
       </TabPanel>
     </Tabs>
   );
