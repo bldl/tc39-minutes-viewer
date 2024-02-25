@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
-// import "../App.css";
 
-import { useSelectedText } from "../SelectedTextContext"; // Adjust path as necessary
+import { useSelectedText } from "../SelectedTextContext";
+import ContextMenu from "../ContextMenu";
 
 interface Props {
   link: string | null;
@@ -13,7 +13,12 @@ interface Props {
 const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   const [markdownContent, setMarkdownContent] = useState("");
 
-  const { setSelectedText } = useSelectedText(); // Consume the context
+  const { selectedText, setSelectedText } = useSelectedText(); // Consume the context
+  const [contextMenu, setContextMenu] = useState({
+    isVisible: false,
+    x: 0,
+    y: 0,
+  });
 
   useEffect(() => {
     const fetchMarkdown = async () => {
@@ -23,9 +28,7 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
         setMarkdownContent(welcomeMessage);
         return;
       }
-
       try {
-        console.log(link); // Correctly using link here
         const response = await fetch(link);
         const text = await response.text();
         setMarkdownContent(text);
@@ -37,19 +40,66 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     fetchMarkdown();
   }, [link]); // Use link as the dependency for useEffect
 
+  // SelectedTextContent
   const handleTextHighlight = (_e: React.MouseEvent<HTMLDivElement>) => {
     const selection = window.getSelection()?.toString();
     if (selection) {
       setSelectedText(selection); // Update the context with selected text
-      onHighlight(selection); // If you still need to use this for other purposes
+      onHighlight(selection); // TODO: Do we need this?
+    }
+  };
+
+  // ContextMenu Start
+  const handleContextMenu = (event) => {
+    event.preventDefault();
+    if (selectedText) {
+      setContextMenu({
+        isVisible: true,
+        x: event.clientX,
+        y: event.clientY,
+      });
+    } else {
+      setContextMenu((prevState) => ({ ...prevState, isVisible: false }));
+    }
+  };
+
+  // Function to close the context menu
+  const handleClose = () => {
+    setContextMenu((prev) => ({ ...prev, isVisible: false }));
+  };
+  // ContextMenu End
+
+  // Sentiment analysis
+  const handleAnalyzeSentiment = () => {
+    const textToAnalyze = selectedText;
+    if (textToAnalyze) {
+      // Perform the sentiment analysis
+      try {
+        window.api.performSentimentAnalysis(textToAnalyze);
+      } catch (error) {
+        console.error("Error sending data for analysis:", error);
+      }
+      // Hide context menu after attempting analysis
+      setContextMenu((prevState) => ({ ...prevState, isVisible: false }));
     }
   };
 
   return (
-    <div onMouseUp={handleTextHighlight}>
-      <ReactMarkdown className="md" rehypePlugins={[rehypeSlug]}>
-        {markdownContent}
-      </ReactMarkdown>
+    <div onContextMenu={handleContextMenu} onMouseUp={handleTextHighlight}>
+      {
+        <ReactMarkdown className="md" rehypePlugins={[rehypeSlug]}>
+          {markdownContent}
+        </ReactMarkdown>
+      }
+      {contextMenu.isVisible && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          isOpen={contextMenu.isVisible}
+          onAnalyzeSentiment={handleAnalyzeSentiment}
+          onClose={handleClose}
+        />
+      )}
     </div>
   );
 };
