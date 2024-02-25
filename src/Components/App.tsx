@@ -3,6 +3,8 @@ import ChatComponent from "./ChatComponent/ChatComponent";
 import NavBarComponent from "./NavBar/NavBarComponent";
 import { fetchHashTable } from "./NavBar/FetchMeetings";
 
+import { SelectedTextProvider } from "./SelectedTextContext"; // Import the context provider
+
 function App() {
   const [hashTable, setHashTable] = useState({});
   const [selectedYear, setSelectedYear] = useState(null);
@@ -45,7 +47,7 @@ function App() {
   };
 
   return (
-    <>
+    <SelectedTextProvider>
       <NavBarComponent
         hashTable={hashTable}
         selectedYear={selectedYear}
@@ -55,7 +57,7 @@ function App() {
         onSelectDay={handleDaySelect}
       />
       <ChatComponent link={selectedFilePath} />
-    </>
+    </SelectedTextProvider>
   );
 }
 
