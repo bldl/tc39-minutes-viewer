@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
 
 import { useSelectedText } from "../SelectedTextContext";
 import ContextMenu from "../ContextMenu";
+import { RoughNotation } from "react-rough-notation";
 
 interface Props {
   link: string | null;
@@ -12,7 +13,6 @@ interface Props {
 
 const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   const [markdownContent, setMarkdownContent] = useState("");
-
   const { selectedText, setSelectedText } = useSelectedText(); // Consume the context
   const [contextMenu, setContextMenu] = useState({
     isVisible: false,
@@ -43,9 +43,11 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   // SelectedTextContent
   const handleTextHighlight = (_e: React.MouseEvent<HTMLDivElement>) => {
     const selection = window.getSelection()?.toString();
+
     if (selection) {
       setSelectedText(selection); // Update the context with selected text
-      onHighlight(selection); // TODO: Do we need this?
+      onHighlight(selection || ""); // TODO: Do we need this?
+      console.log(selection);
     }
   };
 
@@ -100,6 +102,18 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
           onClose={handleClose}
         />
       )}
+        {markdownContent.split("\n").map((line, index) => (
+        <React.Fragment key={index}>
+          {selectedText && line.includes(selectedText) ? (
+            <RoughNotation type="highlight" color="yellow" show={true}>
+              {line}
+            </RoughNotation>
+          ) : (
+            line
+          )}
+          <br />
+        </React.Fragment>
+      ))}
     </div>
   );
 };

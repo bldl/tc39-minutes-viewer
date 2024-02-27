@@ -13,12 +13,18 @@ interface TabBoxProps {
   messages: Message[];
   link: string | null;
   isLoading: true | false;
+  showTopicsTab: boolean;
+  showSentimentTab: boolean;
+  showGptTab: boolean
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
   messages,
   link,
   isLoading,
+  showTopicsTab,
+  showGptTab, 
+  showSentimentTab,
 }: TabBoxProps) => {
   // Sentiment start
   const [sentimentResult, setSentimentResult] = useState<string[]>([]);
@@ -81,30 +87,33 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       {/* List of tabs */}
       <TabList>
         {/* Tabs and tab-names */}
-        <Tab>ChatGPT</Tab>
-        <Tab>Topics</Tab>
-        <Tab>Sentiment</Tab>
+        {showGptTab && <Tab>ChatGPT</Tab>}
+        {showTopicsTab && <Tab>Topics</Tab>}
+        {showSentimentTab && <Tab>Sentiment</Tab>}
       </TabList>
 
       {/* Content for tabs */}
 
-      {/* ChatGPT tab */}
-      <TabPanel>
-        <ChatMessages messages={messages} isLoading={isLoading} />
-      </TabPanel>
+      {showGptTab && (
+        <TabPanel>
+          <ChatMessages messages={messages} isLoading={isLoading} />
+        </TabPanel>
+      )}
 
-      {/* Topics tab */}
-      <TabPanel>
-        {" "}
-        <TopicList
-          onTopicClick={function (topic: string): void {
-            scrollToSection(toSlug(topic));
-          }}
-          link={link}
-        />
-      </TabPanel>
+      {showTopicsTab && (
+        <TabPanel>
+          {" "}
+          <TopicList
+            onTopicClick={function (topic: string): void {
+              scrollToSection(toSlug(topic));
+            }}
+            link={link}
+          />
+        </TabPanel>
+      )}
 
       {/* Sentiment tab */}
+      {showSentimentTab && (
       <TabPanel>
         <h2>Sentiment Analysis</h2>
         {sentimentResult.length > 0 ? (
@@ -122,6 +131,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
           <p>No sentiment analysis has been performed yet.</p>
         )}
       </TabPanel>
+      )}
     </Tabs>
   );
 };
