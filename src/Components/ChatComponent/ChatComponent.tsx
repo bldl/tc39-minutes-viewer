@@ -56,7 +56,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
       setShowSentimentTab(true);
     } else if (selectedOption === "Search with GPT-3.5") {
       setShowGptTab(true);
-    }
+    } 
     // Add more conditions for other choices as needed
   };
 
@@ -144,10 +144,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
               borderRadius: "20px",
             }}
           >
-            <TabsComponent 
-            messages={messages}
-            link={link}
-            isLoading={isLoading} showTopicsTab={showTopicsTab} showSentimentTab={showSentimentTab} showGptTab={showGptTab}            />
+            <TabsComponent
+              messages={messages}
+              link={link}
+              isLoading={isLoading}
+              showTopicsTab={showTopicsTab}
+              showSentimentTab={showSentimentTab}
+              showGptTab={showGptTab}
+            />
           </Paper>
         </Grid>
       </Grid>

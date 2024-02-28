@@ -26,9 +26,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
 
   const options: Option[] = [
     myDefaultOption,
-    { label: "Topics", id: 2 },
-    { label: "Sentiment", id: 3 },
-    { label: "Persons", id: 4 },
+    { label:"Topics", id: 2 },
+    { label:"Sentiment", id: 3 },
+    { label:"Persons", id: 4 },
     // Add more options as needed
   ];
 
@@ -71,6 +71,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             }
           }}
           inputValue={input}  
+          isOptionEqualToValue={(option, value) => option.label === value.label}
           renderInput={(params) => (
             <TextField
               {...params}
