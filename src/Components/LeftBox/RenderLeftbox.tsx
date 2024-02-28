@@ -4,7 +4,7 @@ import rehypeSlug from "rehype-slug";
 
 import { useSelectedText } from "../SelectedTextContext";
 import ContextMenu from "../ContextMenu";
-import { RoughNotation } from "react-rough-notation";
+import "./styles.css"; // Import CSS file
 
 interface Props {
   link: string | null;
@@ -13,6 +13,7 @@ interface Props {
 
 const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   const [markdownContent, setMarkdownContent] = useState("");
+  const { highlightSelect, setHighlightSelect } = useSelectedText(); 
   const { selectedText, setSelectedText } = useSelectedText(); // Consume the context
   const [contextMenu, setContextMenu] = useState({
     isVisible: false,
@@ -40,16 +41,76 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     fetchMarkdown();
   }, [link]); // Use link as the dependency for useEffect
 
-  // SelectedTextContent
+  let oldRange: Range | null = null;
+  let oldHighlightedText: string | null = null;
+  
   const handleTextHighlight = (_e: React.MouseEvent<HTMLDivElement>) => {
     const selection = window.getSelection()?.toString();
+    const highlightSelection = window.getSelection();
 
     if (selection) {
       setSelectedText(selection); // Update the context with selected text
-      onHighlight(selection || ""); // TODO: Do we need this?
-      console.log(selection);
+      onHighlight(selection); // TODO: Do we need this?
     }
+
+    console.log(highlightSelection?.toString());
+
+    if (!highlightSelection || highlightSelection.isCollapsed) return;
+  
+    const range = highlightSelection.getRangeAt(0);
+    if (!range) return;
+  
+    const selectedText = highlightSelection.toString();
+    if (!selectedText.trim()) return; // Check if selected text is non-empty
+  
+    // Restore previously highlighted text to its original state
+    if (oldRange && oldHighlightedText) {
+      restoreOriginalState(oldRange, oldHighlightedText);
+    }
+  
+    // Create a new span element for the selected text
+    const newNode = document.createElement("span");
+    newNode.style.backgroundColor = "yellow";
+    newNode.textContent = selectedText; // Set the text content of the new node
+  
+    // Insert the new node with the background color
+    range.deleteContents(); // Remove the existing selection
+    range.insertNode(newNode);
+  
+    // Check if the selection contains newlines
+    const containsNewlines = /\n|\r/.test(selectedText);
+  
+    // If newlines are present, insert newline characters within the new span element
+    if (containsNewlines) {
+      const newlineNodes = selectedText.split(/\n|\r/).map((line, index) => {
+        const newNode = document.createElement("span");
+        newNode.style.backgroundColor = "yellow";
+        newNode.textContent = line;
+        if (index < selectedText.length - 1) {
+          newNode.appendChild(document.createElement("br")); // Insert a <br> element after each line except the last one
+        }
+        return newNode;
+      });
+  
+      // Replace the content of the new span element with the newline nodes
+      newNode.textContent = '';
+      newlineNodes.forEach(node => newNode.appendChild(node));
+    }
+  
+    // Store the current range and highlighted text
+    oldRange = range.cloneRange();
+    oldHighlightedText = newNode.textContent;
   };
+  
+  // Function to restore the original state of previously highlighted text
+  const restoreOriginalState = (range: { deleteContents: () => void; insertNode: (arg0: HTMLSpanElement) => void; }, highlightedText: string | null) => {
+    const newNode = document.createElement("span");
+    newNode.textContent = highlightedText;
+    range.deleteContents();
+    range.insertNode(newNode);
+  };
+
+
 
   // ContextMenu Start
   const handleContextMenu = (event) => {
@@ -87,12 +148,12 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   };
 
   return (
-    <div onContextMenu={handleContextMenu} onMouseUp={handleTextHighlight}>
-      {
-        <ReactMarkdown className="md" rehypePlugins={[rehypeSlug]}>
-          {markdownContent}
-        </ReactMarkdown>
-      }
+    <div
+      className="markdown-container"
+      onContextMenu={handleContextMenu}
+      onMouseUp={handleTextHighlight}
+    >
+      <ReactMarkdown>{markdownContent}</ReactMarkdown>
       {contextMenu.isVisible && (
         <ContextMenu
           x={contextMenu.x}
@@ -102,18 +163,6 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
           onClose={handleClose}
         />
       )}
-        {markdownContent.split("\n").map((line, index) => (
-        <React.Fragment key={index}>
-          {selectedText && line.includes(selectedText) ? (
-            <RoughNotation type="highlight" color="yellow" show={true}>
-              {line}
-            </RoughNotation>
-          ) : (
-            line
-          )}
-          <br />
-        </React.Fragment>
-      ))}
     </div>
   );
 };
