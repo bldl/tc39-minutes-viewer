@@ -61,7 +61,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           disablePortal
           filterOptions={filterOptions}
           options={options}
-          sx={{ width: 950 }}
+          sx={{ width: 950, zIndex: 100  }}
           onChange={(_event, value) => {
             if (value && value.label === myDefaultOption.label) {
               handleSendMessage();
@@ -71,6 +71,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             }
           }}
           inputValue={input}  
+          
           isOptionEqualToValue={(option, value) => option.label === value.label}
           renderInput={(params) => (
             <TextField

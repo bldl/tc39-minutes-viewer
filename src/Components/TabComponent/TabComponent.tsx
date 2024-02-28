@@ -15,7 +15,7 @@ interface TabBoxProps {
   isLoading: true | false;
   showTopicsTab: boolean;
   showSentimentTab: boolean;
-  showGptTab: boolean
+  showGptTab: boolean;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
@@ -23,7 +23,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   link,
   isLoading,
   showTopicsTab,
-  showGptTab, 
+  showGptTab,
   showSentimentTab,
 }: TabBoxProps) => {
   // Sentiment start
@@ -84,13 +84,21 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   }
   return (
     <Tabs>
+      {!showGptTab && !showTopicsTab && !showSentimentTab && (
+        <h2>
+          Here we can add instructions for the app. The text will disappear once
+          a tab is opened.
+        </h2>
+      )}
       {/* List of tabs */}
-      <TabList>
-        {/* Tabs and tab-names */}
-        {showGptTab && <Tab>ChatGPT</Tab>}
-        {showTopicsTab && <Tab>Topics</Tab>}
-        {showSentimentTab && <Tab>Sentiment</Tab>}
-      </TabList>
+      {(showGptTab || showTopicsTab || showSentimentTab) && (
+        <TabList>
+          {/* Tabs and tab-names */}
+          {showGptTab && <Tab>ChatGPT</Tab>}
+          {showTopicsTab && <Tab>Topics</Tab>}
+          {showSentimentTab && <Tab>Sentiment</Tab>}
+        </TabList>
+      )}
 
       {/* Content for tabs */}
 
@@ -114,23 +122,23 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
       {/* Sentiment tab */}
       {showSentimentTab && (
-      <TabPanel>
-        <h2>Sentiment Analysis</h2>
-        {sentimentResult.length > 0 ? (
-          <>
-            <ul>
-              {sentimentResult.map((sentiment, index) => (
-                <li key={index}>{sentiment}</li>
-              ))}
-            </ul>
-            <p>
-              <strong>Overall Sentiment:</strong> {overallSentiment}
-            </p>
-          </>
-        ) : (
-          <p>No sentiment analysis has been performed yet.</p>
-        )}
-      </TabPanel>
+        <TabPanel>
+          <h2>Sentiment Analysis</h2>
+          {sentimentResult.length > 0 ? (
+            <>
+              <ul>
+                {sentimentResult.map((sentiment, index) => (
+                  <li key={index}>{sentiment}</li>
+                ))}
+              </ul>
+              <p>
+                <strong>Overall Sentiment:</strong> {overallSentiment}
+              </p>
+            </>
+          ) : (
+            <p>No sentiment analysis has been performed yet.</p>
+          )}
+        </TabPanel>
       )}
     </Tabs>
   );
