@@ -4,7 +4,6 @@ import rehypeSlug from "rehype-slug";
 
 import { useSelectedText } from "../SelectedTextContext";
 import ContextMenu from "../ContextMenu";
-import "./styles.css"; // Import CSS file
 
 interface Props {
   link: string | null;
@@ -13,15 +12,20 @@ interface Props {
 
 const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   const [markdownContent, setMarkdownContent] = useState("");
-  const { selectedTexts, setSelectedText } = useSelectedText(); // Consume the context
+  const [selectedRange, setSelectedRange] = useState<Range | null>(null);
+  const [selectedTextPosition, setSelectedTextPosition] = useState({
+    top: 0,
+    left: 0,
+  });
 
-  const [highlightedRange, setHighlightedRange] = useState<Range | null>(null);
-
+  const { selectedText, setSelectedText } = useSelectedText(); // Consume the context
   const [contextMenu, setContextMenu] = useState({
     isVisible: false,
     x: 0,
     y: 0,
   });
+
+  const markdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchMarkdown = async () => {
@@ -43,91 +47,34 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     fetchMarkdown();
   }, [link]); // Use link as the dependency for useEffect
 
-  let oldRange: Range | null = null;
-  let oldHighlightedText: string | null = null;
+  useEffect(() => {
+    if (selectedRange) {
+      const rangeRect = selectedRange.getBoundingClientRect();
+      const containerRect = markdownRef.current?.getBoundingClientRect();
 
+      if (rangeRect && containerRect) {
+        setSelectedTextPosition({
+          top: rangeRect.top - containerRect.top + 47,
+          left: rangeRect.left - containerRect.left + 10,
+        });
+      }
+    }
+  }, [selectedRange]);
+
+  // SelectedTextContent
   const handleTextHighlight = (_e: React.MouseEvent<HTMLDivElement>) => {
     const selection = window.getSelection();
-    console.log(selection?.toString());
-    
-
-    if (!selection || selection.isCollapsed) return;
-
-    const range = selection.getRangeAt(0);
-    if (!range) return;
-
-    const selectedText = selection?.toString();
-    if (selectedText){
-      onHighlight(selectedText);
-
+    if (selection && selection.toString()) {
+      setSelectedText(selection.toString()); // Update the context with selected text
+      setSelectedRange(selection.getRangeAt(0));
+      onHighlight(selection.toString()); // TODO: Do we need this?
     }
-
-    if (!selectedText.trim()) return; // Check if selected text is non-empty
-
-    // Restore previously highlighted text to its original state
-    if (oldRange && oldHighlightedText) {
-      restoreOriginalState(oldRange, oldHighlightedText);
-    
-    }
-
-
-
-    // Create a new span element for the selected text
-    const newNode = document.createElement("span");
-    newNode.style.backgroundColor = "yellow";
-    newNode.textContent = selectedText; // Set the text content of the new node
-
-    // Insert the new node with the background color
-    range.deleteContents(); // Remove the existing selection
-    range.insertNode(newNode);
-
-    // Check if the selection contains newlines
-    const containsNewlines = /\n|\r/.test(selectedText);
-
-    // If newlines are present, insert newline characters within the new span element
-    if (containsNewlines) {
-      const newlineNodes = selectedText.split(/\n|\r/).map((line, index) => {
-        const newNode = document.createElement("span");
-        newNode.style.backgroundColor = "yellow";
-        newNode.textContent = line;
-        if (index < selectedText.length - 1) {
-          newNode.appendChild(document.createElement("br")); // Insert a <br> element after each line except the last one
-        }
-        return newNode;
-      });
-
-      // Replace the content of the new span element with the newline nodes
-      newNode.textContent = "";
-      newlineNodes.forEach((node) => newNode.appendChild(node));
-    }
-
-    // Store the current range and highlighted text
-    oldRange = range.cloneRange();
-    oldHighlightedText = newNode.textContent;
-  };
-
-  // Function to restore the original state of previously highlighted text
-  const restoreOriginalState = (
-    range: {
-      deleteContents: () => void;
-      insertNode: (arg0: HTMLSpanElement) => void;
-    },
-    highlightedText: string | null
-  ) => {
-    const newNode = document.createElement("span");
-    newNode.textContent = highlightedText;
-    range.deleteContents();
-    range.insertNode(newNode);
   };
 
   // ContextMenu Start
-  const handleContextMenu = (event: {
-    preventDefault: () => void;
-    clientX: any;
-    clientY: any;
-  }) => {
+  const handleContextMenu = (event) => {
     event.preventDefault();
-    if (selectedTexts) {
+    if (selectedText) {
       setContextMenu({
         isVisible: true,
         x: event.clientX,
@@ -146,7 +93,7 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
 
   // Sentiment analysis
   const handleAnalyzeSentiment = () => {
-    const textToAnalyze = selectedTexts;
+    const textToAnalyze = selectedText;
     if (textToAnalyze) {
       // Perform the sentiment analysis
       try {
@@ -160,14 +107,12 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   };
 
   return (
-    <div
-      className="markdown-container"
-      onContextMenu={handleContextMenu}
-      onMouseUp={handleTextHighlight}
-    >
-      <ReactMarkdown className="md" rehypePlugins={[rehypeSlug]}>
-        {markdownContent}
-      </ReactMarkdown>
+    <div onContextMenu={handleContextMenu} onMouseUp={handleTextHighlight}>
+      <div ref={markdownRef}>
+        <ReactMarkdown className="md" rehypePlugins={[rehypeSlug]}>
+          {markdownContent}
+        </ReactMarkdown>
+      </div>
       {contextMenu.isVisible && (
         <ContextMenu
           x={contextMenu.x}
@@ -176,6 +121,19 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
           onAnalyzeSentiment={handleAnalyzeSentiment}
           onClose={handleClose}
         />
+      )}
+      {selectedRange && (
+        <div
+          style={{
+            position: "absolute",
+            background: "rgba(0, 0, 255, 0.3)",
+            zIndex: 99,
+            top: selectedTextPosition.top,
+            left: selectedTextPosition.left,
+            width: selectedRange.getBoundingClientRect().width + 15,
+            height: selectedRange.getBoundingClientRect().height + 15,
+          }}
+        ></div>
       )}
     </div>
   );
