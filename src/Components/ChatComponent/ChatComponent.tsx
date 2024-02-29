@@ -28,6 +28,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   const [clearMessages, setClearMessages] = useState<boolean>(false);
 
   const [highlightedText, setHighlightedText] = useState<string>("");
+  const [showTopicsTab, setShowTopicsTab] = useState(false);
+  const [showSentimentTab, setShowSentimentTab] = useState(false);
+  const [showGptTab, setShowGptTab] = useState(false);
 
   const handleHighlightedText = (text: string) => {
     setHighlightedText(text);
@@ -44,6 +47,17 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
     setIsLoading(false);
     setMessages([]);
     setClearMessages(true);
+  };
+
+  const handleSelectOption = (selectedOption: string) => {
+    if (selectedOption === "Topics") {
+      setShowTopicsTab(true);
+    } else if (selectedOption === "Sentiment") {
+      setShowSentimentTab(true);
+    } else if (selectedOption === "Search with GPT-3.5") {
+      setShowGptTab(true);
+    } 
+    // Add more conditions for other choices as needed
   };
 
   {
@@ -112,6 +126,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         handleInputChange={handleInputChange}
         handleSendMessage={handleSendMessage}
         handleClearMessages={handleClearMessages}
+        handleSelectOption={handleSelectOption}
       />
       <Grid container spacing={1} style={{ marginTop: "10px" }}>
         <LeftBoxContent link={link} onHighlight={handleHighlightedText} />
@@ -133,6 +148,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
               messages={messages}
               link={link}
               isLoading={isLoading}
+              showTopicsTab={showTopicsTab}
+              showSentimentTab={showSentimentTab}
+              showGptTab={showGptTab}
             />
           </Paper>
         </Grid>

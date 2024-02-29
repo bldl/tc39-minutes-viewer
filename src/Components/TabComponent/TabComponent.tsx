@@ -13,12 +13,18 @@ interface TabBoxProps {
   messages: Message[];
   link: string | null;
   isLoading: true | false;
+  showTopicsTab: boolean;
+  showSentimentTab: boolean;
+  showGptTab: boolean;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
   messages,
   link,
   isLoading,
+  showTopicsTab,
+  showGptTab,
+  showSentimentTab,
 }: TabBoxProps) => {
   // Sentiment start
   const [sentimentResult, setSentimentResult] = useState<string[]>([]);
@@ -78,50 +84,62 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   }
   return (
     <Tabs>
+      {!showGptTab && !showTopicsTab && !showSentimentTab && (
+        <h2>
+          Here we can add instructions for the app. The text will disappear once
+          a tab is opened.
+        </h2>
+      )}
       {/* List of tabs */}
-      <TabList>
-        {/* Tabs and tab-names */}
-        <Tab>ChatGPT</Tab>
-        <Tab>Topics</Tab>
-        <Tab>Sentiment</Tab>
-      </TabList>
+      {(showGptTab || showTopicsTab || showSentimentTab) && (
+        <TabList>
+          {/* Tabs and tab-names */}
+          {showGptTab && <Tab>ChatGPT</Tab>}
+          {showTopicsTab && <Tab>Topics</Tab>}
+          {showSentimentTab && <Tab>Sentiment</Tab>}
+        </TabList>
+      )}
 
       {/* Content for tabs */}
 
-      {/* ChatGPT tab */}
-      <TabPanel>
-        <ChatMessages messages={messages} isLoading={isLoading} />
-      </TabPanel>
+      {showGptTab && (
+        <TabPanel>
+          <ChatMessages messages={messages} isLoading={isLoading} />
+        </TabPanel>
+      )}
 
-      {/* Topics tab */}
-      <TabPanel>
-        {" "}
-        <TopicList
-          onTopicClick={function (topic: string): void {
-            scrollToSection(toSlug(topic));
-          }}
-          link={link}
-        />
-      </TabPanel>
+      {showTopicsTab && (
+        <TabPanel>
+          {" "}
+          <TopicList
+            onTopicClick={function (topic: string): void {
+              scrollToSection(toSlug(topic));
+            }}
+            link={link}
+          />
+        </TabPanel>
+      )}
 
       {/* Sentiment tab */}
-      <TabPanel>
-        <h2>Sentiment Analysis</h2>
-        {sentimentResult.length > 0 ? (
-          <>
-            <ul>
-              {sentimentResult.map((sentiment, index) => (
-                <li key={index}>{sentiment}</li>
-              ))}
-            </ul>
-            <p>
-              <strong>Overall Sentiment:</strong> {overallSentiment}
-            </p>
-          </>
-        ) : (
-          <p>No sentiment analysis has been performed yet.</p>
-        )}
-      </TabPanel>
+      {showSentimentTab && (
+        <TabPanel>
+          <h2>Sentiment Analysis</h2>
+          {sentimentResult.length > 0 ? (
+            <>
+              <ul>
+                {sentimentResult.map((sentiment, index) => (
+                  <li key={index}>{sentiment}</li>
+                ))}
+              </ul>
+              <p>
+                <strong>Overall Sentiment:</strong> {overallSentiment}
+              </p>
+            </>
+          ) : (
+            <p>No sentiment analysis has been performed yet.</p>
+          )}
+        </TabPanel>
+      )}
     </Tabs>
   );
 };
