@@ -6,12 +6,9 @@ import Autocomplete, {
 } from "@mui/material/Autocomplete";
 import { styled, useTheme } from "@mui/material/styles";
 import ListSubheader from "@mui/material/ListSubheader";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle"; // for users
-import StorageIcon from "@mui/icons-material/Storage"; // for repositories
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import ChatIcon from "@mui/icons-material/Chat";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
-import CategoryIcon from "@mui/icons-material/Category";
 
 interface AppBarComponentProps {
   input: string;
@@ -27,6 +24,11 @@ interface Option {
   category: string;
 }
 
+// Styles for group headers
+const GroupHeader = styled(ListSubheader)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+}));
+
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
   input,
   handleInputChange,
@@ -34,10 +36,8 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   handleClearMessages,
   handleSelectOption,
 }) => {
-  // Styles for group headers
-  const GroupHeader = styled(ListSubheader)(({ theme }) => ({
-    backgroundColor: theme.palette.background.paper,
-  }));
+  // Use the theme from MUI's useTheme hook
+  const theme = useTheme();
 
   const myDefaultOption = {
     label: "Search with GPT-3.5",
@@ -67,7 +67,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
     <AppBar
       position="static"
       style={{
-        background: "white",
+        background: theme.palette.background.default,
         borderRadius: "20px",
         padding: "10px",
         marginLeft: "0%",
