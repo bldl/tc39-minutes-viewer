@@ -32,9 +32,9 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
   // Calculate and set overall sentiment based on scores
   useEffect(() => {
-    window.api.receiveSentimentAnalysis((event, arg) => {
+    window.api.receiveSentimentAnalysis((event: any, arg: string) => {
       const scores = JSON.parse(arg); // Assuming arg is a JSON string that represents an array, e.g., "[1, 1]"
-      const sentimentDescriptions = scores.map((score) =>
+      const sentimentDescriptions = scores.map((score: string | number) =>
         interpretSentiment(score)
       );
       setSentimentResult(sentimentDescriptions); // Update the state with an array of descriptions
@@ -45,7 +45,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   }, []);
 
   // Convert sentiment analysis numeric result to a descriptive message
-  const interpretSentiment = (score) => {
+  const interpretSentiment = (score: string | number) => {
     const sentimentMap = {
       "0": "Negative",
       "1": "Neutral",
@@ -54,7 +54,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     return sentimentMap[score] || "Unknown"; // Default to 'Unknown' if score is not in the map
   };
 
-  const interpretOverallSentiment = (scores) => {
+  const interpretOverallSentiment = (scores: any[]) => {
     if (scores.length === 0) return "No sentiment analysis performed yet.";
     const averageScore =
       scores.reduce((acc, cur) => acc + cur, 0) / scores.length;
