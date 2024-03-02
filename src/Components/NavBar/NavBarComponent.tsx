@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Box from "@mui/material/Box";
+import { Box } from "@mui/material";
 import { useSpring, animated } from "@react-spring/web";
 import SvgIcon, { SvgIconProps } from "@mui/material/SvgIcon";
 import { TransitionProps } from "@mui/material/transitions";
@@ -96,9 +96,8 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
     },
   }));
 
-  //// Handle select / Expand functionality
+  //// Handle Expand functionality
   const [expanded, setExpanded] = useState<string[]>([]);
-  const [selected, setSelected] = useState<string[]>([]);
 
   const handleToggle = (event: React.SyntheticEvent, nodeIds: string[]) => {
     setExpanded(nodeIds);
@@ -107,16 +106,6 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
   const handleExpandClick = () => {
     setExpanded((oldExpanded) =>
       oldExpanded.length > 0 ? [] : Object.keys(hashTable)
-    );
-  };
-
-  const handleSelect = (event: React.SyntheticEvent, nodeIds: string[]) => {
-    setSelected(nodeIds);
-  };
-
-  const handleSelectClick = () => {
-    setSelected((oldSelected) =>
-      oldSelected.length > 0 ? [] : Object.keys(hashTable)
     );
   };
   //// End
@@ -175,13 +164,8 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
             size="small"
             variant="text"
             sx={{
-              color: "grey.900",
               padding: "2px 2px",
-              minWidth: "initial", // Override minimum width to allow the button to be smaller
-              fontSize: "0.7rem",
-              "&:hover": {
-                backgroundColor: "grey.100",
-              },
+              fontSize: "0.75rem",
               "&:focus": {
                 outline: "none",
               },
@@ -191,28 +175,6 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
             }}
           >
             {expanded.length > 0 ? "Collapse All" : "Expand All"}
-          </Button>
-          <Button // This button is for the handling of select click
-            onClick={handleSelectClick}
-            size="small"
-            variant="text"
-            sx={{
-              color: "grey.900",
-              padding: "2px 2px",
-              minWidth: "initial", // Override minimum width to allow the button to be smaller
-              fontSize: "0.7rem",
-              "&:hover": {
-                backgroundColor: "grey.100",
-              },
-              "&:focus": {
-                outline: "none",
-              },
-              "&.MuiButtonBase-root:focus": {
-                outline: "none",
-              },
-            }}
-          >
-            {selected.length > 0 ? "Deselect All" : "Select All"}
           </Button>
         </Box>
         <Box sx={{ minHeight: 270, flexGrow: 1, maxWidth: 300 }}>
@@ -224,7 +186,6 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
             defaultEndIcon={<CloseSquare />}
             //// Expansion of tree is functional, but removes animation. I think it is because of the use of "UseState"
             //expanded={expanded}
-            //selected={selected}
             //onNodeToggle={handleToggle}
             onNodeSelect={handleNodeSelect}
             sx={{ overflowX: "hidden" }}

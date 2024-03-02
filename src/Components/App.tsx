@@ -6,12 +6,13 @@ import { SelectedTextProvider } from "./SelectedTextContext";
 import {
   createTheme,
   ThemeProvider,
-  CssBaseline,
   Switch,
   FormGroup,
   FormControlLabel,
   useMediaQuery,
 } from "@mui/material";
+import CssBaseline from "@mui/material/CssBaseline";
+import Typography from "@mui/material/Typography";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 
@@ -74,19 +75,45 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline /> {/* This helps with consistent baseline styles */}
       <SelectedTextProvider>
-        <FormGroup row sx={{ justifyContent: "flex-end", margin: 2 }}>
+        <FormGroup row sx={{ justifyContent: "flex-start", marginLeft: 3 }}>
           <FormControlLabel
             control={
               <Switch
                 checked={themeMode === "dark"}
                 onChange={toggleThemeMode}
-                icon={<WbSunnyIcon />}
+                icon={<WbSunnyIcon sx={{ color: "gold" }} />}
                 checkedIcon={<NightsStayIcon />}
+                sx={{
+                  "& .MuiSwitch-switchBase": {
+                    // Adjust padding to fit the icons inside the thumb
+                    padding: 0, // Reduce padding to increase range
+                    "&.Mui-checked": {
+                      transform: "translateX(75%)", // Increase translateX to match the increased range
+                      "& + .MuiSwitch-track": {
+                        opacity: 0.7, // Adjust for visibility if needed
+                      },
+                    },
+                  },
+                  "& .MuiSwitch-track": {
+                    borderRadius: 12, // Half the height to create a "pill" shape
+                    backgroundColor:
+                      themeMode === "dark"
+                        ? theme.palette.grey[700]
+                        : theme.palette.grey[400], // Adjust as needed
+                    width: "auto", // Ensure the track is as wide as needed for the thumb to slide
+                  },
+                }}
               />
             }
-            label={themeMode === "dark" ? "Dark Mode" : "Light Mode"}
+            label={
+              <Typography variant="body1" component="div" sx={{ mt: "-0.6em" }}>
+                {themeMode === "dark" ? "Dark Mode" : "Light Mode"}
+              </Typography>
+            }
+            labelPlacement="end"
           />
         </FormGroup>
+
         <NavBarComponent
           hashTable={hashTable}
           selectedYear={selectedYear}
