@@ -20,7 +20,7 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     left: 0,
   });
 
-  const { selectedText, setSelectedText } = useSelectedText(); // Consume the context
+  const { selectedText, setSelectedText } = useSelectedText();
   const [contextMenu, setContextMenu] = useState({
     isVisible: false,
     x: 0,
@@ -47,25 +47,32 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     };
 
     fetchMarkdown();
-  }, [link]); // Use link as the dependency for useEffect
+  }, [link]);
 
   useEffect(() => {
-    if (selectedRange) {
-      const rangeRect = selectedRange.getBoundingClientRect();
-      const containerRect = markdownRef.current?.getBoundingClientRect();
-
-      if (rangeRect && containerRect) {
-        setSelectedTextPosition({
-          top: rangeRect.top - containerRect.top + 47,
-          left: rangeRect.left - containerRect.left + 10,
-        });
-      }
+    // Ensure the markdownRef element scrolls into view at the top whenever markdownContent changes
+    if (markdownRef.current) {
+      markdownRef.current.scrollIntoView({
+        behavior: "auto",
+        block: "start",
+      });
     }
-  }, [selectedRange]);
+  }, [markdownContent]);
 
-  // Custom component for headers with Rough Notation
+  const components = {
+    // Your components' overrides...
+    h1: (props) => <HeaderWithRoughNotation {...props} level={1} />,
+    a: ({ href, children }) => (
+      <span
+        style={{ cursor: "not-allowed", color: "gray", textDecoration: "none" }}
+      >
+        {children}
+      </span>
+    ),
+  };
+
   const HeaderWithRoughNotation = ({ level, children }) => {
-    const Tag = `h${level}`; // Dynamically determine the header tag (h1, h2, etc.)
+    const Tag = `h${level}`;
     return (
       <RoughNotation
         type="box"
@@ -80,25 +87,15 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     );
   };
 
-  // Override default header components to use Rough Notation
-  const components = {
-    h1: (props) => <HeaderWithRoughNotation {...props} level={1} />,
-    //h2: (props) => <HeaderWithRoughNotation {...props} level={2} />,
-    //h3: (props) => <HeaderWithRoughNotation {...props} level={3} />,
-    // Add more header levels as needed
-  };
-
-  // SelectedTextContent
   const handleTextHighlight = (_e: React.MouseEvent<HTMLDivElement>) => {
     const selection = window.getSelection();
     if (selection && selection.toString()) {
-      setSelectedText(selection.toString()); // Update the context with selected text
+      setSelectedText(selection.toString());
       setSelectedRange(selection.getRangeAt(0));
-      onHighlight(selection.toString()); // TODO: Do we need this?
+      onHighlight(selection.toString());
     }
   };
 
-  // ContextMenu Start
   const handleContextMenu = (event) => {
     event.preventDefault();
     if (selectedText) {
@@ -112,23 +109,18 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     }
   };
 
-  // Function to close the context menu
   const handleClose = () => {
     setContextMenu((prev) => ({ ...prev, isVisible: false }));
   };
-  // ContextMenu End
 
-  // Sentiment analysis
   const handleAnalyzeSentiment = () => {
     const textToAnalyze = selectedText;
     if (textToAnalyze) {
-      // Perform the sentiment analysis
       try {
         window.api.performSentimentAnalysis(textToAnalyze);
       } catch (error) {
         console.error("Error sending data for analysis:", error);
       }
-      // Hide context menu after attempting analysis
       setContextMenu((prevState) => ({ ...prevState, isVisible: false }));
     }
   };
