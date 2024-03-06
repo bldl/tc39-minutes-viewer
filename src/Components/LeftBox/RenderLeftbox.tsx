@@ -59,6 +59,20 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     }
   }, [markdownContent]);
 
+  useEffect(() => {
+    if (selectedRange) {
+      const rangeRect = selectedRange.getBoundingClientRect();
+      const containerRect = markdownRef.current?.getBoundingClientRect();
+
+      if (rangeRect && containerRect) {
+        setSelectedTextPosition({
+          top: rangeRect.top - containerRect.top + 47,
+          left: rangeRect.left - containerRect.left + 10,
+        });
+      }
+    }
+  }, [selectedRange]);
+
   const components = {
     // Your components' overrides...
     h1: (props) => <HeaderWithRoughNotation {...props} level={1} />,

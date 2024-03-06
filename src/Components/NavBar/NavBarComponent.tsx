@@ -139,14 +139,14 @@ const NavBarComponent: React.FC<NavBarComponentProps> = ({
 
   // Return the Component
   return (
-    <Grid item xs={12} style={{ position: "relative" }}>
+    <Grid item xs={12} style={{ position: "relative", marginLeft: "1%" }}>
       <Paper
         elevation={3}
         style={{
           padding: "20px",
           overflowY: "auto",
-          height: "90.2vh",
-          width: "15%",
+          height: "92.2vh",
+          width: "17%",
           position: "absolute",
           top: "10%",
           borderRadius: "20px",

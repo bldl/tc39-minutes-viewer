@@ -27,7 +27,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
           padding: "20px",
           overflowY: "auto",
           height: "68vh",
-          width: "192%",
+          width: "100%",
           borderRadius: "20px",
         }}
       >
