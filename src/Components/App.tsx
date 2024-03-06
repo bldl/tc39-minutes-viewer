@@ -75,18 +75,36 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline /> {/* This helps with consistent baseline styles */}
       <SelectedTextProvider>
-        <FormGroup row sx={{ justifyContent: "flex-start", marginLeft: 3 }}>
+        <FormGroup
+          row
+          sx={{ justifyContent: "flex-start", marginLeft: 3, marginTop: "-1%" }}
+        >
           <FormControlLabel
             control={
               <Switch
-                checked={themeMode === "light"}
+                checked={themeMode === "dark"}
                 onChange={toggleThemeMode}
-                icon={<WbSunnyIcon sx={{ color: "gold" }} />}
-                checkedIcon={<NightsStayIcon />}
+                icon={
+                  <WbSunnyIcon
+                    sx={{
+                      color: "gold",
+                      marginLeft: -0.5,
+                      marginTop: -0.5,
+                      fontSize: 30,
+                    }}
+                  />
+                }
+                checkedIcon={
+                  <NightsStayIcon
+                    sx={{
+                      marginTop: -0.3,
+                    }}
+                  />
+                }
                 sx={{
                   "& .MuiSwitch-switchBase": {
                     // Adjust padding to fit the icons inside the thumb
-                    padding: 0, // Reduce padding to increase range
+                    padding: 1, // Reduce padding to increase range
                     "&.Mui-checked": {
                       transform: "translateX(75%)", // Increase translateX to match the increased range
                       "& + .MuiSwitch-track": {
@@ -100,15 +118,11 @@ function App() {
                       themeMode === "dark"
                         ? theme.palette.grey[700]
                         : theme.palette.grey[400], // Adjust as needed
-                    width: "auto", // Ensure the track is as wide as needed for the thumb to slide
+                    opacity: 0.7,
+                    width: "100%", // Ensure the track is as wide as needed for the thumb to slide
                   },
                 }}
               />
-            }
-            label={
-              <Typography variant="body1" component="div" sx={{ mt: "-0.6em" }}>
-                {themeMode === "dark" ? "Light Mode" : "Dark Mode"}
-              </Typography>
             }
             labelPlacement="end"
           />

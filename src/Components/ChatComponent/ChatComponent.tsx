@@ -131,34 +131,32 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         handleClearMessages={handleClearMessages}
         handleSelectOption={handleSelectOption}
       />
-      <Grid container spacing={1} style={{ marginTop: "10px" }}>
+      <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
         <LeftBoxContent link={link} onHighlight={handleHighlightedText} />
 
-        <Grid item xs={6}>
-          <Divider orientation="vertical" flexItem />
-          <Paper
-            elevation={3}
-            style={{
-              padding: "20px",
-              overflowY: "auto",
-              height: "77vh",
-              width: "37.8vw",
-              maxWidth: "100%",
-              borderRadius: "20px",
-            }}
-          >
-            <TabsComponent
-              messages={messages}
-              link={link}
-              isLoading={isLoading}
-              showTopicsTab={showTopicsTab}
-              showSentimentTab={showSentimentTab}
-              showGptTab={showGptTab}
-              showParticipantsTab={showPersonsTab}
-            />
-          </Paper>
-        </Grid>
-      </Grid>
+        <Paper
+          elevation={3}
+          style={{
+            padding: "20px",
+            overflowY: "auto",
+            height: "80vh",
+            width: "40vw",
+            maxWidth: "100%",
+            borderRadius: "20px",
+            flexShrink: 1, // Allow the right box to shrink
+          }}
+        >
+          <TabsComponent
+            messages={messages}
+            link={link}
+            isLoading={isLoading}
+            showTopicsTab={showTopicsTab}
+            showSentimentTab={showSentimentTab}
+            showGptTab={showGptTab}
+            showParticipantsTab={showPersonsTab}
+          />
+        </Paper>
+      </div>
     </Container>
   );
 };

@@ -14,8 +14,8 @@ const LeftBoxContent = ({ link, onHighlight }: Props) => {
         style={{
           padding: "20px",
           overflowY: "auto",
-          height: "77vh",
-          width: "37.8vw",
+          height: "80vh",
+          width: "40vw",
           borderRadius: "20px",
           position: "relative",
         }}

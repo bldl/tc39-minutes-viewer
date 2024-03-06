@@ -74,7 +74,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         borderRadius: "20px",
         padding: "10px",
         marginLeft: "0%",
-        width: "100%",
+        width: "80.7vw",
       }}
     >
       <Toolbar>
@@ -88,16 +88,20 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           getOptionLabel={(option) => option.label}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
-            <TextField {...params} label="What do you want to know?" value={input} onChange={handleInputChange}/>
+            <TextField
+              {...params}
+              label="What do you want to know?"
+              value={input}
+              onChange={handleInputChange}
+            />
           )}
           onChange={(_event, value) => {
             if (value && value.label === myDefaultOption.label) {
               handleSendMessage();
-            } 
+            }
             if (value) {
               handleSelectOption(value.label); // Assuming handleSelectOption can handle all options
             }
-            
           }}
           renderOption={(props, option) => (
             <li {...props}>
@@ -121,7 +125,6 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           ]}
           sx={{ width: 950, zIndex: 100 }}
           inputValue={input}
-   
         />
         <Button
           style={{ marginLeft: "50px" }}
