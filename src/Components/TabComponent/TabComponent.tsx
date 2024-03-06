@@ -101,7 +101,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   const annotateElement = (element: Element) => {
     const annotation = annotate(element, {
       type: "underline",
-      color: "black" /* default */,
+      color: "red",
       padding: 5,
       strokeWidth: 2,
       iterations: 1,
