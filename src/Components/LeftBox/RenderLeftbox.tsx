@@ -72,15 +72,30 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   };
 
   const HeaderWithRoughNotation = ({ level, children }) => {
+    const [showAnnotation, setShowAnnotation] = useState(true);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setShowAnnotation(false);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }, []);
+
     const Tag = `h${level}`;
     return (
       <RoughNotation
-        type="box"
-        show={true}
-        color="#FF6347"
+        type="highlight"
+        show={showAnnotation}
+        color="red"
         padding={8}
         strokeWidth={2}
-        animationDuration={1500}
+        animationDuration={1000}
+        iterations={1}
+        animationDelay={300}
+        animationTimingFunction="ease-out"
       >
         <Tag>{children}</Tag>
       </RoughNotation>
