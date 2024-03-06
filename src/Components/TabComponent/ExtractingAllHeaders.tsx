@@ -49,7 +49,7 @@ const TopicList: React.FC<TopicListProps> = ({ onTopicClick, link }) => {
   };
 
   return (
-    <div style={{ backgroundColor: "white", padding: "20px" }}>
+    <div style={{  padding: "20px" }}>
       <h2>{topics.length > 0 ? "Topics" : "No md file selected"}</h2>
       <ul>
         {topics.map((topic) => (
