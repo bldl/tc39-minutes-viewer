@@ -5,6 +5,8 @@ import rehypeSlug from "rehype-slug";
 import { useSelectedText } from "../SelectedTextContext";
 import ContextMenu from "../ContextMenu";
 
+import { RoughNotation } from "react-rough-notation";
+
 interface Props {
   link: string | null;
   onHighlight: (highlightedText: string) => void;
@@ -61,6 +63,31 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     }
   }, [selectedRange]);
 
+  // Custom component for headers with Rough Notation
+  const HeaderWithRoughNotation = ({ level, children }) => {
+    const Tag = `h${level}`; // Dynamically determine the header tag (h1, h2, etc.)
+    return (
+      <RoughNotation
+        type="box"
+        show={true}
+        color="#FF6347"
+        padding={8}
+        strokeWidth={2}
+        animationDuration={1500}
+      >
+        <Tag>{children}</Tag>
+      </RoughNotation>
+    );
+  };
+
+  // Override default header components to use Rough Notation
+  const components = {
+    h1: (props) => <HeaderWithRoughNotation {...props} level={1} />,
+    //h2: (props) => <HeaderWithRoughNotation {...props} level={2} />,
+    //h3: (props) => <HeaderWithRoughNotation {...props} level={3} />,
+    // Add more header levels as needed
+  };
+
   // SelectedTextContent
   const handleTextHighlight = (_e: React.MouseEvent<HTMLDivElement>) => {
     const selection = window.getSelection();
@@ -109,7 +136,11 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   return (
     <div onContextMenu={handleContextMenu} onMouseUp={handleTextHighlight}>
       <div ref={markdownRef}>
-        <ReactMarkdown className="md" rehypePlugins={[rehypeSlug]}>
+        <ReactMarkdown
+          className="md"
+          rehypePlugins={[rehypeSlug]}
+          components={components}
+        >
           {markdownContent}
         </ReactMarkdown>
       </div>
