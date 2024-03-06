@@ -198,7 +198,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
       {showParticipantsTab && (
         <TabPanel>
-          <h2>Persons</h2>
           <ExtractAllPeople
             link={link}
             onPersonClick={(person) => handlePerosnClick(person)}
