@@ -1,3 +1,5 @@
+import { Box, ButtonGroup } from "@mui/material";
+import Button from "@mui/material/Button";
 import React, { useState, useEffect } from "react";
 
 interface Topic {
@@ -48,21 +50,40 @@ const TopicList: React.FC<TopicListProps> = ({ onTopicClick, link }) => {
     onTopicClick(topicName);
   };
 
+  const topicButtons = topics.map((topic) => (
+    <Button
+      key={topic.id}
+      onClick={() => handleTopicClick(topic.name)}
+      variant="text"
+      sx={{
+        justifyContent: "flex-start", // Align text to the left
+        textTransform: "none", // Prevent uppercase transform
+        textAlign: "left", // Ensure text is left aligned within the button
+      }}
+    >
+      {topic.name}
+    </Button>
+  ));
+
   return (
-    <div style={{ backgroundColor: "white", padding: "20px" }}>
-      <h2>{topics.length > 0 ? "Topics" : "No md file selected"}</h2>
-      <ul>
-        {topics.map((topic) => (
-          <li
-            style={{ cursor: "pointer" }}
-            key={topic.id}
-            onClick={() => handleTopicClick(topic.name)}
-          >
-            {topic.name}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        "& > *": {
+          m: 1,
+        },
+      }}
+    >
+      <ButtonGroup
+        orientation="vertical"
+        aria-label="Vertical button group"
+        variant="outlined"
+        fullWidth // Ensures the button group takes up the full width
+      >
+        {topicButtons}
+      </ButtonGroup>
+    </Box>
   );
 };
 
