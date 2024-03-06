@@ -3,6 +3,7 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
+import { annotate } from "rough-notation";
 
 interface Message {
   role: "user" | "assistant";
@@ -70,9 +71,26 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     const element = document.getElementById(id);
     console.log(element);
     if (element) {
+      annotateElement(element);
       element.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const annotateElement = (element: Element) => {
+    const annotation = annotate(element, {
+      type: "underline",
+      color: "black",
+      padding: 5,
+      strokeWidth: 2,
+      iterations: 1,
+    });
+    annotation.show();
+    // Automatically hide the annotation after a delay if you want
+    setTimeout(() => {
+      annotation.hide();
+    }, 2000);
+  };
+
   function toSlug(topic: string): string {
     return topic
       .toLowerCase() // Convert to lowercase
