@@ -46,8 +46,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   };
 
   const options: Option[] = [
-    { label: "Sentiment", id: 3, category: "Analysis" },
+    myDefaultOption,
     { label: "Topics", id: 2, category: "List" },
+    { label: "Sentiment", id: 3, category: "Analysis" },
     { label: "Persons", id: 4, category: "List" },
     // Add more options as needed, assigning them to categories
   ];
@@ -85,16 +86,16 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           getOptionLabel={(option) => option.label}
           isOptionEqualToValue={(option, value) => option.id === value.id}
           renderInput={(params) => (
-            <TextField {...params} label="What do you want to know?" />
+            <TextField {...params} label="What do you want to know?" value={input} onChange={handleInputChange}/>
           )}
           onChange={(_event, value) => {
+            if (value && value.label === myDefaultOption.label) {
+              handleSendMessage();
+            } 
             if (value) {
-              if (value.label === myDefaultOption.label) {
-                handleSendMessage();
-              } else {
-                handleSelectOption(value.label); // Assuming handleSelectOption can handle all options
-              }
+              handleSelectOption(value.label); // Assuming handleSelectOption can handle all options
             }
+            
           }}
           renderOption={(props, option) => (
             <li {...props}>
@@ -118,11 +119,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           ]}
           sx={{ width: 950, zIndex: 100 }}
           inputValue={input}
-          onInputChange={(_event, newInputValue) => {
-            handleInputChange({
-              target: { value: newInputValue },
-            } as React.ChangeEvent<HTMLInputElement>);
-          }}
+   
         />
         <Button
           style={{ marginLeft: "50px" }}
