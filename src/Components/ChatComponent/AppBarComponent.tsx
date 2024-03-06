@@ -38,7 +38,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
 }) => {
   // Use the theme from MUI's useTheme hook
   const theme = useTheme();
-
+  const themeMode = theme.palette.mode;
   const myDefaultOption = {
     label: "Search with GPT-3.5",
     id: 1,
@@ -68,7 +68,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
     <AppBar
       position="static"
       style={{
-        background: theme.palette.background.default,
+        ...(themeMode === "light" && {
+          background: theme.palette.background.default,
+        }),
         borderRadius: "20px",
         padding: "10px",
         marginLeft: "0%",
