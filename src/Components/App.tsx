@@ -79,7 +79,7 @@ function App() {
           <FormControlLabel
             control={
               <Switch
-                checked={themeMode === "dark"}
+                checked={themeMode === "light"}
                 onChange={toggleThemeMode}
                 icon={<WbSunnyIcon sx={{ color: "gold" }} />}
                 checkedIcon={<NightsStayIcon />}
@@ -107,7 +107,7 @@ function App() {
             }
             label={
               <Typography variant="body1" component="div" sx={{ mt: "-0.6em" }}>
-                {themeMode === "dark" ? "Dark Mode" : "Light Mode"}
+                {themeMode === "dark" ? "Light Mode" : "Dark Mode"}
               </Typography>
             }
             labelPlacement="end"
