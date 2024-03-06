@@ -3,6 +3,7 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
+import { annotate } from "rough-notation";
 
 interface Message {
   role: "user" | "assistant";
@@ -29,6 +30,13 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   // Sentiment start
   const [sentimentResult, setSentimentResult] = useState<string[]>([]);
   const [overallSentiment, setOverallSentiment] = useState<string>("");
+  const [lastTopicClick, setLastTopicClick] = useState<{
+    topic: string;
+    time: number;
+  }>({
+    topic: "",
+    time: 0,
+  });
 
   // Calculate and set overall sentiment based on scores
   useEffect(() => {
@@ -66,13 +74,47 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   };
   // Sentiment end
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection = (id: string, topic: string) => {
+    const currentTime = new Date().getTime();
+    if (
+      topic === lastTopicClick.topic &&
+      currentTime - lastTopicClick.time < 2000
+    ) {
+      // It's been less than a second since the last click of the same topic
+      return;
+    }
+
+    // Update last topic click with the current topic and time
+    setLastTopicClick({ topic, time: currentTime });
+
+    // Proceed with scrolling and annotating the element
     const element = document.getElementById(id);
-    console.log(element);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
+      // Wait until scroll if finished before annotating the element
+      setTimeout(() => {
+        annotateElement(element);
+      }, 700);
+      // annotateElement(element);
+      // element.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  const annotateElement = (element: Element) => {
+    const annotation = annotate(element, {
+      type: "underline",
+      color: "black",
+      padding: 5,
+      strokeWidth: 2,
+      iterations: 1,
+    });
+    annotation.show();
+    // Automatically hide the annotation after a delay if you want
+    setTimeout(() => {
+      annotation.hide();
+    }, 2000);
+  };
+
   function toSlug(topic: string): string {
     return topic
       .toLowerCase() // Convert to lowercase
@@ -113,7 +155,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
           {" "}
           <TopicList
             onTopicClick={function (topic: string): void {
-              scrollToSection(toSlug(topic));
+              scrollToSection(toSlug(topic), topic);
             }}
             link={link}
           />
