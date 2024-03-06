@@ -31,6 +31,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   const [showTopicsTab, setShowTopicsTab] = useState(false);
   const [showSentimentTab, setShowSentimentTab] = useState(false);
   const [showGptTab, setShowGptTab] = useState(false);
+  const [showPersonsTab, setShowPersonsTab] = useState(false);
 
   const handleHighlightedText = (text: string) => {
     setHighlightedText(text);
@@ -56,7 +57,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
       setShowSentimentTab(true);
     } else if (selectedOption === "Search with GPT-3.5") {
       setShowGptTab(true);
-    } 
+    } else if (selectedOption === "Persons") {
+      setShowPersonsTab(true);
+    }
     // Add more conditions for other choices as needed
   };
 
@@ -151,6 +154,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
               showTopicsTab={showTopicsTab}
               showSentimentTab={showSentimentTab}
               showGptTab={showGptTab}
+              showParticipantsTab={showPersonsTab}
             />
           </Paper>
         </Grid>

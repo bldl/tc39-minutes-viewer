@@ -157,7 +157,7 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
         <div
           style={{
             position: "absolute",
-            background: "rgba(0, 0, 255, 0.3)",
+            background: "rgba(255, 255, 0, 0.3)",
             zIndex: 99,
             top: selectedTextPosition.top,
             left: selectedTextPosition.left,

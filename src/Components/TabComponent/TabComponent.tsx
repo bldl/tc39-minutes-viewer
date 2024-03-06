@@ -4,6 +4,7 @@ import "react-tabs/style/react-tabs.css";
 import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
 import { annotate } from "rough-notation";
+import ExtractAllPeople from "./ExtractAllPeople.tsx";
 
 interface Message {
   role: "user" | "assistant";
@@ -17,6 +18,7 @@ interface TabBoxProps {
   showTopicsTab: boolean;
   showSentimentTab: boolean;
   showGptTab: boolean;
+  showParticipantsTab: boolean;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
@@ -26,6 +28,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showTopicsTab,
   showGptTab,
   showSentimentTab,
+  showParticipantsTab,
 }: TabBoxProps) => {
   // Sentiment start
   const [sentimentResult, setSentimentResult] = useState<string[]>([]);
@@ -122,21 +125,33 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       .replace(/^-+/, "") // Trim hyphen from start
       .replace(/-+$/, ""); // Trim hyphen from end
   }
+
+  const handlePerosnClick = (person: string) => {
+    scrollToSection(toSlug(person), person);
+  };
+
   return (
     <Tabs>
-      {!showGptTab && !showTopicsTab && !showSentimentTab && (
-        <h2>
-          Here we can add instructions for the app. The text will disappear once
-          a tab is opened.
-        </h2>
-      )}
+      {!showGptTab &&
+        !showTopicsTab &&
+        !showParticipantsTab &&
+        !showSentimentTab && (
+          <h2>
+            Here we can add instructions for the app. The text will disappear
+            once a tab is opened.
+          </h2>
+        )}
       {/* List of tabs */}
-      {(showGptTab || showTopicsTab || showSentimentTab) && (
+      {(showGptTab ||
+        showTopicsTab ||
+        showSentimentTab ||
+        showParticipantsTab) && (
         <TabList>
           {/* Tabs and tab-names */}
           {showGptTab && <Tab>ChatGPT</Tab>}
           {showTopicsTab && <Tab>Topics</Tab>}
           {showSentimentTab && <Tab>Sentiment</Tab>}
+          {showParticipantsTab && <Tab>Persons</Tab>}
         </TabList>
       )}
 
@@ -178,6 +193,16 @@ const TabsComponent: React.FC<TabBoxProps> = ({
           ) : (
             <p>No sentiment analysis has been performed yet.</p>
           )}
+        </TabPanel>
+      )}
+
+      {showParticipantsTab && (
+        <TabPanel>
+          <h2>Persons</h2>
+          <ExtractAllPeople
+            link={link}
+            onPersonClick={(person) => handlePerosnClick(person)}
+          />
         </TabPanel>
       )}
     </Tabs>
