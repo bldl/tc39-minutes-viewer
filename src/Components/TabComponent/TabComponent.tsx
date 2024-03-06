@@ -80,7 +80,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       topic === lastTopicClick.topic &&
       currentTime - lastTopicClick.time < 2000
     ) {
-      // It's been less than a second since the last click of the same topic
+      // It's been less than two seconds since the last click of the same topic
       return;
     }
 
@@ -95,8 +95,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       setTimeout(() => {
         annotateElement(element);
       }, 700);
-      // annotateElement(element);
-      // element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
