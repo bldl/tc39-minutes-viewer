@@ -55,6 +55,38 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     });
   }, []);
 
+  const extractFilename = (
+    link: string | null,
+    type: string | "topics" | "sentiment" | "people"
+  ): string => {
+    if (!link) return "No file selected";
+
+    // Normalize backslashes to forward slashes for consistency, especially useful if your app might run in different environments (Windows uses backslashes, Unix/Linux/URLs use forward slashes)
+    const normalizedLink = link.replace(/\\/g, "/");
+
+    // Extract the part after 'public/meetings/'
+    const pattern = /public\/meetings\/(.*)/;
+    const match = normalizedLink.match(pattern);
+    var filename = match ? match[1] : "No file selected";
+
+    if (type === "sentiment") {
+      // add sentiment to the link
+      filename = filename + "/sentiment";
+    }
+
+    if (type === "people") {
+      // add people to the link
+      filename = filename + "/people";
+    }
+
+    if (type === "topics") {
+      // add topics to the link
+      filename = filename + "/topics";
+    }
+
+    return filename;
+  };
+
   // Convert sentiment analysis numeric result to a descriptive message
   const interpretSentiment = (score: string | number) => {
     const sentimentMap = {
@@ -165,7 +197,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
       {showTopicsTab && (
         <TabPanel>
-          {" "}
+          <h3>{extractFilename(link, "topics")}</h3>
           <TopicList
             onTopicClick={function (topic: string): void {
               scrollToSection(toSlug(topic), topic);
@@ -179,6 +211,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       {showSentimentTab && (
         <TabPanel>
           <h2>Sentiment Analysis</h2>
+          <h3>{extractFilename(link, "sentiment")}</h3>
           {sentimentResult.length > 0 ? (
             <>
               <ul>
@@ -198,6 +231,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
       {showParticipantsTab && (
         <TabPanel>
+          <h3>{extractFilename(link, "people")}</h3>
           <ExtractAllPeople
             link={link}
             onPersonClick={(person) => handlePerosnClick(person)}
