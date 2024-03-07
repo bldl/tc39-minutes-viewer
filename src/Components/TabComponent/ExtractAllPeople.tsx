@@ -63,7 +63,7 @@ const PeopleList: React.FC<PeopleListProps> = ({ onPersonClick, link }) => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
       <h2>{people.length > 0 ? "People" : "No md file selected"}</h2>
       <ul>
         {people.map((person) => (
