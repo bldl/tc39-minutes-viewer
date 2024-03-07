@@ -5,9 +5,6 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-
-//import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-//import "react-tabs/style/react-tabs.css";
 import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
 import { annotate } from "rough-notation";
@@ -47,11 +44,35 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     topic: "",
     time: 0,
   });
-  const [value, setValue] = useState("1");
+  const [value, setValue] = useState(
+    showGptTab
+      ? "1"
+      : showTopicsTab
+      ? "2"
+      : showSentimentTab
+      ? "3"
+      : showParticipantsTab
+      ? "4"
+      : ""
+  );
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (event: any, newValue: React.SetStateAction<string>) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    // When the component mounts or when the conditions of the tabs change,
+    // set the value to the first available tab.
+    if (showGptTab) {
+      setValue("1");
+    } else if (showTopicsTab) {
+      setValue("2");
+    } else if (showSentimentTab) {
+      setValue("3");
+    } else if (showParticipantsTab) {
+      setValue("4");
+    }
+  }, [showGptTab, showTopicsTab, showSentimentTab, showParticipantsTab]);
 
   // Calculate and set overall sentiment based on scores
   useEffect(() => {
@@ -142,11 +163,26 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     scrollToSection(toSlug(person), person);
   };
 
-  return (
+  return showGptTab ||
+    showTopicsTab ||
+    showSentimentTab ||
+    showParticipantsTab ? (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <TabList onChange={handleChange} aria-label="tab example">
+          <TabList
+            onChange={handleChange}
+            aria-label="lab API tabs example"
+            sx={{
+              "& .MuiTab-root:focus": {
+                outline: "none",
+                // You can add additional styles for the focused state here
+              },
+              "& .MuiTab-root.Mui-selected": {
+                // Styles for the selected tab
+              },
+            }}
+          >
             {showGptTab && <Tab label="ChatGPT" value="1" />}
             {showTopicsTab && <Tab label="Topics" value="2" />}
             {showSentimentTab && <Tab label="Sentiment" value="3" />}
@@ -197,6 +233,11 @@ const TabsComponent: React.FC<TabBoxProps> = ({
           </TabPanel>
         )}
       </TabContext>
+    </Box>
+  ) : (
+    // Render a message or an empty fragment when no tabs are available
+    <Box sx={{ width: "100%", typography: "body1" }}>
+      <h2>No tab is selected.</h2>
     </Box>
   );
 };

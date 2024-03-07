@@ -6,6 +6,7 @@ import { useSelectedText } from "../SelectedTextContext";
 import ContextMenu from "../ContextMenu";
 
 import { RoughNotation } from "react-rough-notation";
+import { JSX } from "react/jsx-runtime";
 
 interface Props {
   link: string | null;
@@ -75,8 +76,14 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
 
   const components = {
     // Your components' overrides...
-    h1: (props) => <HeaderWithRoughNotation {...props} level={1} />,
-    a: ({ href, children }) => (
+    h1: (
+      props: JSX.IntrinsicAttributes & {
+        [x: string]: any;
+        level: any;
+        children: any;
+      }
+    ) => <HeaderWithRoughNotation {...props} level={1} />,
+    a: ({ children }) => (
       <span
         style={{ cursor: "not-allowed", color: "gray", textDecoration: "none" }}
       >
@@ -85,7 +92,7 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     ),
   };
 
-  const HeaderWithRoughNotation = ({ level, children }) => {
+  const HeaderWithRoughNotation = ({ level, children, ...rest }) => {
     const [showAnnotation, setShowAnnotation] = useState(true);
 
     useEffect(() => {
@@ -98,9 +105,12 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
       };
     }, []);
 
+    const { animationTimingFunction, otherNonStandardProp, ...domProps } = rest;
+
     const Tag = `h${level}`;
     return (
       <RoughNotation
+        {...domProps} // Spread only the props that are valid for the DOM element
         type="highlight"
         show={showAnnotation}
         color="red"
@@ -109,7 +119,7 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
         animationDuration={1000}
         iterations={1}
         animationDelay={300}
-        animationTimingFunction="ease-out"
+        // animationTimingFunction is not passed here
       >
         <Tag>{children}</Tag>
       </RoughNotation>
@@ -125,7 +135,11 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     }
   };
 
-  const handleContextMenu = (event) => {
+  const handleContextMenu = (event: {
+    preventDefault: () => void;
+    clientX: any;
+    clientY: any;
+  }) => {
     event.preventDefault();
     if (selectedText) {
       setContextMenu({

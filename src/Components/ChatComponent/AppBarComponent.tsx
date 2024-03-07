@@ -25,7 +25,7 @@ interface Option {
 }
 
 // Styles for group headers
-const GroupHeader = styled(ListSubheader)(({ theme }) => ({
+const GroupHeader = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
@@ -120,7 +120,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           renderGroup={(params: AutocompleteRenderGroupParams) => [
             <li key={params.key}>
               <GroupHeader>{params.group}</GroupHeader>
-              {params.children}
+              <ul>{params.children}</ul>
             </li>,
           ]}
           sx={{ width: 950, zIndex: 100 }}
