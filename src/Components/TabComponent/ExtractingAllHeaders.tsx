@@ -70,19 +70,22 @@ const TopicList: React.FC<TopicListProps> = ({ onTopicClick, link }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        "& > *": {
-          m: 1,
-        },
       }}
     >
-      <ButtonGroup
-        orientation="vertical"
-        aria-label="Vertical button group"
-        variant="outlined"
-        fullWidth // Ensures the button group takes up the full width
-      >
-        {topicButtons}
-      </ButtonGroup>
+      {topicButtons.length > 0 ? (
+        <ButtonGroup
+          orientation="vertical"
+          aria-label="Vertical button group"
+          variant="outlined"
+          fullWidth // Ensures the button group takes up the full width
+        >
+          {topicButtons}
+        </ButtonGroup>
+      ) : (
+        <h2>
+          Select an MD file from the navigation bar to display the topics list.
+        </h2> // Display this message when topicButtons is empty
+      )}
     </Box>
   );
 };

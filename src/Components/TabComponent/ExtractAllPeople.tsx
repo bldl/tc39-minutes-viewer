@@ -63,8 +63,12 @@ const PeopleList: React.FC<PeopleListProps> = ({ onPersonClick, link }) => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>{people.length > 0 ? "People" : "No md file selected"}</h2>
+    <div>
+      <h2>
+        {people.length > 0
+          ? "People"
+          : "Select an MD file from the navigation bar to display the people list."}
+      </h2>
       <ul>
         {people.map((person) => (
           <li key={person.id} onClick={() => handlePersonClick(person.name)}>

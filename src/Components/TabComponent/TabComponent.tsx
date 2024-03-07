@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import "react-tabs/style/react-tabs.css";
+
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
 import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
 import { annotate } from "rough-notation";
@@ -40,6 +44,35 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     topic: "",
     time: 0,
   });
+  const [value, setValue] = useState(
+    showGptTab
+      ? "1"
+      : showTopicsTab
+      ? "2"
+      : showSentimentTab
+      ? "3"
+      : showParticipantsTab
+      ? "4"
+      : ""
+  );
+
+  const handleChange = (event: any, newValue: React.SetStateAction<string>) => {
+    setValue(newValue);
+  };
+
+  useEffect(() => {
+    // When the component mounts or when the conditions of the tabs change,
+    // set the value to the first available tab.
+    if (showGptTab) {
+      setValue("1");
+    } else if (showTopicsTab) {
+      setValue("2");
+    } else if (showSentimentTab) {
+      setValue("3");
+    } else if (showParticipantsTab) {
+      setValue("4");
+    }
+  }, [showGptTab, showTopicsTab, showSentimentTab, showParticipantsTab]);
 
   // Calculate and set overall sentiment based on scores
   useEffect(() => {
@@ -130,81 +163,82 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     scrollToSection(toSlug(person), person);
   };
 
-  return (
-    <Tabs>
-      {!showGptTab &&
-        !showTopicsTab &&
-        !showParticipantsTab &&
-        !showSentimentTab && (
-          <h2>
-            Here we can add instructions for the app. The text will disappear
-            once a tab is opened.
-          </h2>
-        )}
-      {/* List of tabs */}
-      {(showGptTab ||
-        showTopicsTab ||
-        showSentimentTab ||
-        showParticipantsTab) && (
-        <TabList>
-          {/* Tabs and tab-names */}
-          {showGptTab && <Tab>ChatGPT</Tab>}
-          {showTopicsTab && <Tab>Topics</Tab>}
-          {showSentimentTab && <Tab>Sentiment</Tab>}
-          {showParticipantsTab && <Tab>Persons</Tab>}
-        </TabList>
-      )}
-
-      {/* Content for tabs */}
-
-      {showGptTab && (
-        <TabPanel>
-          <ChatMessages messages={messages} isLoading={isLoading} />
-        </TabPanel>
-      )}
-
-      {showTopicsTab && (
-        <TabPanel>
-          {" "}
-          <TopicList
-            onTopicClick={function (topic: string): void {
-              scrollToSection(toSlug(topic), topic);
+  return showGptTab ||
+    showTopicsTab ||
+    showSentimentTab ||
+    showParticipantsTab ? (
+    <Box sx={{ width: "100%", typography: "body1" }}>
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <TabList
+            onChange={handleChange}
+            aria-label="lab API tabs example"
+            sx={{
+              "& .MuiTab-root:focus": {
+                outline: "none",
+                // You can add additional styles for the focused state here
+              },
+              "& .MuiTab-root.Mui-selected": {
+                // Styles for the selected tab
+              },
             }}
-            link={link}
-          />
-        </TabPanel>
-      )}
-
-      {/* Sentiment tab */}
-      {showSentimentTab && (
-        <TabPanel>
-          <h2>Sentiment Analysis</h2>
-          {sentimentResult.length > 0 ? (
-            <>
-              <ul>
-                {sentimentResult.map((sentiment, index) => (
-                  <li key={index}>{sentiment}</li>
-                ))}
-              </ul>
-              <p>
-                <strong>Overall Sentiment:</strong> {overallSentiment}
-              </p>
-            </>
-          ) : (
-            <p>No sentiment analysis has been performed yet.</p>
-          )}
-        </TabPanel>
-      )}
-
-      {showParticipantsTab && (
-        <TabPanel>
-          <ExtractAllPeople
-            link={link}
-            onPersonClick={(person) => handlePerosnClick(person)}
-          />
-        </TabPanel>
-      )}
-    </Tabs>
+          >
+            {showGptTab && <Tab label="ChatGPT" value="1" />}
+            {showTopicsTab && <Tab label="Topics" value="2" />}
+            {showSentimentTab && <Tab label="Sentiment" value="3" />}
+            {showParticipantsTab && <Tab label="Persons" value="4" />}
+          </TabList>
+        </Box>
+        {showGptTab && (
+          <TabPanel value="1">
+            <ChatMessages messages={messages} isLoading={isLoading} />
+          </TabPanel>
+        )}
+        {showTopicsTab && (
+          <TabPanel value="2">
+            {" "}
+            <TopicList
+              onTopicClick={function (topic: string): void {
+                scrollToSection(toSlug(topic), topic);
+              }}
+              link={link}
+            />
+          </TabPanel>
+        )}
+        {showSentimentTab && (
+          <TabPanel value="3">
+            <h2>Sentiment Analysis</h2>
+            {sentimentResult.length > 0 ? (
+              <>
+                <ul>
+                  {sentimentResult.map((sentiment, index) => (
+                    <li key={index}>{sentiment}</li>
+                  ))}
+                </ul>
+                <p>
+                  <strong>Overall Sentiment:</strong> {overallSentiment}
+                </p>
+              </>
+            ) : (
+              <p>No sentiment analysis has been performed yet.</p>
+            )}
+          </TabPanel>
+        )}
+        {showParticipantsTab && (
+          <TabPanel value="4">
+            <ExtractAllPeople
+              link={link}
+              onPersonClick={(person) => handlePerosnClick(person)}
+            />
+          </TabPanel>
+        )}
+      </TabContext>
+    </Box>
+  ) : (
+    // Render a message or an empty fragment when no tabs are available
+    <Box sx={{ width: "100%", typography: "body1" }}>
+      <h2>No tab is selected.</h2>
+    </Box>
   );
 };
 
