@@ -57,7 +57,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
   const extractFilename = (
     link: string | null,
-    type: string | "topics" | "sentiment" | "people"
+    type: string | "topics" | "sentiment" | "persons"
   ): string => {
     if (!link) return "No file selected";
 
@@ -74,9 +74,9 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       filename = filename + "/sentiment";
     }
 
-    if (type === "people") {
+    if (type === "persons") {
       // add people to the link
-      filename = filename + "/people";
+      filename = filename + "/persons";
     }
 
     if (type === "topics") {
@@ -111,6 +111,8 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
   const scrollToSection = (id: string, topic: string) => {
     const currentTime = new Date().getTime();
+    console.log("Clicked on topic in scroll:", topic);
+    console.log("Id:", id);
     if (
       topic === lastTopicClick.topic &&
       currentTime - lastTopicClick.time < 2000
@@ -124,6 +126,9 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
     // Proceed with scrolling and annotating the element
     const element = document.getElementById(id);
+
+    console.log("Element:", element);
+
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
       // Wait until scroll if finished before annotating the element
@@ -148,14 +153,21 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     }, 2000);
   };
 
-  function toSlug(topic: string): string {
-    return topic
+  function toSlug(text: string): string {
+    // Normalize Unicode characters, remove non-alphanumeric characters, replace spaces with hyphens
+    // This approach assumes a basic handling of special characters and may need adjustments for edge cases
+    return text
+      .normalize("NFD") // Decompose Unicode into base characters and diacritics
+      .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
       .toLowerCase() // Convert to lowercase
-      .replace(/[\s]+/g, "-") // Replace spaces with hyphens
-      .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+      .replace(/&/g, "")
+      .replace(/:=/g, "-")
+      .replace(/"/g, "-")
+      .replace(/[\s]+/g, "-") // Replace spaces and repeated hyphens with a single hyphen
+      .replace(/[^a-z0-9\-]/g, "") // Remove remaining non-alphanumeric/non-hyphen characters
       .replace(/\-\-+/g, "-") // Replace multiple hyphens with a single hyphen
-      .replace(/^-+/, "") // Trim hyphen from start
-      .replace(/-+$/, ""); // Trim hyphen from end
+      .replace(/^-+|-+$/g, "") // Trim hyphens from start and end
+      .replace(/""/g, ""); // Handle ':=' by removing it
   }
 
   const handlePerosnClick = (person: string) => {
@@ -201,6 +213,8 @@ const TabsComponent: React.FC<TabBoxProps> = ({
           <TopicList
             onTopicClick={function (topic: string): void {
               scrollToSection(toSlug(topic), topic);
+              console.log("Clicked on topic:", topic);
+              console.log("After being slugged", toSlug(topic));
             }}
             link={link}
           />
@@ -231,7 +245,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
       {showParticipantsTab && (
         <TabPanel>
-          <h3>{extractFilename(link, "people")}</h3>
+          <h3>{extractFilename(link, "persons")}</h3>
           <ExtractAllPeople
             link={link}
             onPersonClick={(person) => handlePerosnClick(person)}
