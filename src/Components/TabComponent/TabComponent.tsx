@@ -9,6 +9,15 @@ import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
 import { annotate } from "rough-notation";
 import ExtractAllPeople from "./ExtractAllPeople.tsx";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
 
 interface Message {
   role: "user" | "assistant";
@@ -107,6 +116,34 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     else if (averageScore >= 0.5 && averageScore < 1.5)
       return "Overall sentiment is Neutral.";
     else return "Overall sentiment is Positive.";
+  };
+
+  const SentimentAnalysisChart = ({ sentimentResults }) => {
+    const data = [
+      {
+        name: "Negative",
+        count: sentimentResults.filter((x) => x === "Negative").length,
+      },
+      {
+        name: "Neutral",
+        count: sentimentResults.filter((x) => x === "Neutral").length,
+      },
+      {
+        name: "Positive",
+        count: sentimentResults.filter((x) => x === "Positive").length,
+      },
+    ];
+
+    return (
+      <BarChart width={500} height={300} data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="count" fill="#8884d8" />
+      </BarChart>
+    );
   };
   // Sentiment end
 
@@ -209,16 +246,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
           <TabPanel value="3">
             <h2>Sentiment Analysis</h2>
             {sentimentResult.length > 0 ? (
-              <>
-                <ul>
-                  {sentimentResult.map((sentiment, index) => (
-                    <li key={index}>{sentiment}</li>
-                  ))}
-                </ul>
-                <p>
-                  <strong>Overall Sentiment:</strong> {overallSentiment}
-                </p>
-              </>
+              <SentimentAnalysisChart sentimentResults={sentimentResult} />
             ) : (
               <p>No sentiment analysis has been performed yet.</p>
             )}
