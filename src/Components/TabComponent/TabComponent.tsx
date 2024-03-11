@@ -9,6 +9,7 @@ import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
 import { annotate } from "rough-notation";
 import ExtractAllPeople from "./ExtractAllPeople.tsx";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import {
   BarChart,
   Bar,
@@ -17,6 +18,11 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
 } from "recharts";
 
 interface Message {
@@ -145,6 +151,106 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       </BarChart>
     );
   };
+
+  const SentimentPieChart = ({ sentimentResults }) => {
+    const data = [
+      {
+        name: "Negative",
+        value: sentimentResults.filter((x) => x === "Negative").length,
+      },
+      {
+        name: "Neutral",
+        value: sentimentResults.filter((x) => x === "Neutral").length,
+      },
+      {
+        name: "Positive",
+        value: sentimentResults.filter((x) => x === "Positive").length,
+      },
+    ];
+
+    const COLORS = ["#FF8042", "#00C49F", "#0088FE"];
+
+    return (
+      <PieChart width={400} height={400}>
+        <Pie
+          data={data}
+          cx={200}
+          cy={200}
+          labelLine={false}
+          outerRadius={80}
+          fill="#8884d8"
+          dataKey="value"
+          label={({ name, percent }) =>
+            `${name} ${(percent * 100).toFixed(0)}%`
+          }
+        >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Pie>
+        <Tooltip />
+        <Legend />
+      </PieChart>
+    );
+  };
+
+  const SentimentLineChart = ({ sentimentResults }) => {
+    // Mapping sentiment strings to numeric values for visualization
+    const data = sentimentResults.map((sentiment, index) => ({
+      name: `Point ${index + 1}`,
+      Sentiment: sentiment === "Positive" ? 2 : sentiment === "Neutral" ? 1 : 0,
+    }));
+
+    return (
+      <LineChart width={500} height={300} data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis domain={[0, 2]} allowDataOverflow={true} />
+        <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="Sentiment" stroke="#8884d8" />
+      </LineChart>
+    );
+  };
+
+  const renderCustomizedLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+    index,
+    payload,
+  }) => {
+    if (percent < 0.05) return null; // Don't render labels for very small segments
+
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos((-midAngle * Math.PI) / 180);
+    const y = cy + radius * Math.sin((-midAngle * Math.PI) / 180);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="white"
+        textAnchor={x > cx ? "start" : "end"}
+        dominantBaseline="central"
+      >
+        {`${payload.name} (${(percent * 100).toFixed(0)}%)`}
+      </text>
+    );
+  };
+
+  // State to manage selected chart type
+  const [chartType, setChartType] = useState("bar");
+
+  // Handler for chart type change
+  const handleChartTypeChange = (event, newChartType) => {
+    if (newChartType !== null) {
+      setChartType(newChartType);
+    }
+  };
   // Sentiment end
 
   const scrollToSection = (id: string, topic: string) => {
@@ -245,19 +351,34 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         {showSentimentTab && (
           <TabPanel value="3">
             <h2>Sentiment Analysis</h2>
+            <ToggleButtonGroup
+              color="primary"
+              value={chartType}
+              exclusive
+              onChange={handleChartTypeChange}
+              aria-label="chart type"
+            >
+              <ToggleButton value="bar" aria-label="bar chart">
+                Bar Chart
+              </ToggleButton>
+              <ToggleButton value="pie" aria-label="pie chart">
+                Pie Chart
+              </ToggleButton>
+              <ToggleButton value="line" aria-label="line chart">
+                Line Chart
+              </ToggleButton>
+            </ToggleButtonGroup>
             {sentimentResult.length > 0 ? (
-              <SentimentAnalysisChart sentimentResults={sentimentResult} />
+              chartType === "bar" ? (
+                <SentimentAnalysisChart sentimentResults={sentimentResult} />
+              ) : chartType === "pie" ? (
+                <SentimentPieChart sentimentResults={sentimentResult} />
+              ) : (
+                <SentimentLineChart sentimentResults={sentimentResult} />
+              )
             ) : (
               <p>No sentiment analysis has been performed yet.</p>
             )}
-          </TabPanel>
-        )}
-        {showParticipantsTab && (
-          <TabPanel value="4">
-            <ExtractAllPeople
-              link={link}
-              onPersonClick={(person) => handlePerosnClick(person)}
-            />
           </TabPanel>
         )}
       </TabContext>
