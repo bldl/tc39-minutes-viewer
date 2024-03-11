@@ -43,7 +43,7 @@ const SentimentPieChart: React.FC<SentimentPieChartProps> = ({
     <PieChart width={500} height={275}>
       <Pie
         data={data}
-        cx={235}
+        cx={245}
         cy={125}
         labelLine={false}
         outerRadius={80}

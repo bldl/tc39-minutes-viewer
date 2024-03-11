@@ -12,6 +12,11 @@ import ExtractAllPeople from "./ExtractAllPeople.tsx";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
+import { Typography } from "@mui/material";
+import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
+import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
+import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
+
 import SentimentBarChart from "./Sentiment/SentimentBarChart";
 import SentimentPieChart from "./Sentiment/SentimentPieChart";
 import SentimentLineChart from "./Sentiment/SentimentLineChart";
@@ -23,6 +28,15 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   marginBottom: theme.spacing(2), // Add some space below the buttons
 }));
 
+const getSentimentIcon = (sentiment) => {
+  if (sentiment.includes("Negative")) {
+    return <SentimentDissatisfiedIcon color="error" sx={{ fontSize: 40 }} />;
+  } else if (sentiment.includes("Positive")) {
+    return <SentimentSatisfiedIcon color="success" sx={{ fontSize: 40 }} />;
+  } else if (sentiment.includes("Neutral")) {
+    return <SentimentNeutralIcon color="action" sx={{ fontSize: 40 }} />;
+  }
+};
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -123,7 +137,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   };
 
   // State to manage selected chart type
-  const [chartType, setChartType] = useState("bar");
+  const [chartType, setChartType] = useState("pie");
 
   // Handler for chart type change
   const handleChartTypeChange = (event, newChartType) => {
@@ -238,11 +252,11 @@ const TabsComponent: React.FC<TabBoxProps> = ({
                 onChange={handleChartTypeChange}
                 aria-label="chart type"
               >
-                <ToggleButton value="pie" aria-label="pie chart">
-                  Pie Chart
-                </ToggleButton>
                 <ToggleButton value="bar" aria-label="bar chart">
                   Bar Chart
+                </ToggleButton>
+                <ToggleButton value="pie" aria-label="pie chart">
+                  Pie Chart
                 </ToggleButton>
                 <ToggleButton value="line" aria-label="line chart">
                   Line Chart
@@ -250,15 +264,43 @@ const TabsComponent: React.FC<TabBoxProps> = ({
               </StyledToggleButtonGroup>
             </Box>
             {sentimentResult.length > 0 ? (
-              chartType === "pie" ? (
-                <SentimentPieChart sentimentResults={sentimentResult} />
-              ) : chartType === "bar" ? (
-                <SentimentBarChart sentimentResults={sentimentResult} />
-              ) : (
-                <SentimentLineChart sentimentResults={sentimentResult} />
-              )
+              <>
+                <Box sx={{ textAlign: "center", my: 2 }}>
+                  <Typography variant="h6">Overall Sentiment</Typography>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    {overallSentiment}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      mt: 2,
+                    }}
+                  >
+                    {getSentimentIcon(overallSentiment)}
+                  </Box>
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+                  {chartType === "bar" && (
+                    <SentimentBarChart sentimentResults={sentimentResult} />
+                  )}
+                  {chartType === "pie" && (
+                    <SentimentPieChart sentimentResults={sentimentResult} />
+                  )}
+                  {chartType === "line" && (
+                    <SentimentLineChart sentimentResults={sentimentResult} />
+                  )}
+                </Box>
+              </>
             ) : (
-              <p>No sentiment analysis has been performed yet.</p>
+              <Box sx={{ textAlign: "center", my: 2 }}>
+                <SentimentNeutralIcon sx={{ fontSize: 40, my: 2 }} />
+                <Typography>
+                  No sentiment analysis has been performed yet.
+                </Typography>
+              </Box>
             )}
           </TabPanel>
         )}
