@@ -12,7 +12,6 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 
