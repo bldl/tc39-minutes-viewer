@@ -2,18 +2,19 @@
 
 ## About the project
 
-We were given the task of making the meeting notes of tc39 more readable and accesable.
-This application exist to make it easier to view meeting notes from the tc39 meetings.
+We have been tasked with improving the accessibility and readability of the TC39 meeting notes. Our application simplifies the process of viewing these notes. We've organized all meeting documents into a tree structure, making it easier to find specific files. Additionally, we've incorporated a sentiment analysis tool. This feature allows users to select portions of text and analyze their sentiment. We've also integrated the ChatGPT API. Now, users can engage in conversations with context from the marked sections of the markdown (MD) files. 
+
 
 ## How to run / Installation
 
-This is how to run the project now, might change later.
-After you have cloned the project you can write "npm i" in console.
+Current Instructions for Running the Project (Subject to Change):
 
-Afterwards it should be possible to run the app, if something is missing just write "npm i "Name of missing""
+After cloning the project, open the console and execute the command 'npm i'. This installs all necessary dependencies.
+Once installation is complete, you should be able to run the app.
+If you encounter a notification about missing components, 
+use the command 'npm i [Name of Missing Component]' to install them individually."
 
-### Installation
-
+### Example:
 ```java
 pip install stanza
 ```
