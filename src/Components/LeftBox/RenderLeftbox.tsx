@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
-
+import { Tab, Tabs } from "@mui/material"; // Import MUI Tab components
 import { useSelectedText } from "../SelectedTextContext";
 import ContextMenu from "../ContextMenu";
-
 import { RoughNotation } from "react-rough-notation";
 import { JSX } from "react/jsx-runtime";
 
@@ -20,6 +19,8 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     top: 0,
     left: 0,
   });
+  const [openTabs, setOpenTabs] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
 
   const { selectedText, setSelectedText } = useSelectedText();
   const [contextMenu, setContextMenu] = useState({
@@ -42,6 +43,8 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
         const response = await fetch(link);
         const text = await response.text();
         setMarkdownContent(text);
+        setOpenTabs((prevTabs) => [...prevTabs, link]);
+        setActiveTab(link);
       } catch (error) {
         console.error("Error loading Markdown file:", error);
       }
@@ -51,7 +54,6 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   }, [link]);
 
   useEffect(() => {
-    // Ensure the markdownRef element scrolls into view at the top whenever markdownContent changes
     if (markdownRef.current) {
       markdownRef.current.scrollIntoView({
         behavior: "auto",
@@ -73,58 +75,6 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
       }
     }
   }, [selectedRange]);
-
-  const components = {
-    // Your components' overrides...
-    h1: (
-      props: JSX.IntrinsicAttributes & {
-        [x: string]: any;
-        level: any;
-        children: any;
-      }
-    ) => <HeaderWithRoughNotation {...props} level={1} />,
-    a: ({ children }) => (
-      <span
-        style={{ cursor: "not-allowed", color: "gray", textDecoration: "none" }}
-      >
-        {children}
-      </span>
-    ),
-  };
-
-  const HeaderWithRoughNotation = ({ level, children, ...rest }) => {
-    const [showAnnotation, setShowAnnotation] = useState(true);
-
-    useEffect(() => {
-      const timer = setTimeout(() => {
-        setShowAnnotation(false);
-      }, 3000);
-
-      return () => {
-        clearTimeout(timer);
-      };
-    }, []);
-
-    const { animationTimingFunction, otherNonStandardProp, ...domProps } = rest;
-
-    const Tag = `h${level}`;
-    return (
-      <RoughNotation
-        {...domProps} // Spread only the props that are valid for the DOM element
-        type="highlight"
-        show={showAnnotation}
-        color="red"
-        padding={8}
-        strokeWidth={2}
-        animationDuration={1000}
-        iterations={1}
-        animationDelay={300}
-        // animationTimingFunction is not passed here
-      >
-        <Tag>{children}</Tag>
-      </RoughNotation>
-    );
-  };
 
   const handleTextHighlight = (_e: React.MouseEvent<HTMLDivElement>) => {
     const selection = window.getSelection();
@@ -168,39 +118,55 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     }
   };
 
+  // Handler for tab change
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    setActiveTab(newValue);
+  };
+
   return (
-    <div onContextMenu={handleContextMenu} onMouseUp={handleTextHighlight}>
-      <div ref={markdownRef}>
-        <ReactMarkdown
-          className="md"
-          rehypePlugins={[rehypeSlug]}
-          components={components}
-        >
-          {markdownContent}
-        </ReactMarkdown>
+    <div>
+      {/* Render tabs */}
+      <Tabs value={activeTab} onChange={handleTabChange}>
+        {openTabs.map((tabLink) => (
+          <Tab
+            key={tabLink}
+            label={tabLink} // Display tab content
+            value={tabLink} // Identify the tab
+          />
+        ))}
+      </Tabs>
+      <div onContextMenu={handleContextMenu} onMouseUp={handleTextHighlight}>
+        <div ref={markdownRef}>
+          <ReactMarkdown
+            className="md"
+            rehypePlugins={[rehypeSlug]}
+          >
+            {markdownContent}
+          </ReactMarkdown>
+        </div>
+        {contextMenu.isVisible && (
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            isOpen={contextMenu.isVisible}
+            onAnalyzeSentiment={handleAnalyzeSentiment}
+            onClose={handleClose}
+          />
+        )}
+        {selectedRange && (
+          <div
+            style={{
+              position: "absolute",
+              background: "rgba(255, 255, 0, 0.3)",
+              zIndex: 99,
+              top: selectedTextPosition.top,
+              left: selectedTextPosition.left,
+              width: selectedRange.getBoundingClientRect().width + 15,
+              height: selectedRange.getBoundingClientRect().height + 15,
+            }}
+          ></div>
+        )}
       </div>
-      {contextMenu.isVisible && (
-        <ContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
-          isOpen={contextMenu.isVisible}
-          onAnalyzeSentiment={handleAnalyzeSentiment}
-          onClose={handleClose}
-        />
-      )}
-      {selectedRange && (
-        <div
-          style={{
-            position: "absolute",
-            background: "rgba(255, 255, 0, 0.3)",
-            zIndex: 99,
-            top: selectedTextPosition.top,
-            left: selectedTextPosition.left,
-            width: selectedRange.getBoundingClientRect().width + 15,
-            height: selectedRange.getBoundingClientRect().height + 15,
-          }}
-        ></div>
-      )}
     </div>
   );
 };
