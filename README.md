@@ -8,11 +8,25 @@ This application exist to make it easier to view meeting notes from the tc39 mee
 ## How to run / Installation
 
 This is how to run the project now, might change later.
-After you have cloned the project you can write "npm i" in console
+After you have cloned the project you can write "npm i" in console.
+
 Afterwards it should be possible to run the app, if something is missing just write "npm i "Name of missing""
 
-To start:
-"npm run dev"
+### Installation
+
+```java
+pip install stanza
+```
+
+To install what is needed do this:
+```java
+npm i
+```
+### To start:
+
+```Java
+npm run dev
+```
 
 ## Tech/Framework used
 
@@ -34,10 +48,19 @@ Our [agile project board](https://trello.com/b/vpTSGlQt/zinf-tc39).
 
 ## Screenshots
 
-TODO:
-
 ![App](image.png)
 
 ## Credits
 
-TODO:
+in alphabetical order:
+
+_Brage Aasen_
+
+_Casper Benjamin Karlsen_
+
+*Elias Hovdenes*
+
+*Magnus Brorby*
+
+*Vetle Knutsen*
+
