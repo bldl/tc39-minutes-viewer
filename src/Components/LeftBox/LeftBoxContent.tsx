@@ -18,6 +18,7 @@ const LeftBoxContent = ({ link, onHighlight }: Props) => {
           width: "40vw",
           borderRadius: "20px",
           position: "relative",
+          overflowX: "hidden",
         }}
       >
         <RenderMarkdown link={link} onHighlight={onHighlight} />

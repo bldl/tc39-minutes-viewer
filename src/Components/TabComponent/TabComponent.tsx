@@ -237,7 +237,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   ) : (
     // Render a message or an empty fragment when no tabs are available
     <Box sx={{ width: "100%", typography: "body1" }}>
-      <h2>No tab is selected.</h2>
+      <h2>Here we can add instructions for the app. </h2>
     </Box>
   );
 };

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
-import { Tab, Tabs } from "@mui/material"; // Import MUI Tab components
+import { IconButton, Tab, Tabs } from "@mui/material"; // Import MUI Tab components
 import { useSelectedText } from "../SelectedTextContext";
 import ContextMenu from "../ContextMenu";
 import { RoughNotation } from "react-rough-notation";
 import { JSX } from "react/jsx-runtime";
+import CloseIcon from "@mui/icons-material/Close";
 
 interface Props {
   link: string | null;
@@ -13,14 +14,17 @@ interface Props {
 }
 
 const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
-  const [markdownContent, setMarkdownContent] = useState("");
+  const [markdownMap, setMarkdownMap] = useState<Map<string, string>>(
+    new Map()
+  );
   const [selectedRange, setSelectedRange] = useState<Range | null>(null);
   const [selectedTextPosition, setSelectedTextPosition] = useState({
     top: 0,
     left: 0,
   });
-  const [openTabs, setOpenTabs] = useState<string[]>([]);
+
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [closingTab, setClosingTab] = useState<string | null>(null); // Track the tab being closed
 
   const { selectedText, setSelectedText } = useSelectedText();
   const [contextMenu, setContextMenu] = useState({
@@ -34,16 +38,16 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   useEffect(() => {
     const fetchMarkdown = async () => {
       if (!link) {
-        const welcomeMessage =
-          "## Welcome! Use the navigation bar to the left to select which files you want browse";
-        setMarkdownContent(welcomeMessage);
         return;
       }
       try {
         const response = await fetch(link);
         const text = await response.text();
-        setMarkdownContent(text);
-        setOpenTabs((prevTabs) => [...prevTabs, link]);
+        setMarkdownMap((prevMap) => {
+          const newMap = new Map(prevMap);
+          newMap.set(link, text);
+          return newMap;
+        });
         setActiveTab(link);
       } catch (error) {
         console.error("Error loading Markdown file:", error);
@@ -60,7 +64,7 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
         block: "start",
       });
     }
-  }, [markdownContent]);
+  }, [markdownMap]);
 
   useEffect(() => {
     if (selectedRange) {
@@ -69,7 +73,7 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
 
       if (rangeRect && containerRect) {
         setSelectedTextPosition({
-          top: rangeRect.top - containerRect.top + 47,
+          top: rangeRect.top - containerRect.top + 105,
           left: rangeRect.left - containerRect.left + 10,
         });
       }
@@ -118,20 +122,115 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
     }
   };
 
+  const components = {
+    // Your components' overrides...
+    h1: (
+      props: JSX.IntrinsicAttributes & {
+        [x: string]: any;
+        level: any;
+        children: any;
+      }
+    ) => <HeaderWithRoughNotation {...props} level={1} />,
+    a: ({ children }) => (
+      <span
+        style={{ cursor: "not-allowed", color: "gray", textDecoration: "none" }}
+      >
+        {children}
+      </span>
+    ),
+  };
+
+  const HeaderWithRoughNotation = ({ level, children, ...rest }) => {
+    const [showAnnotation, setShowAnnotation] = useState(true);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setShowAnnotation(false);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }, []);
+
+    const { animationTimingFunction, otherNonStandardProp, ...domProps } = rest;
+
+    const Tag = `h${level}`;
+    return (
+      <RoughNotation
+        {...domProps} // Spread only the props that are valid for the DOM element
+        type="highlight"
+        show={showAnnotation}
+        color="red"
+        padding={8}
+        strokeWidth={2}
+        animationDuration={1000}
+        iterations={1}
+        animationDelay={300}
+        // animationTimingFunction is not passed here
+      >
+        <Tag>{children}</Tag>
+      </RoughNotation>
+    );
+  };
+
   // Handler for tab change
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setActiveTab(newValue);
+
+    setSelectedRange(null);
+    setSelectedText("");
   };
+
+  const handleCloseTab = (link: string) => {
+    setClosingTab(link);
+    setMarkdownMap((prevMap) => {
+      const newMap = new Map(prevMap);
+      newMap.delete(link);
+      return newMap;
+    });
+  };
+
+  useEffect(() => {
+    if (closingTab !== null && activeTab === closingTab) {
+      const updatedTabs = Array.from(markdownMap.keys());
+      const lastTabIndex = updatedTabs.length - 1;
+      setActiveTab(lastTabIndex >= 0 ? updatedTabs[lastTabIndex] : null);
+    }
+  }, [markdownMap, activeTab, closingTab]);
 
   return (
     <div>
       {/* Render tabs */}
-      <Tabs value={activeTab} onChange={handleTabChange}>
-        {openTabs.map((tabLink) => (
+      <Tabs
+        value={
+          activeTab !== null && markdownMap.has(activeTab)
+            ? activeTab
+            : markdownMap.keys().next().value
+        }
+        onChange={handleTabChange}
+        variant="scrollable"
+        scrollButtons
+        allowScrollButtonsMobile
+        aria-label="scrollable force tabs example"
+      >
+        {[...markdownMap.keys()].map((tabLink) => (
           <Tab
             key={tabLink}
-            label={tabLink} // Display tab content
             value={tabLink} // Identify the tab
+            label={
+              <span>
+                {tabLink.replace("public/meetings/", "")}
+                <IconButton
+                  size="small"
+                  component="span"
+                  onClick={() => handleCloseTab(tabLink)}
+                  style={{ marginLeft: "auto" }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </span>
+            }
           />
         ))}
       </Tabs>
@@ -140,8 +239,10 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
           <ReactMarkdown
             className="md"
             rehypePlugins={[rehypeSlug]}
+            components={components}
           >
-            {markdownContent}
+            {markdownMap.get(activeTab ?? "") ||
+              "Choose a file in the navigation bar."}
           </ReactMarkdown>
         </div>
         {contextMenu.isVisible && (
