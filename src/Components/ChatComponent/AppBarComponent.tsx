@@ -106,28 +106,31 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             if (value?.isCommand) {
               // Example input: "2018-03/mar-20.md/topics/sentiment"
               const basePath = "../public/meetings/";
-              let topics: string[] = [];
-              let sentiments: string[] = [];
+              let tabs: string[] = [];
 
-              // Use a regular expression to extract the parts of the input
-              const parts = input.match(/^(.+?\.md)(?:\/(topics|sentiment))?$/);
+              // This regex now captures all subsequent paths as a single string
+              const parts = input.match(/^(.+?\.md)(?:\/(.*))?$/);
 
               if (parts) {
                 const filePath = basePath + parts[1]; // "../public/meetings/2018-03/mar-20.md"
                 updateFilePath(filePath);
 
-                // If there's a second part and it's 'topics', add to topics array
-                if (parts[2] === "topics") {
-                  topics.push(parts[2]);
+                // Check if there are additional paths and split them into an array
+                if (parts[2]) {
+                  // Split the second captured group by '/' to handle multiple tabs
+                  const additionalPaths = parts[2].split("/");
+                  // For each path, check if it's a recognized tab and add it to the tabs array
+                  additionalPaths.forEach((path) => {
+                    if (["topics", "sentiment", "persons"].includes(path)) {
+                      // Extend this array with more tab types as needed
+                      tabs.push(path);
+                    }
+                  });
                 }
 
-                // If there's a second part and it's 'sentiment', add to sentiments array
-                if (parts[2] === "sentiment") {
-                  sentiments.push(parts[2]);
-                }
-
-                // Assuming openTabs is a function you'll implement
-                //openTabs(topics, sentiments);
+                //TODO:
+                // Call openTabs with the list of tabs, ensuring no duplicates
+                openTabs([...new Set(tabs)]); // Using Set to ensure uniqueness
                 console.log(filePath);
               }
             } else if (value) {
