@@ -197,6 +197,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   }
 
   const handlePerosnClick = (person: string) => {
+    console.log("Clicked on person:", person);
     scrollToSection(toSlug(person), person);
   };
 
