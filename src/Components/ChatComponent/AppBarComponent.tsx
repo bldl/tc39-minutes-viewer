@@ -17,6 +17,7 @@ interface AppBarComponentProps {
   handleSendMessage: () => void;
   handleClearMessages: () => void;
   handleSelectOption: (selectedOption: string) => void;
+  updateFilePath: (filePath: string) => void; // Accept this prop
 }
 
 interface Option {
@@ -37,6 +38,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   handleSendMessage,
   handleClearMessages,
   handleSelectOption,
+  updateFilePath,
 }) => {
   const theme = useTheme();
   const themeMode = theme.palette.mode;
@@ -102,7 +104,32 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           )}
           onChange={(_event, value) => {
             if (value?.isCommand) {
-              console.log(input); //Send this to the left box
+              // Example input: "2018-03/mar-20.md/topics/sentiment"
+              const basePath = "../public/meetings/";
+              let topics: string[] = [];
+              let sentiments: string[] = [];
+
+              // Use a regular expression to extract the parts of the input
+              const parts = input.match(/^(.+?\.md)(?:\/(topics|sentiment))?$/);
+
+              if (parts) {
+                const filePath = basePath + parts[1]; // "../public/meetings/2018-03/mar-20.md"
+                updateFilePath(filePath);
+
+                // If there's a second part and it's 'topics', add to topics array
+                if (parts[2] === "topics") {
+                  topics.push(parts[2]);
+                }
+
+                // If there's a second part and it's 'sentiment', add to sentiments array
+                if (parts[2] === "sentiment") {
+                  sentiments.push(parts[2]);
+                }
+
+                // Assuming openTabs is a function you'll implement
+                //openTabs(topics, sentiments);
+                console.log(filePath);
+              }
             } else if (value) {
               if (value.label === "Search with GPT-3.5") {
                 handleSendMessage();
