@@ -9,6 +9,7 @@ import ListSubheader from "@mui/material/ListSubheader";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import ChatIcon from "@mui/icons-material/Chat";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
+import CodeIcon from "@mui/icons-material/Code"; // Icon for the execute command
 
 interface AppBarComponentProps {
   input: string;
@@ -22,6 +23,7 @@ interface Option {
   label: string;
   id: number;
   category: string;
+  isCommand?: boolean; // Optional property to identify command options
 }
 
 // Styles for group headers
@@ -36,32 +38,37 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   handleClearMessages,
   handleSelectOption,
 }) => {
-  // Use the theme from MUI's useTheme hook
   const theme = useTheme();
   const themeMode = theme.palette.mode;
-  const myDefaultOption = {
-    label: "Search with GPT-3.5",
-    id: 1,
-    category: "ChatGPT",
+
+  const commandOption: Option = {
+    label: "Execute command",
+    id: -1, // Unique ID for the command option
+    category: "Commands",
+    isCommand: true,
   };
 
   const options: Option[] = [
-    myDefaultOption,
+    { label: "Search with GPT-3.5", id: 1, category: "ChatGPT" },
     { label: "Topics", id: 2, category: "List" },
     { label: "Sentiment", id: 3, category: "Analysis" },
     { label: "Persons", id: 4, category: "List" },
-    // Add more options as needed, assigning them to categories
+    // Additional static options...
   ];
 
-  const _filterOptions = createFilterOptions<Option>();
-  const filterOptions = (options: Option[], state: any) => {
-    const results = _filterOptions(options, state);
+  // Custom filterOptions function to always include the "Execute command" option
+  const filterOptions = (options: Option[], params: { inputValue: string }) => {
+    const filtered = createFilterOptions<Option>()(options, {
+      ...params,
+      getOptionLabel: (option) => option.label,
+    });
 
-    if (!results.includes(myDefaultOption)) {
-      results.unshift(myDefaultOption);
+    // Check if "Execute command" is already included due to the current input value
+    if (!filtered.some((option) => option.isCommand)) {
+      filtered.push(commandOption); // Always add the "Execute command" option
     }
 
-    return results;
+    return filtered;
   };
 
   return (
@@ -81,9 +88,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         <Autocomplete
           disablePortal
           filterOptions={filterOptions}
-          options={options.sort(
-            (a, b) => -b.category.localeCompare(a.category)
-          )}
+          options={options}
           groupBy={(option) => option.category}
           getOptionLabel={(option) => option.label}
           isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -96,11 +101,14 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             />
           )}
           onChange={(_event, value) => {
-            if (value && value.label === myDefaultOption.label) {
-              handleSendMessage();
-            }
-            if (value) {
-              handleSelectOption(value.label); // Assuming handleSelectOption can handle all options
+            if (value?.isCommand) {
+              console.log(input); //Send this to the left box
+            } else if (value) {
+              if (value.label === "Search with GPT-3.5") {
+                handleSendMessage();
+              } else {
+                handleSelectOption(value.label);
+              }
             }
           }}
           renderOption={(props, option) => (
@@ -113,6 +121,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
               )}
               {option.category === "List" && (
                 <FormatListNumberedIcon style={{ marginRight: 8 }} />
+              )}
+              {option.category === "Commands" && (
+                <CodeIcon style={{ marginRight: 8 }} />
               )}
               {option.label}
             </li>
