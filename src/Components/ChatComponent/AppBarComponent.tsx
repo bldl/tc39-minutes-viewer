@@ -101,38 +101,110 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
               value={input}
               onChange={handleInputChange}
             />
-          )}
+          )} //if (value?.isCommand) {
           onChange={(_event, value) => {
             if (value?.isCommand) {
-              // Example input: "2018-03/mar-20.md/topics/sentiment"
               const basePath = "../public/meetings/";
-              let tabs: string[] = [];
+              let tabs = [];
 
-              // This regex now captures all subsequent paths as a single string
-              const parts = input.match(/^(.+?\.md)(?:\/(.*))?$/);
-
-              if (parts) {
-                const filePath = basePath + parts[1]; // "../public/meetings/2018-03/mar-20.md"
-                updateFilePath(filePath);
-
-                // Check if there are additional paths and split them into an array
-                if (parts[2]) {
-                  // Split the second captured group by '/' to handle multiple tabs
-                  const additionalPaths = parts[2].split("/");
-                  // For each path, check if it's a recognized tab and add it to the tabs array
-                  additionalPaths.forEach((path) => {
-                    if (["topics", "sentiment", "persons"].includes(path)) {
-                      // Extend this array with more tab types as needed
-                      tabs.push(path);
-                    }
-                  });
-                }
-
-                //TODO:
-                // Call openTabs with the list of tabs, ensuring no duplicates
-                openTabs([...new Set(tabs)]); // Using Set to ensure uniqueness
-                console.log(filePath);
+              // Validate the base format of the input
+              if (!input.startsWith("http://tc39/")) {
+                console.error("Invalid input format");
+                return;
               }
+
+              // Split the input by '/' and capture the parts after "tc39/"
+              const linker = input.replace("http://tc39/", "");
+              const parts = linker.split("/");
+
+              if (parts.length < 3) {
+                console.error("Invalid input format");
+                return;
+              }
+
+              const year = parts[0];
+              let month = parts[1];
+              const date = parts[2];
+
+              // Year validation
+              if (isNaN(parseInt(year, 10)) || year.length !== 4) {
+                console.error("Invalid year format");
+                return;
+              }
+
+              // Month and date validation
+              if (isNaN(parseInt(date, 10))) {
+                console.error("Invalid date format");
+                return;
+              }
+
+              // Convert month to a number if it is numeric, otherwise keep the month name
+              const monthNames = [
+                "jan",
+                "feb",
+                "mar",
+                "apr",
+                "may",
+                "jun",
+                "jul",
+                "aug",
+                "sep",
+                "oct",
+                "nov",
+                "dec",
+              ];
+              let monthNumber = parseInt(month, 10);
+              let monthName = month;
+
+              // Check if month is a number and within valid range
+              if (
+                !isNaN(monthNumber) &&
+                monthNumber >= 1 &&
+                monthNumber <= 12
+              ) {
+                monthName = monthNames[monthNumber - 1];
+                month = month.padStart(2, "0");
+              } else {
+                monthNumber = monthNames.indexOf(month.toLowerCase()) + 1;
+                if (monthNumber === 0) {
+                  console.error("Invalid month format");
+                  return;
+                }
+                month = monthNumber.toString().padStart(2, "0");
+              }
+
+              // Construct the file path
+              const mdFileLink = `${basePath}${year}-${month}/${monthName}-${date}.md`;
+
+              if (parts.length > 3) {
+                // Starting from the 4th part, add remaining parts to the tabs list
+                for (let i = 3; i < parts.length; i++) {
+                  tabs.push(parts[i]);
+                }
+              }
+
+              // Output for demonstration
+              console.log("File path:", mdFileLink);
+              console.log("Tabs:", tabs);
+
+              // Your logic to use mdFileLink and tabs as needed
+
+              // check if the mdFileLink is valid before updating the file path
+              //check if the file exists with fetch
+
+              fetch(mdFileLink)
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("File not found");
+                  }
+                  return response.text();
+                })
+                .then(() => {
+                  updateFilePath(mdFileLink);
+                })
+                .catch((error) => {
+                  console.error("Error fetching file:", error);
+                });
             } else if (value) {
               if (value.label === "Search with GPT-3.5") {
                 handleSendMessage();
