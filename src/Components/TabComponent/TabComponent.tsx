@@ -57,34 +57,33 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
   const extractFilename = (
     link: string | null,
-    type: string | "topics" | "sentiment" | "persons"
+    type: "topics" | "sentiment" | "persons"
   ): string => {
     if (!link) return "No file selected";
 
-    // Normalize backslashes to forward slashes for consistency, especially useful if your app might run in different environments (Windows uses backslashes, Unix/Linux/URLs use forward slashes)
+    // Normalize backslashes to forward slashes for consistency
     const normalizedLink = link.replace(/\\/g, "/");
 
     // Extract the part after 'public/meetings/'
     const pattern = /public\/meetings\/(.*)/;
     const match = normalizedLink.match(pattern);
-    var filename = match ? match[1] : "No file selected";
+    if (!match) return "Invalid link format";
 
-    if (type === "sentiment") {
-      // add sentiment to the link
-      filename = filename + "/sentiment";
-    }
+    // Extracted filename will be something like '2019-03/26.md'
+    let [yearMonth, dayWithExtension] = match[1].split("/");
+    if (!dayWithExtension) return "Invalid link format";
 
-    if (type === "persons") {
-      // add people to the link
-      filename = filename + "/persons";
-    }
+    // Split the year and month, and remove the '.md' extension from day
+    let [year, month] = yearMonth.split("-");
 
-    if (type === "topics") {
-      // add topics to the link
-      filename = filename + "/topics";
-    }
+    //remove also the .md from the day and letters
+    let part = dayWithExtension.replace(".md", "");
+    let day = part.replace(/[a-zA-Z--]/g, "");
 
-    return filename;
+    // Reconstruct the URL with the type
+    const reconstructedUrl = `http://tc39/${year}/${month}/${day}/${type}`;
+
+    return reconstructedUrl;
   };
 
   // Convert sentiment analysis numeric result to a descriptive message
