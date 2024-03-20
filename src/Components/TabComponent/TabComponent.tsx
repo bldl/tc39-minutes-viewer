@@ -273,25 +273,24 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         </Box>
         {showGptTab && (
           <TabPanel value="1">
-            <h3>{extractFilename(link, "topics")}</h3>
+            <h3>{extractFilename(activeTab, "gpt")}</h3>
             <ChatMessages messages={messages} isLoading={isLoading} />
           </TabPanel>
         )}
         {showTopicsTab && (
           <TabPanel value="2">
-            <h3>{extractFilename(link, "topics")}</h3>{" "}
+            <h3>{extractFilename(activeTab, "topics")}</h3>{" "}
             <TopicList
               onTopicClick={function (topic: string): void {
                 scrollToSection(toSlug(topic), topic);
               }}
               link={activeTab}
-              
             />
           </TabPanel>
         )}
         {showSentimentTab && (
           <TabPanel value="3">
-            <h3>{extractFilename(link, "topics")}</h3>
+            <h3>{extractFilename(activeTab, "sentiment")}</h3>
             <h2>Sentiment Analysis</h2>
             {sentimentResult.length > 0 ? (
               <>
@@ -311,6 +310,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         )}
         {showParticipantsTab && (
           <TabPanel value="4">
+            <h3>{extractFilename(activeTab, "persons")}</h3>
             <ExtractAllPeople
               link={activeTab}
               onPersonClick={(person) => handlePerosnClick(person)}
@@ -328,5 +328,3 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 };
 
 export default TabsComponent;
-
-//<h3>{extractFilename(link, "topics")}</h3>
