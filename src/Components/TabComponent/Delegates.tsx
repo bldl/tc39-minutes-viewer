@@ -50,7 +50,11 @@ interface essentialProps {
 
     return (
         <div>
-          <h2>Delegates List</h2>
+          <h2>
+        {initials.length > 0
+          ? "People"
+          : "Select an MD file from the navigation bar to display the people list."}
+        </h2>
           <ul>
             {DELEGATES.filter(delegate => initials.includes(delegate.credentials))
                       .map((delegate, index) => (
