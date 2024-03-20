@@ -5,7 +5,6 @@ import Autocomplete, {
   AutocompleteRenderGroupParams,
 } from "@mui/material/Autocomplete";
 import { styled, useTheme } from "@mui/material/styles";
-import ListSubheader from "@mui/material/ListSubheader";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import ChatIcon from "@mui/icons-material/Chat";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
@@ -63,8 +62,10 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   };
 
   const myDefaultOption = {
-    label: "Search with GPT-3.5", id: 1, category: "ChatGPT",
-  }
+    label: "Search with GPT-3.5",
+    id: 1,
+    category: "ChatGPT",
+  };
 
   const options: Option[] = [
     myDefaultOption,
@@ -76,18 +77,18 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
 
   const _filterOptions = createFilterOptions<Option>();
   const filterOptions = (options: Option[], state: any) => {
-    const results = _filterOptions(options,state);
+    const results = _filterOptions(options, state);
 
-    if (!results.includes(myDefaultOption)){
+    if (!results.includes(myDefaultOption)) {
       results.unshift(myDefaultOption);
     }
 
-    if (!results.some((option) => option.isCommand)){
-      results.unshift(commandOption)
+    if (!results.some((option) => option.isCommand)) {
+      results.unshift(commandOption);
     }
 
-    return results
-  }
+    return results;
+  };
 
   return (
     <AppBar
@@ -121,11 +122,10 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           onChange={(_event, value) => {
             if (value && value.label === myDefaultOption.label) {
               handleSendMessage();
-            } 
+            }
             if (value) {
               handleSelectOption(value.label);
             }
-
 
             if (value?.isCommand) {
               const basePath = "../public/meetings/";
@@ -229,8 +229,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
                 .catch((error) => {
                   console.error("Error fetching file:", error);
                 });
-            } 
-            
+            }
           }}
           renderOption={(props, option) => (
             <li {...props}>
