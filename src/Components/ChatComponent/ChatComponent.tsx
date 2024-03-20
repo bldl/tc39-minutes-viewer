@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Container, Divider, Grid, Paper } from "@mui/material";
+import { Container, Paper } from "@mui/material";
 import AppBarComponent from "./AppBarComponent"; // Importing the AppBarComponent
 import LeftBoxContent from "../LeftBox/LeftBoxContent"; // Assuming LeftBoxContent is already a separate component
 import TabsComponent from "../TabComponent/TabComponent"; // Assuming TabsComponent is already a separate component
@@ -9,6 +9,7 @@ import TabsComponent from "../TabComponent/TabComponent"; // Assuming TabsCompon
 interface Message {
   role: "user" | "assistant";
   content: string;
+  activeTab?: string | null;
 }
 
 // Props for the ChatComponent.
@@ -93,7 +94,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
             ? true
             : currentState.showGptTab,
         showPersonsTab:
-          selectedOption === "Persons" ? true : currentState.showPersonsTab,
+          selectedOption === "Participants" ? true : currentState.showPersonsTab,
       };
 
       // Update the fileTabStates with the new state for activeTab
@@ -101,6 +102,25 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         ...fileTabStates,
         [activeTab]: newState,
       });
+    }
+  };
+
+  const handleCloseTab = (tabType: string) => {
+    // Update the local visibility state based on the tabType
+    if (tabType === "Gpt") setShowGptTab(false);
+    else if (tabType === "Topics") setShowTopicsTab(false);
+    else if (tabType === "Sentiment") setShowSentimentTab(false);
+    else if (tabType === "Persons") setShowPersonsTab(false);
+
+    // Then, update the fileTabStates for the active tab if it exists
+    if (activeTab && fileTabStates[activeTab]) {
+      setFileTabStates((prevStates) => ({
+        ...prevStates,
+        [activeTab]: {
+          ...prevStates[activeTab],
+          [`show${tabType}Tab`]: false, // Dynamically set the specific tab visibility to false
+        },
+      }));
     }
   };
 
@@ -163,12 +183,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
           },
         }
       );
+
       // Updating the messages state with the response.
       setMessages([
         ...messages,
         {
           role: "assistant",
           content: response.data.choices[0].message.content,
+          activeTab: link,
         },
       ]);
       setInput("");
@@ -219,10 +241,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
             showGptTab={showGptTab}
             showParticipantsTab={showPersonsTab}
             activeTab={activeTab}
-            closeGptTab={() => setShowGptTab(false)}
-            closeTopicsTab={() => setShowTopicsTab(false)}
-            closeSentimentTab={() => setShowSentimentTab(false)}
-            closeParticipantsTab={() => setShowPersonsTab(false)}
+            handleCloseTab={handleCloseTab}
           />
         </Paper>
       </div>

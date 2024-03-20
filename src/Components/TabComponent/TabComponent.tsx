@@ -55,10 +55,7 @@ interface TabBoxProps {
   showParticipantsTab: boolean;
   activeTab: string | null;
 
-  closeGptTab: () => void;
-  closeTopicsTab: () => void;
-  closeSentimentTab: () => void;
-  closeParticipantsTab: () => void;
+  handleCloseTab: (tabType: string) => void;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
@@ -69,11 +66,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showGptTab,
   showSentimentTab,
   showParticipantsTab,
-
-  closeGptTab,
-  closeTopicsTab,
-  closeSentimentTab,
-  closeParticipantsTab,
+  handleCloseTab,
 }: TabBoxProps) => {
   // Sentiment start
   const [sentimentResult, setSentimentResult] = useState<string[]>([]);
@@ -253,18 +246,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       .replace(/""/g, ""); // Handle ':=' by removing it
   }
 
-  function handleCloseTab(tab: string): void {
-    if (tab === "Topics") {
-      closeTopicsTab();
-    } else if (tab === "ChatGPT") {
-      closeGptTab();
-    } else if (tab === "Persons") {
-      closeParticipantsTab();
-    } else if (tab == "Sentiment") {
-      closeSentimentTab();
-    }
-  }
-
   return showGptTab ||
     showTopicsTab ||
     showSentimentTab ||
@@ -293,7 +274,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
                     <IconButton
                       size="small"
                       component="span"
-                      onClick={() => handleCloseTab("ChatGPT")}
+                      onClick={() => handleCloseTab("Gpt")}
                       style={{ marginLeft: "auto" }}
                     >
                       <CloseIcon />
@@ -349,7 +330,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
                     <IconButton
                       size="small"
                       component="span"
-                      onClick={() => handleCloseTab("Participants")}
+                      onClick={() => handleCloseTab("Persons")}
                       style={{ marginLeft: "auto" }}
                     >
                       <CloseIcon />
