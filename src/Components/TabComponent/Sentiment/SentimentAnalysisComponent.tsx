@@ -18,13 +18,15 @@ const SentimentAnalysisComponent: React.FC<SentimentAnalysisComponentProps> = ({
   const [chartType, setChartType] = useState("pie");
 
   // Convert sentiment analysis numeric result to a descriptive message
-  const interpretSentiment = (score: string | number) => {
-    const sentimentMap = {
+  type SentimentScore = "0" | "1" | "2";
+  const interpretSentiment = (score: SentimentScore) => {
+    const sentimentMap: { [key in SentimentScore]: string } = {
       "0": "Negative",
       "1": "Neutral",
       "2": "Positive",
     };
-    return sentimentMap[score] || "Unknown"; // Default to 'Unknown' if score is not in the map
+
+    return sentimentMap[score] || "Unknown";
   };
 
   const interpretOverallSentiment = (scores: any[]) => {
@@ -38,7 +40,6 @@ const SentimentAnalysisComponent: React.FC<SentimentAnalysisComponentProps> = ({
     else return "Overall sentiment is Positive.";
   };
 
-  // Assuming interpretSentiment and interpretOverallSentiment are extracted utility functions
   useEffect(() => {
     if (!link) return;
 
