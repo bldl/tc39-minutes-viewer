@@ -9,6 +9,7 @@ import ListSubheader from "@mui/material/ListSubheader";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import ChatIcon from "@mui/icons-material/Chat";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
+import CodeIcon from "@mui/icons-material/Code"; // Icon for the execute command
 
 interface AppBarComponentProps {
   input: string;
@@ -16,12 +17,14 @@ interface AppBarComponentProps {
   handleSendMessage: () => void;
   handleClearMessages: () => void;
   handleSelectOption: (selectedOption: string) => void;
+  updateFilePath: (filePath: string) => void; // Accept this prop
 }
 
 interface Option {
   label: string;
   id: number;
   category: string;
+  isCommand?: boolean; // Optional property to identify command options
 }
 
 // Styles for group headers
@@ -47,34 +50,44 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   handleSendMessage,
   handleClearMessages,
   handleSelectOption,
+  updateFilePath,
 }) => {
-  // Use the theme from MUI's useTheme hook
   const theme = useTheme();
   const themeMode = theme.palette.mode;
-  const myDefaultOption = {
-    label: "Search with GPT-3.5",
-    id: 1,
-    category: "ChatGPT",
+
+  const commandOption: Option = {
+    label: "Execute link",
+    id: -1, // Unique ID for the command option
+    category: "Commands",
+    isCommand: true,
   };
+
+  const myDefaultOption = {
+    label: "Search with GPT-3.5", id: 1, category: "ChatGPT",
+  }
 
   const options: Option[] = [
     myDefaultOption,
     { label: "Topics", id: 2, category: "List" },
     { label: "Sentiment", id: 3, category: "Analysis" },
     { label: "Persons", id: 4, category: "List" },
-    // Add more options as needed, assigning them to categories
+    // Additional static options...
   ];
 
   const _filterOptions = createFilterOptions<Option>();
   const filterOptions = (options: Option[], state: any) => {
-    const results = _filterOptions(options, state);
+    const results = _filterOptions(options,state);
 
-    if (!results.includes(myDefaultOption)) {
+    if (!results.includes(myDefaultOption)){
       results.unshift(myDefaultOption);
     }
 
-    return results;
-  };
+    if (!results.some((option) => option.isCommand)){
+      results.unshift(commandOption)
+    }
+
+    return results
+  }
 
   return (
     <AppBar
@@ -93,9 +106,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         <Autocomplete
           disablePortal
           filterOptions={filterOptions}
-          options={options.sort(
-            (a, b) => -b.category.localeCompare(a.category)
-          )}
+          options={options}
           groupBy={(option) => option.category}
           getOptionLabel={(option) => option.label}
           isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -106,14 +117,120 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
               value={input}
               onChange={handleInputChange}
             />
-          )}
+          )} //if (value?.isCommand) {
           onChange={(_event, value) => {
             if (value && value.label === myDefaultOption.label) {
               handleSendMessage();
-            }
+            } 
             if (value) {
-              handleSelectOption(value.label); // Assuming handleSelectOption can handle all options
+              handleSelectOption(value.label);
             }
+
+
+            if (value?.isCommand) {
+              const basePath = "../public/meetings/";
+              let tabs = [];
+
+              // Validate the base format of the input
+              if (!input.startsWith("http://tc39/")) {
+                console.error("Invalid input format");
+                return;
+              }
+
+              // Split the input by '/' and capture the parts after "tc39/"
+              const linker = input.replace("http://tc39/", "");
+              const parts = linker.split("/");
+
+              if (parts.length < 3) {
+                console.error("Invalid input format");
+                return;
+              }
+
+              const year = parts[0];
+              let month = parts[1];
+              const date = parts[2];
+
+              // Year validation
+              if (isNaN(parseInt(year, 10)) || year.length !== 4) {
+                console.error("Invalid year format");
+                return;
+              }
+
+              // Month and date validation
+              if (isNaN(parseInt(date, 10))) {
+                console.error("Invalid date format");
+                return;
+              }
+
+              // Convert month to a number if it is numeric, otherwise keep the month name
+              const monthNames = [
+                "jan",
+                "feb",
+                "mar",
+                "apr",
+                "may",
+                "jun",
+                "jul",
+                "aug",
+                "sep",
+                "oct",
+                "nov",
+                "dec",
+              ];
+              let monthNumber = parseInt(month, 10);
+              let monthName = month;
+
+              // Check if month is a number and within valid range
+              if (
+                !isNaN(monthNumber) &&
+                monthNumber >= 1 &&
+                monthNumber <= 12
+              ) {
+                monthName = monthNames[monthNumber - 1];
+                month = month.padStart(2, "0");
+              } else {
+                monthNumber = monthNames.indexOf(month.toLowerCase()) + 1;
+                if (monthNumber === 0) {
+                  console.error("Invalid month format");
+                  return;
+                }
+                month = monthNumber.toString().padStart(2, "0");
+              }
+
+              // Construct the file path
+              const mdFileLink = `${basePath}${year}-${month}/${monthName}-${date}.md`;
+
+              if (parts.length > 3) {
+                // Starting from the 4th part, add remaining parts to the tabs list
+                for (let i = 3; i < parts.length; i++) {
+                  tabs.push(parts[i]);
+                }
+              }
+
+              // Output for demonstration
+              console.log("File path:", mdFileLink);
+              console.log("Tabs:", tabs);
+
+              // Your logic to use mdFileLink and tabs as needed
+
+              // check if the mdFileLink is valid before updating the file path
+              //check if the file exists with fetch
+
+              fetch(mdFileLink)
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("File not found");
+                  }
+                  return response.text();
+                })
+                .then(() => {
+                  updateFilePath(mdFileLink);
+                })
+                .catch((error) => {
+                  console.error("Error fetching file:", error);
+                });
+            } 
+            
           }}
           renderOption={(props, option) => (
             <li {...props}>
@@ -125,6 +242,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
               )}
               {option.category === "List" && (
                 <FormatListNumberedIcon style={{ marginRight: 8 }} />
+              )}
+              {option.category === "Commands" && (
+                <CodeIcon style={{ marginRight: 8 }} />
               )}
               {option.label}
             </li>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+
 import Delegates from './Delegates.tsx';
+
 
 
 interface PeopleListProps {
@@ -7,8 +9,10 @@ interface PeopleListProps {
 }
 
 
+
 const PeopleList: React.FC<PeopleListProps> = ({ link }) => {
   
+
 
   return (
     <div>
@@ -24,7 +28,7 @@ const PeopleList: React.FC<PeopleListProps> = ({ link }) => {
           </li>
         ))}
       </ul> */}
-      <Delegates link = {link}/>
+      <Delegates link={link} />
     </div>
   );
 };
