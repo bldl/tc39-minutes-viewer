@@ -35,6 +35,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   const [showGptTab, setShowGptTab] = useState(false);
   const [showPersonsTab, setShowPersonsTab] = useState(false);
 
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+
   const handleHighlightedText = (text: string) => {
     setHighlightedText(text);
   };
@@ -135,7 +137,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         updateFilePath={updateFilePath}
       />
       <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-        <LeftBoxContent link={link} onHighlight={handleHighlightedText} />
+        <LeftBoxContent link={link} onHighlight={handleHighlightedText} onTabChange={setActiveTab}/>
 
         <Paper
           elevation={3}
@@ -157,6 +159,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
             showSentimentTab={showSentimentTab}
             showGptTab={showGptTab}
             showParticipantsTab={showPersonsTab}
+            activeTab={activeTab} 
           />
         </Paper>
       </div>
