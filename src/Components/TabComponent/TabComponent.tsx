@@ -11,7 +11,9 @@ import { annotate } from "rough-notation";
 import ExtractAllPeople from "./ExtractAllPeople.tsx";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Delegates from "./Delegates.tsx"
+import Delegates from "./Delegates.tsx";
+import { IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 import { Typography } from "@mui/material";
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
@@ -52,6 +54,11 @@ interface TabBoxProps {
   showGptTab: boolean;
   showParticipantsTab: boolean;
   activeTab: string | null;
+
+  closeGptTab: () => void;
+  closeTopicsTab: () => void;
+  closeSentimentTab: () => void;
+  closeParticipantsTab: () => void;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
@@ -62,6 +69,11 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showGptTab,
   showSentimentTab,
   showParticipantsTab,
+
+  closeGptTab,
+  closeTopicsTab,
+  closeSentimentTab,
+  closeParticipantsTab,
 }: TabBoxProps) => {
   // Sentiment start
   const [sentimentResult, setSentimentResult] = useState<string[]>([]);
@@ -241,10 +253,17 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       .replace(/""/g, ""); // Handle ':=' by removing it
   }
 
-  // const handlePerosnClick = (person: string) => {
-  //   console.log("Clicked on person:", person);
-  //   scrollToSection(toSlug(person), person);
-  // };
+  function handleCloseTab(tab: string): void {
+    if (tab === "Topics") {
+      closeTopicsTab();
+    } else if (tab === "ChatGPT") {
+      closeGptTab();
+    } else if (tab === "Persons") {
+      closeParticipantsTab();
+    } else if (tab == "Sentiment") {
+      closeSentimentTab();
+    }
+  }
 
   return showGptTab ||
     showTopicsTab ||
@@ -266,10 +285,80 @@ const TabsComponent: React.FC<TabBoxProps> = ({
               },
             }}
           >
-            {showGptTab && <Tab label="ChatGPT" value="1" />}
-            {showTopicsTab && <Tab label="Topics" value="2" />}
-            {showSentimentTab && <Tab label="Sentiment" value="3" />}
-            {showParticipantsTab && <Tab label="Persons" value="4" />}
+            {showGptTab && (
+              <Tab
+                label={
+                  <span>
+                    ChatGpt
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("ChatGPT")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="1"
+              />
+            )}
+
+            {showTopicsTab && (
+              <Tab
+                label={
+                  <span>
+                    Topics
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Topics")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="2"
+              />
+            )}
+
+            {showSentimentTab && (
+              <Tab
+                label={
+                  <span>
+                    Sentiment
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Sentiment")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="3"
+              />
+            )}
+            {showParticipantsTab && (
+              <Tab
+                label={
+                  <span>
+                    Participants
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Participants")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="4"
+              />
+            )}
           </TabList>
         </Box>
         {showGptTab && (
@@ -354,12 +443,8 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         )}
         {showParticipantsTab && (
           <TabPanel value="4">
-
             <h3>{extractFilename(activeTab, "persons")}</h3>
-            <Delegates
-              link={activeTab}
-
-            />
+            <Delegates link={activeTab} />
           </TabPanel>
         )}
       </TabContext>

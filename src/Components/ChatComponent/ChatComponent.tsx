@@ -18,6 +18,17 @@ interface ChatComponentProps {
   updateFilePath: (filePath: string) => void;
 }
 
+interface TabStates {
+  showTopicsTab: boolean;
+  showSentimentTab: boolean;
+  showGptTab: boolean;
+  showPersonsTab: boolean;
+}
+
+interface FileTabStates {
+  [key: string]: TabStates;
+}
+
 // ChatComponent is the main component for the chat interface.
 const ChatComponent: React.FC<ChatComponentProps> = ({
   link = "../public/meetings/2012-05/may-21.md",
@@ -37,6 +48,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
+  const [fileTabStates, setFileTabStates] = useState<FileTabStates>({});
+
   const handleHighlightedText = (text: string) => {
     setHighlightedText(text);
   };
@@ -55,17 +68,59 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   };
 
   const handleSelectOption = (selectedOption: string) => {
-    if (selectedOption === "Topics") {
-      setShowTopicsTab(true);
-    } else if (selectedOption === "Sentiment") {
-      setShowSentimentTab(true);
-    } else if (selectedOption === "Search with GPT-3.5") {
-      setShowGptTab(true);
-    } else if (selectedOption === "Persons") {
-      setShowPersonsTab(true);
+    if (activeTab) {
+      // Make sure activeTab is a string
+      // Default state if this tab hasn't been opened before
+      const defaultState: TabStates = {
+        showTopicsTab: false,
+        showSentimentTab: false,
+        showGptTab: false,
+        showPersonsTab: false,
+      };
+
+      // Get the current state for activeTab, or default to all false if not set
+      const currentState = fileTabStates[activeTab] || defaultState;
+
+      // Update the state based on selectedOption
+      const newState = {
+        ...currentState,
+        showTopicsTab:
+          selectedOption === "Topics" ? true : currentState.showTopicsTab,
+        showSentimentTab:
+          selectedOption === "Sentiment" ? true : currentState.showSentimentTab,
+        showGptTab:
+          selectedOption === "Search with GPT-3.5"
+            ? true
+            : currentState.showGptTab,
+        showPersonsTab:
+          selectedOption === "Persons" ? true : currentState.showPersonsTab,
+      };
+
+      // Update the fileTabStates with the new state for activeTab
+      setFileTabStates({
+        ...fileTabStates,
+        [activeTab]: newState,
+      });
     }
-    // Add more conditions for other choices as needed
   };
+
+  useEffect(() => {
+    if (activeTab && fileTabStates[activeTab]) {
+      // Load the tab states for the newly selected file
+      const { showTopicsTab, showSentimentTab, showGptTab, showPersonsTab } =
+        fileTabStates[activeTab];
+      setShowTopicsTab(showTopicsTab);
+      setShowSentimentTab(showSentimentTab);
+      setShowGptTab(showGptTab);
+      setShowPersonsTab(showPersonsTab);
+    } else {
+      // If the file hasn't been opened before, reset the tab states to false
+      setShowTopicsTab(false);
+      setShowSentimentTab(false);
+      setShowGptTab(false);
+      setShowPersonsTab(false);
+    }
+  }, [activeTab, fileTabStates]);
 
   {
     // Effect to reset the clearMessages flag.
@@ -137,7 +192,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         updateFilePath={updateFilePath}
       />
       <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-        <LeftBoxContent link={link} onHighlight={handleHighlightedText} onTabChange={setActiveTab}/>
+        <LeftBoxContent
+          link={link}
+          onHighlight={handleHighlightedText}
+          onTabChange={setActiveTab}
+        />
 
         <Paper
           elevation={3}
@@ -159,7 +218,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
             showSentimentTab={showSentimentTab}
             showGptTab={showGptTab}
             showParticipantsTab={showPersonsTab}
-            activeTab={activeTab} 
+            activeTab={activeTab}
+            closeGptTab={() => setShowGptTab(false)}
+            closeTopicsTab={() => setShowTopicsTab(false)}
+            closeSentimentTab={() => setShowSentimentTab(false)}
+            closeParticipantsTab={() => setShowPersonsTab(false)}
           />
         </Paper>
       </div>
