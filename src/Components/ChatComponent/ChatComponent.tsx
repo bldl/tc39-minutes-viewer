@@ -15,11 +15,13 @@ interface Message {
 interface ChatComponentProps {
   link: string | null;
   isLoading: true | false;
+  updateFilePath: (filePath: string) => void;
 }
 
 // ChatComponent is the main component for the chat interface.
 const ChatComponent: React.FC<ChatComponentProps> = ({
   link = "../public/meetings/2012-05/may-21.md",
+  updateFilePath,
 }) => {
   // State variables for the chat component.
   const [input, setInput] = useState<string>("");
@@ -32,6 +34,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
   const [showSentimentTab, setShowSentimentTab] = useState(false);
   const [showGptTab, setShowGptTab] = useState(false);
   const [showPersonsTab, setShowPersonsTab] = useState(false);
+
+  const [activeTab, setActiveTab] = useState<string | null>(null);
 
   const handleHighlightedText = (text: string) => {
     setHighlightedText(text);
@@ -130,9 +134,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         handleSendMessage={handleSendMessage}
         handleClearMessages={handleClearMessages}
         handleSelectOption={handleSelectOption}
+        updateFilePath={updateFilePath}
       />
       <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-        <LeftBoxContent link={link} onHighlight={handleHighlightedText} />
+        <LeftBoxContent link={link} onHighlight={handleHighlightedText} onTabChange={setActiveTab}/>
 
         <Paper
           elevation={3}
@@ -154,6 +159,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
             showSentimentTab={showSentimentTab}
             showGptTab={showGptTab}
             showParticipantsTab={showPersonsTab}
+            activeTab={activeTab} 
           />
         </Paper>
       </div>

@@ -11,9 +11,14 @@ import CloseIcon from "@mui/icons-material/Close";
 interface Props {
   link: string | null;
   onHighlight: (highlightedText: string) => void;
+  onTabChange: (activeTab: string | null) => void;
 }
 
-const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
+const RenderMarkdown: React.FC<Props> = ({
+  link,
+  onHighlight,
+  onTabChange,
+}) => {
   const [markdownMap, setMarkdownMap] = useState<Map<string, string>>(
     new Map()
   );
@@ -49,6 +54,7 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
           return newMap;
         });
         setActiveTab(link);
+        onTabChange(link);
       } catch (error) {
         console.error("Error loading Markdown file:", error);
       }
@@ -178,6 +184,8 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setActiveTab(newValue);
 
+    onTabChange(newValue);
+
     setSelectedRange(null);
     setSelectedText("");
   };
@@ -196,6 +204,7 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
       const updatedTabs = Array.from(markdownMap.keys());
       const lastTabIndex = updatedTabs.length - 1;
       setActiveTab(lastTabIndex >= 0 ? updatedTabs[lastTabIndex] : null);
+      onTabChange(lastTabIndex >= 0 ? updatedTabs[lastTabIndex] : null);
     }
   }, [markdownMap, activeTab, closingTab]);
 
@@ -220,6 +229,7 @@ const RenderMarkdown: React.FC<Props> = ({ link, onHighlight }) => {
             value={tabLink} // Identify the tab
             label={
               <span>
+                {/* {tabLink.replace("public/meetings/", "")} */}
                 {tabLink.replace("public/meetings/", "")}
                 <IconButton
                   size="small"

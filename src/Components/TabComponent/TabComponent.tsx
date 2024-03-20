@@ -50,11 +50,12 @@ interface TabBoxProps {
   showSentimentTab: boolean;
   showGptTab: boolean;
   showParticipantsTab: boolean;
+  activeTab: string | null;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
   messages,
-  link,
+  activeTab,
   isLoading,
   showTopicsTab,
   showGptTab,
@@ -115,6 +116,37 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     });
   }, []);
 
+  const extractFilename = (
+    link: string | null,
+    type: "topics" | "sentiment" | "persons"
+  ): string => {
+    if (!link) return "No file selected";
+
+    // Normalize backslashes to forward slashes for consistency
+    const normalizedLink = link.replace(/\\/g, "/");
+
+    // Extract the part after 'public/meetings/'
+    const pattern = /public\/meetings\/(.*)/;
+    const match = normalizedLink.match(pattern);
+    if (!match) return "Invalid link format";
+
+    // Extracted filename will be something like '2019-03/26.md'
+    let [yearMonth, dayWithExtension] = match[1].split("/");
+    if (!dayWithExtension) return "Invalid link format";
+
+    // Split the year and month, and remove the '.md' extension from day
+    let [year, month] = yearMonth.split("-");
+
+    //remove also the .md from the day and letters
+    let part = dayWithExtension.replace(".md", "");
+    let day = part.replace(/[a-zA-Z--]/g, "");
+
+    // Reconstruct the URL with the type
+    const reconstructedUrl = `http://tc39/${year}/${month}/${day}/${type}`;
+
+    return reconstructedUrl;
+  };
+
   // Convert sentiment analysis numeric result to a descriptive message
   const interpretSentiment = (score: string | number) => {
     const sentimentMap = {
@@ -149,6 +181,8 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
   const scrollToSection = (id: string, topic: string) => {
     const currentTime = new Date().getTime();
+    console.log("Clicked on topic in scroll:", topic);
+    console.log("Id:", id);
     if (
       topic === lastTopicClick.topic &&
       currentTime - lastTopicClick.time < 2000
@@ -162,6 +196,9 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
     // Proceed with scrolling and annotating the element
     const element = document.getElementById(id);
+
+    console.log("Element:", element);
+
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
       // Wait until scroll if finished before annotating the element
@@ -186,14 +223,21 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     }, 2000);
   };
 
-  function toSlug(topic: string): string {
-    return topic
+  function toSlug(text: string): string {
+    // Normalize Unicode characters, remove non-alphanumeric characters, replace spaces with hyphens
+    // This approach assumes a basic handling of special characters and may need adjustments for edge cases
+    return text
+      .normalize("NFD") // Decompose Unicode into base characters and diacritics
+      .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
       .toLowerCase() // Convert to lowercase
-      .replace(/[\s]+/g, "-") // Replace spaces with hyphens
-      .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+      .replace(/&/g, "")
+      .replace(/:=/g, "-")
+      .replace(/"/g, "-")
+      .replace(/[\s]+/g, "-") // Replace spaces and repeated hyphens with a single hyphen
+      .replace(/[^a-z0-9\-]/g, "") // Remove remaining non-alphanumeric/non-hyphen characters
       .replace(/\-\-+/g, "-") // Replace multiple hyphens with a single hyphen
-      .replace(/^-+/, "") // Trim hyphen from start
-      .replace(/-+$/, ""); // Trim hyphen from end
+      .replace(/^-+|-+$/g, "") // Trim hyphens from start and end
+      .replace(/""/g, ""); // Handle ':=' by removing it
   }
 
   const handlePerosnClick = (person: string) => {
@@ -229,86 +273,46 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         </Box>
         {showGptTab && (
           <TabPanel value="1">
+            <h3>{extractFilename(activeTab, "gpt")}</h3>
             <ChatMessages messages={messages} isLoading={isLoading} />
           </TabPanel>
         )}
         {showTopicsTab && (
           <TabPanel value="2">
-            {" "}
+            <h3>{extractFilename(activeTab, "topics")}</h3>{" "}
             <TopicList
               onTopicClick={function (topic: string): void {
                 scrollToSection(toSlug(topic), topic);
               }}
-              link={link}
+              link={activeTab}
             />
           </TabPanel>
         )}
         {showSentimentTab && (
           <TabPanel value="3">
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <StyledToggleButtonGroup
-                color="primary"
-                value={chartType}
-                exclusive
-                onChange={handleChartTypeChange}
-                aria-label="chart type"
-              >
-                <ToggleButton value="bar" aria-label="bar chart">
-                  Bar Chart
-                </ToggleButton>
-                <ToggleButton value="pie" aria-label="pie chart">
-                  Pie Chart
-                </ToggleButton>
-                <ToggleButton value="line" aria-label="line chart">
-                  Line Chart
-                </ToggleButton>
-              </StyledToggleButtonGroup>
-            </Box>
+            <h3>{extractFilename(activeTab, "sentiment")}</h3>
+            <h2>Sentiment Analysis</h2>
             {sentimentResult.length > 0 ? (
               <>
-                <Box sx={{ textAlign: "center", my: 2 }}>
-                  <Typography variant="h6">Overall Sentiment</Typography>
-                  <Typography variant="subtitle1" color="textSecondary">
-                    {overallSentiment}
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      mt: 2,
-                    }}
-                  >
-                    {getSentimentIcon(overallSentiment)}
-                  </Box>
-                </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
-                  {chartType === "bar" && (
-                    <SentimentBarChart sentimentResults={sentimentResult} />
-                  )}
-                  {chartType === "pie" && (
-                    <SentimentPieChart sentimentResults={sentimentResult} />
-                  )}
-                  {chartType === "line" && (
-                    <SentimentLineChart sentimentResults={sentimentResult} />
-                  )}
-                </Box>
+                <ul>
+                  {sentimentResult.map((sentiment, index) => (
+                    <li key={index}>{sentiment}</li>
+                  ))}
+                </ul>
+                <p>
+                  <strong>Overall Sentiment:</strong> {overallSentiment}
+                </p>
               </>
             ) : (
-              <Box sx={{ textAlign: "center", my: 2 }}>
-                <SentimentNeutralIcon sx={{ fontSize: 40, my: 2 }} />
-                <Typography>
-                  No sentiment analysis has been performed yet.
-                </Typography>
-              </Box>
+              <p>No sentiment analysis has been performed yet.</p>
             )}
           </TabPanel>
         )}
         {showParticipantsTab && (
           <TabPanel value="4">
+            <h3>{extractFilename(activeTab, "persons")}</h3>
             <ExtractAllPeople
-              link={link}
+              link={activeTab}
               onPersonClick={(person) => handlePerosnClick(person)}
             />
           </TabPanel>

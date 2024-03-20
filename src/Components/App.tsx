@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import ChatComponent from "./ChatComponent/ChatComponent";
 import NavBarComponent from "./NavBar/NavBarComponent";
 import { fetchHashTable } from "./NavBar/FetchMeetings";
@@ -15,12 +15,12 @@ import CssBaseline from "@mui/material/CssBaseline";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import NightsStayIcon from "@mui/icons-material/NightsStay";
 
-function App() {
+const App = () => {
   const [hashTable, setHashTable] = useState({});
-  const [selectedYear, setSelectedYear] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState(null);
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [selectedFilePath, setSelectedFilePath] = useState(null);
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null);
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const [themeMode, setThemeMode] = useState(
     prefersDarkMode ? "dark" : "light"
@@ -44,35 +44,29 @@ function App() {
     loadHashTable();
   }, []);
 
-  // Handle for year select
-  const handleYearSelect = (year) => {
+  const handleYearSelect = (year: string) => {
     setSelectedYear(year);
     if (selectedYear !== year) {
-      // Only reset these if a different year is selected
       setSelectedMonth(null);
       setSelectedDay(null);
-      // Do not reset setSelectedFilePath here to keep the file open
     }
   };
 
-  // Handle for month select
-  const handleMonthSelect = (year, month) => {
+  const handleMonthSelect = (year: string, month: string) => {
     setSelectedYear(year);
+    setSelectedMonth(month);
     if (selectedMonth !== month) {
-      // Only reset these if a different month is selected
       setSelectedDay(null);
-      // Do not reset setSelectedFilePath here to keep the file open
     }
   };
 
-  // Handle for day select
-  const handleDaySelect = (filePath) => {
+  const handleDaySelect = (filePath: string) => {
     setSelectedFilePath(filePath);
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline /> {/* This helps with consistent baseline styles */}
+      <CssBaseline />
       <SelectedTextProvider>
         <FormGroup
           row
@@ -93,32 +87,25 @@ function App() {
                     }}
                   />
                 }
-                checkedIcon={
-                  <NightsStayIcon
-                    sx={{
-                      marginTop: -0.3,
-                    }}
-                  />
-                }
+                checkedIcon={<NightsStayIcon sx={{ marginTop: -0.3 }} />}
                 sx={{
                   "& .MuiSwitch-switchBase": {
-                    // Adjust padding to fit the icons inside the thumb
-                    padding: 1, // Reduce padding to increase range
+                    padding: 1,
                     "&.Mui-checked": {
-                      transform: "translateX(75%)", // Increase translateX to match the increased range
+                      transform: "translateX(75%)",
                       "& + .MuiSwitch-track": {
-                        opacity: 0.7, // Adjust for visibility if needed
+                        opacity: 0.7,
                       },
                     },
                   },
                   "& .MuiSwitch-track": {
-                    borderRadius: 12, // Half the height to create a "pill" shape
+                    borderRadius: 12,
                     backgroundColor:
                       themeMode === "dark"
                         ? theme.palette.grey[700]
-                        : theme.palette.grey[400], // Adjust as needed
+                        : theme.palette.grey[400],
                     opacity: 0.7,
-                    width: "100%", // Ensure the track is as wide as needed for the thumb to slide
+                    width: "100%",
                   },
                 }}
               />
@@ -135,10 +122,13 @@ function App() {
           onSelectMonth={handleMonthSelect}
           onSelectDay={handleDaySelect}
         />
-        <ChatComponent link={selectedFilePath} />
+        <ChatComponent
+          link={selectedFilePath}
+          updateFilePath={setSelectedFilePath}
+        />
       </SelectedTextProvider>
     </ThemeProvider>
   );
-}
+};
 
 export default App;
