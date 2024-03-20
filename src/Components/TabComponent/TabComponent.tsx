@@ -244,86 +244,87 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     scrollToSection(toSlug(person), person);
   };
 
-  return (
-    <Tabs>
-      {!showGptTab &&
-        !showTopicsTab &&
-        !showParticipantsTab &&
-        !showSentimentTab && (
-          <h2>
-            Here we can add instructions for the app. The text will disappear
-            once a tab is opened.
-          </h2>
-        )}
-      {/* List of tabs */}
-      {(showGptTab ||
-        showTopicsTab ||
-        showSentimentTab ||
-        showParticipantsTab) && (
-        <TabList>
-          {/* Tabs and tab-names */}
-          {showGptTab && <Tab>ChatGPT</Tab>}
-          {showTopicsTab && <Tab>Topics</Tab>}
-          {showSentimentTab && <Tab>Sentiment</Tab>}
-          {showParticipantsTab && <Tab>Persons</Tab>}
-        </TabList>
-      )}
-
-      {/* Content for tabs */}
-
-      {showGptTab && (
-        <TabPanel>
-          <ChatMessages messages={messages} isLoading={isLoading} />
-        </TabPanel>
-      )}
-
-      {showTopicsTab && (
-        <TabPanel>
-          <h3>{extractFilename(link, "topics")}</h3>
-          <TopicList
-            onTopicClick={function (topic: string): void {
-              scrollToSection(toSlug(topic), topic);
-              console.log("Clicked on topic:", topic);
-              console.log("After being slugged", toSlug(topic));
+  return showGptTab ||
+    showTopicsTab ||
+    showSentimentTab ||
+    showParticipantsTab ? (
+    <Box sx={{ width: "100%", typography: "body1" }}>
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <TabList
+            onChange={handleChange}
+            aria-label="lab API tabs example"
+            sx={{
+              "& .MuiTab-root:focus": {
+                outline: "none",
+                // You can add additional styles for the focused state here
+              },
+              "& .MuiTab-root.Mui-selected": {
+                // Styles for the selected tab
+              },
             }}
-            link={link}
-          />
-        </TabPanel>
-      )}
-
-      {/* Sentiment tab */}
-      {showSentimentTab && (
-        <TabPanel>
-          <h2>Sentiment Analysis</h2>
-          <h3>{extractFilename(link, "sentiment")}</h3>
-          {sentimentResult.length > 0 ? (
-            <>
-              <ul>
-                {sentimentResult.map((sentiment, index) => (
-                  <li key={index}>{sentiment}</li>
-                ))}
-              </ul>
-              <p>
-                <strong>Overall Sentiment:</strong> {overallSentiment}
-              </p>
-            </>
-          ) : (
-            <p>No sentiment analysis has been performed yet.</p>
-          )}
-        </TabPanel>
-      )}
-
-      {showParticipantsTab && (
-        <TabPanel>
-          <h3>{extractFilename(link, "persons")}</h3>
-          <ExtractAllPeople
-            link={link}
-            onPersonClick={(person) => handlePerosnClick(person)}
-          />
-        </TabPanel>
-      )}
-    </Tabs>
+          >
+            {showGptTab && <Tab label="ChatGPT" value="1" />}
+            {showTopicsTab && <Tab label="Topics" value="2" />}
+            {showSentimentTab && <Tab label="Sentiment" value="3" />}
+            {showParticipantsTab && <Tab label="Persons" value="4" />}
+          </TabList>
+        </Box>
+        {showGptTab && (
+          <TabPanel value="1">
+            <h3>{extractFilename(link, "topics")}</h3>
+            <ChatMessages messages={messages} isLoading={isLoading} />
+          </TabPanel>
+        )}
+        {showTopicsTab && (
+          <TabPanel value="2">
+            <h3>{extractFilename(link, "topics")}</h3>{" "}
+            <TopicList
+              onTopicClick={function (topic: string): void {
+                scrollToSection(toSlug(topic), topic);
+              }}
+              link={link}
+            />
+          </TabPanel>
+        )}
+        {showSentimentTab && (
+          <TabPanel value="3">
+            <h3>{extractFilename(link, "topics")}</h3>
+            <h2>Sentiment Analysis</h2>
+            {sentimentResult.length > 0 ? (
+              <>
+                <ul>
+                  {sentimentResult.map((sentiment, index) => (
+                    <li key={index}>{sentiment}</li>
+                  ))}
+                </ul>
+                <p>
+                  <strong>Overall Sentiment:</strong> {overallSentiment}
+                </p>
+              </>
+            ) : (
+              <p>No sentiment analysis has been performed yet.</p>
+            )}
+          </TabPanel>
+        )}
+        {showParticipantsTab && (
+          <TabPanel value="4">
+            <ExtractAllPeople
+              link={link}
+              onPersonClick={(person) => handlePerosnClick(person)}
+            />
+          </TabPanel>
+        )}
+      </TabContext>
+    </Box>
+  ) : (
+    // Render a message or an empty fragment when no tabs are available
+    <Box sx={{ width: "100%", typography: "body1" }}>
+      <h2>Here we can add instructions for the app. </h2>
+    </Box>
   );
 };
 
 export default TabsComponent;
+
+//<h3>{extractFilename(link, "topics")}</h3>
