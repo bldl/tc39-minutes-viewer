@@ -118,7 +118,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
   const extractFilename = (
     link: string | null,
-    type: "topics" | "sentiment" | "persons"
+    type: "topics" | "sentiment" | "persons" | "gpt"
   ): string => {
     if (!link) return "No file selected";
 
@@ -291,20 +291,63 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         {showSentimentTab && (
           <TabPanel value="3">
             <h3>{extractFilename(activeTab, "sentiment")}</h3>
-            <h2>Sentiment Analysis</h2>
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <StyledToggleButtonGroup
+                color="primary"
+                value={chartType}
+                exclusive
+                onChange={handleChartTypeChange}
+                aria-label="chart type"
+              >
+                <ToggleButton value="bar" aria-label="bar chart">
+                  Bar Chart
+                </ToggleButton>
+                <ToggleButton value="pie" aria-label="pie chart">
+                  Pie Chart
+                </ToggleButton>
+                <ToggleButton value="line" aria-label="line chart">
+                  Line Chart
+                </ToggleButton>
+              </StyledToggleButtonGroup>
+            </Box>
             {sentimentResult.length > 0 ? (
               <>
-                <ul>
-                  {sentimentResult.map((sentiment, index) => (
-                    <li key={index}>{sentiment}</li>
-                  ))}
-                </ul>
-                <p>
-                  <strong>Overall Sentiment:</strong> {overallSentiment}
-                </p>
+                <Box sx={{ textAlign: "center", my: 2 }}>
+                  <Typography variant="h6">Overall Sentiment</Typography>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    {overallSentiment}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      mt: 2,
+                    }}
+                  >
+                    {getSentimentIcon(overallSentiment)}
+                  </Box>
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
+                  {chartType === "bar" && (
+                    <SentimentBarChart sentimentResults={sentimentResult} />
+                  )}
+                  {chartType === "pie" && (
+                    <SentimentPieChart sentimentResults={sentimentResult} />
+                  )}
+                  {chartType === "line" && (
+                    <SentimentLineChart sentimentResults={sentimentResult} />
+                  )}
+                </Box>
               </>
             ) : (
-              <p>No sentiment analysis has been performed yet.</p>
+              <Box sx={{ textAlign: "center", my: 2 }}>
+                <SentimentNeutralIcon sx={{ fontSize: 40, my: 2 }} />
+                <Typography>
+                  No sentiment analysis has been performed yet.
+                </Typography>
+              </Box>
             )}
           </TabPanel>
         )}
