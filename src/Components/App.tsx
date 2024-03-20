@@ -3,8 +3,8 @@ import ChatComponent from "./ChatComponent/ChatComponent";
 import NavBarComponent from "./NavBar/NavBarComponent";
 import { fetchHashTable } from "./NavBar/FetchMeetings";
 import { SelectedTextProvider } from "./SelectedTextContext";
+import createTheme from "@mui/material/styles/createTheme";
 import {
-  createTheme,
   ThemeProvider,
   Switch,
   FormGroup,
