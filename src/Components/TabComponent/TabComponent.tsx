@@ -11,7 +11,7 @@ import { extractFilename, toSlug, useScrollToSection } from "./Utils";
 
 import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
-import Delegates from "./Delegates.tsx";
+import Delegates from "./Delegates/Delegates.tsx";
 import SentimentAnalysisComponent from "./Sentiment/SentimentAnalysisComponent";
 
 interface TabBoxProps {
