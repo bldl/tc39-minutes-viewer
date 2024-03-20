@@ -56,34 +56,38 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   const themeMode = theme.palette.mode;
 
   const commandOption: Option = {
-    label: "Execute command",
+    label: "Execute link",
     id: -1, // Unique ID for the command option
     category: "Commands",
     isCommand: true,
   };
 
+  const myDefaultOption = {
+    label: "Search with GPT-3.5", id: 1, category: "ChatGPT",
+  }
+
   const options: Option[] = [
-    { label: "Search with GPT-3.5", id: 1, category: "ChatGPT" },
+    myDefaultOption,
     { label: "Topics", id: 2, category: "List" },
     { label: "Sentiment", id: 3, category: "Analysis" },
     { label: "Persons", id: 4, category: "List" },
     // Additional static options...
   ];
 
-  // Custom filterOptions function to always include the "Execute command" option
-  const filterOptions = (options: Option[], params: { inputValue: string }) => {
-    const filtered = createFilterOptions<Option>()(options, {
-      ...params,
-      getOptionLabel: (option) => option.label,
-    });
+  const _filterOptions = createFilterOptions<Option>();
+  const filterOptions = (options: Option[], state: any) => {
+    const results = _filterOptions(options,state);
 
-    // Check if "Execute command" is already included due to the current input value
-    if (!filtered.some((option) => option.isCommand)) {
-      filtered.push(commandOption); // Always add the "Execute command" option
+    if (!results.includes(myDefaultOption)){
+      results.unshift(myDefaultOption);
     }
 
-    return filtered;
-  };
+    if (!results.some((option) => option.isCommand)){
+      results.unshift(commandOption)
+    }
+
+    return results
+  }
 
   return (
     <AppBar
@@ -115,6 +119,14 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             />
           )} //if (value?.isCommand) {
           onChange={(_event, value) => {
+            if (value && value.label === myDefaultOption.label) {
+              handleSendMessage();
+            } 
+            if (value) {
+              handleSelectOption(value.label);
+            }
+
+
             if (value?.isCommand) {
               const basePath = "../public/meetings/";
               let tabs = [];
@@ -217,13 +229,8 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
                 .catch((error) => {
                   console.error("Error fetching file:", error);
                 });
-            } else if (value) {
-              if (value.label === "Search with GPT-3.5") {
-                handleSendMessage();
-              } else {
-                handleSelectOption(value.label);
-              }
-            }
+            } 
+            
           }}
           renderOption={(props, option) => (
             <li {...props}>
