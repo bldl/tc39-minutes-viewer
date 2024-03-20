@@ -120,7 +120,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     link: string | null,
     type: "topics" | "sentiment" | "persons" | "gpt"
   ): string => {
-    if (!link) return "No file selected";
+    if (!link) return "";
 
     // Normalize backslashes to forward slashes for consistency
     const normalizedLink = link.replace(/\\/g, "/");
