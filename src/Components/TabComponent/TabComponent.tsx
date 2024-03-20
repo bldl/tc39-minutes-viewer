@@ -50,11 +50,12 @@ interface TabBoxProps {
   showSentimentTab: boolean;
   showGptTab: boolean;
   showParticipantsTab: boolean;
+  activeTab: string | null;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
   messages,
-  link,
+  activeTab,
   isLoading,
   showTopicsTab,
   showGptTab,
@@ -239,7 +240,8 @@ const TabsComponent: React.FC<TabBoxProps> = ({
               onTopicClick={function (topic: string): void {
                 scrollToSection(toSlug(topic), topic);
               }}
-              link={link}
+              link={activeTab}
+              
             />
           </TabPanel>
         )}
@@ -308,7 +310,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         {showParticipantsTab && (
           <TabPanel value="4">
             <ExtractAllPeople
-              link={link}
+              link={activeTab}
               onPersonClick={(person) => handlePerosnClick(person)}
             />
           </TabPanel>
