@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
-import Delegates from "./Delegates.tsx";
+
+import Delegates from './Delegates.tsx';
+
+
 
 interface PeopleListProps {
-  onPersonClick: (personName: string) => void;
   link: string | null;
 }
 
-const PeopleList: React.FC<PeopleListProps> = ({ onPersonClick, link }) => {
-  // Fetch the content of the Markdown file and extract the people
 
-  const handlePersonClick = (personName: string) => {
-    console.log("Clicked on person:", personName);
-    onPersonClick(personName);
-  };
+
+const PeopleList: React.FC<PeopleListProps> = ({ link }) => {
+  
+
 
   return (
     <div>

@@ -11,6 +11,7 @@ import { annotate } from "rough-notation";
 import ExtractAllPeople from "./ExtractAllPeople.tsx";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import Delegates from "./Delegates.tsx"
 
 import { Typography } from "@mui/material";
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
@@ -240,10 +241,10 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       .replace(/""/g, ""); // Handle ':=' by removing it
   }
 
-  const handlePerosnClick = (person: string) => {
-    console.log("Clicked on person:", person);
-    scrollToSection(toSlug(person), person);
-  };
+  // const handlePerosnClick = (person: string) => {
+  //   console.log("Clicked on person:", person);
+  //   scrollToSection(toSlug(person), person);
+  // };
 
   return showGptTab ||
     showTopicsTab ||
@@ -353,10 +354,11 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         )}
         {showParticipantsTab && (
           <TabPanel value="4">
+
             <h3>{extractFilename(activeTab, "persons")}</h3>
-            <ExtractAllPeople
+            <Delegates
               link={activeTab}
-              onPersonClick={(person) => handlePerosnClick(person)}
+
             />
           </TabPanel>
         )}

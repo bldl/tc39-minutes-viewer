@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-// Define the delegate type
+// Defining the delegate type
 type Delegate = {
   name: string;
   credentials: string;
@@ -13,6 +13,7 @@ interface essentialProps {
   const DelegatesComponent: React.FC<essentialProps> = ({ link }) => {
     const [initials, setInitials] = useState<string[]>([]);
     
+    // Fetches the md-file and sets the initials state to the delegates in this file when the link is updated
     useEffect(() => {
         const fetchFromMarkdown = async () => {
             if (link) {
@@ -24,7 +25,7 @@ interface essentialProps {
                     const matches = markdownContent.match(regex);
         
                     if (matches) {
-                        // Use a Set to ensure uniqueness
+                        // Uses a Set to ensure uniqueness
                         const uniqueInitials = Array.from(new Set(matches));
                         setInitials(uniqueInitials);
                     }
@@ -37,18 +38,27 @@ interface essentialProps {
         fetchFromMarkdown();
     }, [link]); 
 
+    // Prints the initials of the delegates when initials are updated.
     useEffect(() => {
         console.log("Initials:", initials);
     }, [initials]); 
 
+    // Prints the name of the person clicked in the console
+    const handlePersonClick = (personName: string) => {
+      console.log("Clicked on person:", personName);
+    };
 
     return (
         <div>
-          <h2>Delegates List</h2>
+          <h2>
+        {initials.length > 0
+          ? "People"
+          : "Select an MD file from the navigation bar to display the people list."}
+        </h2>
           <ul>
             {DELEGATES.filter(delegate => initials.includes(delegate.credentials))
                       .map((delegate, index) => (
-              <li key={index}>{`${delegate.name} (${delegate.credentials})`}</li>
+              <li key={index} onClick={() => handlePersonClick(delegate.credentials)}>{`${delegate.name} (${delegate.credentials})`}</li>
             ))}
           </ul>
         </div>
