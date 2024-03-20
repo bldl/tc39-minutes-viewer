@@ -5,43 +5,12 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import { annotate } from "rough-notation";
+
 import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
-import { annotate } from "rough-notation";
-import ExtractAllPeople from "./ExtractAllPeople.tsx";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import Delegates from "./Delegates.tsx"
-
-import { Typography } from "@mui/material";
-import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
-import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
-import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
-
-import SentimentBarChart from "./Sentiment/SentimentBarChart";
-import SentimentPieChart from "./Sentiment/SentimentPieChart";
-import SentimentLineChart from "./Sentiment/SentimentLineChart";
-
-// Styled ToggleButtonGroup for better alignment and spacing
-const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
-  display: "flex",
-  justifyContent: "center", // Ensure the buttons are centered
-  marginBottom: theme.spacing(2), // Add some space below the buttons
-}));
-
-const getSentimentIcon = (sentiment) => {
-  if (sentiment.includes("Negative")) {
-    return <SentimentDissatisfiedIcon color="error" sx={{ fontSize: 40 }} />;
-  } else if (sentiment.includes("Positive")) {
-    return <SentimentSatisfiedIcon color="success" sx={{ fontSize: 40 }} />;
-  } else if (sentiment.includes("Neutral")) {
-    return <SentimentNeutralIcon color="action" sx={{ fontSize: 40 }} />;
-  }
-};
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
+import Delegates from "./Delegates.tsx";
+import SentimentAnalysisComponent from "./Sentiment/SentimentAnalysisComponent";
 
 interface TabBoxProps {
   messages: Message[];
@@ -63,9 +32,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showSentimentTab,
   showParticipantsTab,
 }: TabBoxProps) => {
-  // Sentiment start
-  const [sentimentResult, setSentimentResult] = useState<string[]>([]);
-  const [overallSentiment, setOverallSentiment] = useState<string>("");
   const [lastTopicClick, setLastTopicClick] = useState<{
     topic: string;
     time: number;
@@ -85,7 +51,10 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       : ""
   );
 
-  const handleChange = (event: any, newValue: React.SetStateAction<string>) => {
+  const handleChange = (
+    _event: any,
+    newValue: React.SetStateAction<string>
+  ) => {
     setValue(newValue);
   };
 
@@ -102,20 +71,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       setValue("4");
     }
   }, [showGptTab, showTopicsTab, showSentimentTab, showParticipantsTab]);
-
-  // Calculate and set overall sentiment based on scores
-  useEffect(() => {
-    window.api.receiveSentimentAnalysis((event: any, arg: string) => {
-      const scores = JSON.parse(arg); // Assuming arg is a JSON string that represents an array, e.g., "[1, 1]"
-      const sentimentDescriptions = scores.map((score: string | number) =>
-        interpretSentiment(score)
-      );
-      setSentimentResult(sentimentDescriptions); // Update the state with an array of descriptions
-
-      const overall = interpretOverallSentiment(scores);
-      setOverallSentiment(overall);
-    });
-  }, []);
 
   const extractFilename = (
     link: string | null,
@@ -147,38 +102,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
     return reconstructedUrl;
   };
-
-  // Convert sentiment analysis numeric result to a descriptive message
-  const interpretSentiment = (score: string | number) => {
-    const sentimentMap = {
-      "0": "Negative",
-      "1": "Neutral",
-      "2": "Positive",
-    };
-    return sentimentMap[score] || "Unknown"; // Default to 'Unknown' if score is not in the map
-  };
-
-  const interpretOverallSentiment = (scores: any[]) => {
-    if (scores.length === 0) return "No sentiment analysis performed yet.";
-    const averageScore =
-      scores.reduce((acc, cur) => acc + cur, 0) / scores.length;
-    // Define thresholds for categorizing sentiment
-    if (averageScore < 0.5) return "Overall sentiment is Negative.";
-    else if (averageScore >= 0.5 && averageScore < 1.5)
-      return "Overall sentiment is Neutral.";
-    else return "Overall sentiment is Positive.";
-  };
-
-  // State to manage selected chart type
-  const [chartType, setChartType] = useState("pie");
-
-  // Handler for chart type change
-  const handleChartTypeChange = (event, newChartType) => {
-    if (newChartType !== null) {
-      setChartType(newChartType);
-    }
-  };
-  // Sentiment end
 
   const scrollToSection = (id: string, topic: string) => {
     const currentTime = new Date().getTime();
@@ -241,11 +164,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       .replace(/""/g, ""); // Handle ':=' by removing it
   }
 
-  // const handlePerosnClick = (person: string) => {
-  //   console.log("Clicked on person:", person);
-  //   scrollToSection(toSlug(person), person);
-  // };
-
   return showGptTab ||
     showTopicsTab ||
     showSentimentTab ||
@@ -292,74 +210,13 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         {showSentimentTab && (
           <TabPanel value="3">
             <h3>{extractFilename(activeTab, "sentiment")}</h3>
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <StyledToggleButtonGroup
-                color="primary"
-                value={chartType}
-                exclusive
-                onChange={handleChartTypeChange}
-                aria-label="chart type"
-              >
-                <ToggleButton value="bar" aria-label="bar chart">
-                  Bar Chart
-                </ToggleButton>
-                <ToggleButton value="pie" aria-label="pie chart">
-                  Pie Chart
-                </ToggleButton>
-                <ToggleButton value="line" aria-label="line chart">
-                  Line Chart
-                </ToggleButton>
-              </StyledToggleButtonGroup>
-            </Box>
-            {sentimentResult.length > 0 ? (
-              <>
-                <Box sx={{ textAlign: "center", my: 2 }}>
-                  <Typography variant="h6">Overall Sentiment</Typography>
-                  <Typography variant="subtitle1" color="textSecondary">
-                    {overallSentiment}
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      mt: 2,
-                    }}
-                  >
-                    {getSentimentIcon(overallSentiment)}
-                  </Box>
-                </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
-                  {chartType === "bar" && (
-                    <SentimentBarChart sentimentResults={sentimentResult} />
-                  )}
-                  {chartType === "pie" && (
-                    <SentimentPieChart sentimentResults={sentimentResult} />
-                  )}
-                  {chartType === "line" && (
-                    <SentimentLineChart sentimentResults={sentimentResult} />
-                  )}
-                </Box>
-              </>
-            ) : (
-              <Box sx={{ textAlign: "center", my: 2 }}>
-                <SentimentNeutralIcon sx={{ fontSize: 40, my: 2 }} />
-                <Typography>
-                  No sentiment analysis has been performed yet.
-                </Typography>
-              </Box>
-            )}
+            <SentimentAnalysisComponent link={activeTab} />
           </TabPanel>
         )}
         {showParticipantsTab && (
           <TabPanel value="4">
-
             <h3>{extractFilename(activeTab, "persons")}</h3>
-            <Delegates
-              link={activeTab}
-
-            />
+            <Delegates link={activeTab} />
           </TabPanel>
         )}
       </TabContext>
