@@ -11,6 +11,7 @@ import { annotate } from "rough-notation";
 import ExtractAllPeople from "./ExtractAllPeople.tsx";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import Delegates from "./Delegates.tsx"
 
 import { Typography } from "@mui/material";
 import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
@@ -196,10 +197,10 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       .replace(/-+$/, ""); // Trim hyphen from end
   }
 
-  const handlePerosnClick = (person: string) => {
-    console.log("Clicked on person:", person);
-    scrollToSection(toSlug(person), person);
-  };
+  // const handlePerosnClick = (person: string) => {
+  //   console.log("Clicked on person:", person);
+  //   scrollToSection(toSlug(person), person);
+  // };
 
   return showGptTab ||
     showTopicsTab ||
@@ -307,9 +308,8 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         )}
         {showParticipantsTab && (
           <TabPanel value="4">
-            <ExtractAllPeople
+            <Delegates
               link={link}
-              onPersonClick={(person) => handlePerosnClick(person)}
             />
           </TabPanel>
         )}
