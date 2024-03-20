@@ -115,6 +115,37 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     });
   }, []);
 
+  const extractFilename = (
+    link: string | null,
+    type: "topics" | "sentiment" | "persons"
+  ): string => {
+    if (!link) return "No file selected";
+
+    // Normalize backslashes to forward slashes for consistency
+    const normalizedLink = link.replace(/\\/g, "/");
+
+    // Extract the part after 'public/meetings/'
+    const pattern = /public\/meetings\/(.*)/;
+    const match = normalizedLink.match(pattern);
+    if (!match) return "Invalid link format";
+
+    // Extracted filename will be something like '2019-03/26.md'
+    let [yearMonth, dayWithExtension] = match[1].split("/");
+    if (!dayWithExtension) return "Invalid link format";
+
+    // Split the year and month, and remove the '.md' extension from day
+    let [year, month] = yearMonth.split("-");
+
+    //remove also the .md from the day and letters
+    let part = dayWithExtension.replace(".md", "");
+    let day = part.replace(/[a-zA-Z--]/g, "");
+
+    // Reconstruct the URL with the type
+    const reconstructedUrl = `http://tc39/${year}/${month}/${day}/${type}`;
+
+    return reconstructedUrl;
+  };
+
   // Convert sentiment analysis numeric result to a descriptive message
   const interpretSentiment = (score: string | number) => {
     const sentimentMap = {
@@ -149,6 +180,8 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
   const scrollToSection = (id: string, topic: string) => {
     const currentTime = new Date().getTime();
+    console.log("Clicked on topic in scroll:", topic);
+    console.log("Id:", id);
     if (
       topic === lastTopicClick.topic &&
       currentTime - lastTopicClick.time < 2000
@@ -162,6 +195,9 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
     // Proceed with scrolling and annotating the element
     const element = document.getElementById(id);
+
+    console.log("Element:", element);
+
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
       // Wait until scroll if finished before annotating the element
@@ -186,14 +222,21 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     }, 2000);
   };
 
-  function toSlug(topic: string): string {
-    return topic
+  function toSlug(text: string): string {
+    // Normalize Unicode characters, remove non-alphanumeric characters, replace spaces with hyphens
+    // This approach assumes a basic handling of special characters and may need adjustments for edge cases
+    return text
+      .normalize("NFD") // Decompose Unicode into base characters and diacritics
+      .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
       .toLowerCase() // Convert to lowercase
-      .replace(/[\s]+/g, "-") // Replace spaces with hyphens
-      .replace(/[^\w\-]+/g, "") // Remove all non-word chars
+      .replace(/&/g, "")
+      .replace(/:=/g, "-")
+      .replace(/"/g, "-")
+      .replace(/[\s]+/g, "-") // Replace spaces and repeated hyphens with a single hyphen
+      .replace(/[^a-z0-9\-]/g, "") // Remove remaining non-alphanumeric/non-hyphen characters
       .replace(/\-\-+/g, "-") // Replace multiple hyphens with a single hyphen
-      .replace(/^-+/, "") // Trim hyphen from start
-      .replace(/-+$/, ""); // Trim hyphen from end
+      .replace(/^-+|-+$/g, "") // Trim hyphens from start and end
+      .replace(/""/g, ""); // Handle ':=' by removing it
   }
 
   const handlePerosnClick = (person: string) => {
@@ -201,125 +244,85 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     scrollToSection(toSlug(person), person);
   };
 
-  return showGptTab ||
-    showTopicsTab ||
-    showSentimentTab ||
-    showParticipantsTab ? (
-    <Box sx={{ width: "100%", typography: "body1" }}>
-      <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <TabList
-            onChange={handleChange}
-            aria-label="lab API tabs example"
-            sx={{
-              "& .MuiTab-root:focus": {
-                outline: "none",
-                // You can add additional styles for the focused state here
-              },
-              "& .MuiTab-root.Mui-selected": {
-                // Styles for the selected tab
-              },
+  return (
+    <Tabs>
+      {!showGptTab &&
+        !showTopicsTab &&
+        !showParticipantsTab &&
+        !showSentimentTab && (
+          <h2>
+            Here we can add instructions for the app. The text will disappear
+            once a tab is opened.
+          </h2>
+        )}
+      {/* List of tabs */}
+      {(showGptTab ||
+        showTopicsTab ||
+        showSentimentTab ||
+        showParticipantsTab) && (
+        <TabList>
+          {/* Tabs and tab-names */}
+          {showGptTab && <Tab>ChatGPT</Tab>}
+          {showTopicsTab && <Tab>Topics</Tab>}
+          {showSentimentTab && <Tab>Sentiment</Tab>}
+          {showParticipantsTab && <Tab>Persons</Tab>}
+        </TabList>
+      )}
+
+      {/* Content for tabs */}
+
+      {showGptTab && (
+        <TabPanel>
+          <ChatMessages messages={messages} isLoading={isLoading} />
+        </TabPanel>
+      )}
+
+      {showTopicsTab && (
+        <TabPanel>
+          <h3>{extractFilename(link, "topics")}</h3>
+          <TopicList
+            onTopicClick={function (topic: string): void {
+              scrollToSection(toSlug(topic), topic);
+              console.log("Clicked on topic:", topic);
+              console.log("After being slugged", toSlug(topic));
             }}
-          >
-            {showGptTab && <Tab label="ChatGPT" value="1" />}
-            {showTopicsTab && <Tab label="Topics" value="2" />}
-            {showSentimentTab && <Tab label="Sentiment" value="3" />}
-            {showParticipantsTab && <Tab label="Persons" value="4" />}
-          </TabList>
-        </Box>
-        {showGptTab && (
-          <TabPanel value="1">
-            <ChatMessages messages={messages} isLoading={isLoading} />
-          </TabPanel>
-        )}
-        {showTopicsTab && (
-          <TabPanel value="2">
-            {" "}
-            <TopicList
-              onTopicClick={function (topic: string): void {
-                scrollToSection(toSlug(topic), topic);
-              }}
-              link={link}
-            />
-          </TabPanel>
-        )}
-        {showSentimentTab && (
-          <TabPanel value="3">
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <StyledToggleButtonGroup
-                color="primary"
-                value={chartType}
-                exclusive
-                onChange={handleChartTypeChange}
-                aria-label="chart type"
-              >
-                <ToggleButton value="bar" aria-label="bar chart">
-                  Bar Chart
-                </ToggleButton>
-                <ToggleButton value="pie" aria-label="pie chart">
-                  Pie Chart
-                </ToggleButton>
-                <ToggleButton value="line" aria-label="line chart">
-                  Line Chart
-                </ToggleButton>
-              </StyledToggleButtonGroup>
-            </Box>
-            {sentimentResult.length > 0 ? (
-              <>
-                <Box sx={{ textAlign: "center", my: 2 }}>
-                  <Typography variant="h6">Overall Sentiment</Typography>
-                  <Typography variant="subtitle1" color="textSecondary">
-                    {overallSentiment}
-                  </Typography>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      mt: 2,
-                    }}
-                  >
-                    {getSentimentIcon(overallSentiment)}
-                  </Box>
-                </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
-                  {chartType === "bar" && (
-                    <SentimentBarChart sentimentResults={sentimentResult} />
-                  )}
-                  {chartType === "pie" && (
-                    <SentimentPieChart sentimentResults={sentimentResult} />
-                  )}
-                  {chartType === "line" && (
-                    <SentimentLineChart sentimentResults={sentimentResult} />
-                  )}
-                </Box>
-              </>
-            ) : (
-              <Box sx={{ textAlign: "center", my: 2 }}>
-                <SentimentNeutralIcon sx={{ fontSize: 40, my: 2 }} />
-                <Typography>
-                  No sentiment analysis has been performed yet.
-                </Typography>
-              </Box>
-            )}
-          </TabPanel>
-        )}
-        {showParticipantsTab && (
-          <TabPanel value="4">
-            <ExtractAllPeople
-              link={link}
-              onPersonClick={(person) => handlePerosnClick(person)}
-            />
-          </TabPanel>
-        )}
-      </TabContext>
-    </Box>
-  ) : (
-    // Render a message or an empty fragment when no tabs are available
-    <Box sx={{ width: "100%", typography: "body1" }}>
-      <h2>Here we can add instructions for the app. </h2>
-    </Box>
+            link={link}
+          />
+        </TabPanel>
+      )}
+
+      {/* Sentiment tab */}
+      {showSentimentTab && (
+        <TabPanel>
+          <h2>Sentiment Analysis</h2>
+          <h3>{extractFilename(link, "sentiment")}</h3>
+          {sentimentResult.length > 0 ? (
+            <>
+              <ul>
+                {sentimentResult.map((sentiment, index) => (
+                  <li key={index}>{sentiment}</li>
+                ))}
+              </ul>
+              <p>
+                <strong>Overall Sentiment:</strong> {overallSentiment}
+              </p>
+            </>
+          ) : (
+            <p>No sentiment analysis has been performed yet.</p>
+          )}
+        </TabPanel>
+      )}
+
+      {showParticipantsTab && (
+        <TabPanel>
+          <h3>{extractFilename(link, "persons")}</h3>
+          <ExtractAllPeople
+            link={link}
+            onPersonClick={(person) => handlePerosnClick(person)}
+          />
+        </TabPanel>
+      )}
+    </Tabs>
   );
 };
 

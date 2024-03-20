@@ -39,6 +39,7 @@ const TopicList: React.FC<TopicListProps> = ({ onTopicClick, link }) => {
     lines.forEach((line, index) => {
       if (line.startsWith("## ")) {
         const topicName = line.replace(/^##\s*/, "");
+        // const topicName = line.replace("##", "");
         topics.push({ id: index, name: topicName });
       }
     });
