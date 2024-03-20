@@ -229,6 +229,7 @@ const RenderMarkdown: React.FC<Props> = ({
             value={tabLink} // Identify the tab
             label={
               <span>
+                {/* {tabLink.replace("public/meetings/", "")} */}
                 {tabLink.replace("public/meetings/", "")}
                 <IconButton
                   size="small"

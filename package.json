@@ -35,6 +35,7 @@
     "roughjs": "^4.6.6",
     "stanza": "^12.20.0",
     "styled-components": "^6.1.8",
+    "vite": "^5.2.0",
     "vite-tsconfig-paths": "^4.2.3"
   },
   "devDependencies": {
@@ -51,7 +52,6 @@
     "eslint-plugin-react-refresh": "^0.4.3",
     "less": "^4.2.0",
     "typescript": "^5.2.2",
-    "vite": "^4.5.2",
     "vite-plugin-electron": "^0.14.0",
     "vite-plugin-electron-renderer": "^0.14.5"
   },
