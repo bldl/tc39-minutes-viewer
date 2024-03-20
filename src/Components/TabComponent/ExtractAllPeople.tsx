@@ -1,61 +1,18 @@
 import React, { useState, useEffect } from "react";
+import Delegates from './delegates.tsx';
 
-interface Person {
-  id: number;
-  name: string;
-}
 
 interface PeopleListProps {
   onPersonClick: (personName: string) => void;
   link: string | null;
 }
 
+
 const PeopleList: React.FC<PeopleListProps> = ({ onPersonClick, link }) => {
-  const [people, setPeople] = useState<Person[]>([]);
+  
+  // Fetch the content of the Markdown file and extract the people
 
-  useEffect(() => {
-    if (link) {
-      fetchPeopleFromMarkdown();
-    }
-  }, [link]);
 
-  const fetchPeopleFromMarkdown = async () => {
-    try {
-      const response = await fetch(link!);
-      const markdownContent = await response.text();
-      const peopleFromMarkdown = extractPeopleFromMarkdown(markdownContent);
-      setPeople(peopleFromMarkdown);
-    } catch (error) {
-      console.error("Error loading Markdown file:", error);
-    }
-  };
-
-  const extractPeopleFromMarkdown = (markdownContent: string): Person[] => {
-    const people: Person[] = [];
-
-    // Find the section that starts and ends with "-----"
-    const sectionStartIndex = markdownContent.indexOf("-----") + 5; // Start after the first delimiter
-    const sectionEndIndex = markdownContent.indexOf("-----", sectionStartIndex); // Find the ending delimiter
-    const peopleSection = markdownContent.substring(
-      sectionStartIndex,
-      sectionEndIndex
-    );
-
-    // Split the section by commas to get individual names and their credentials
-    const namesWithCredentials = peopleSection.split(", ");
-
-    namesWithCredentials.forEach((nameWithCredentials, index) => {
-      // Extract name and credentials assuming the format "Name (Credentials)"
-      const matches = nameWithCredentials.match(/(.*)\s\((.*)\)/);
-      if (matches && matches.length >= 3) {
-        const name = matches[1].trim();
-        const credentials = matches[2].trim();
-        people.push({ id: index, name: `${name} (${credentials})` });
-      }
-    });
-
-    return people;
-  };
 
   const handlePersonClick = (personName: string) => {
     console.log("Clicked on person:", personName);
@@ -63,15 +20,20 @@ const PeopleList: React.FC<PeopleListProps> = ({ onPersonClick, link }) => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>{people.length > 0 ? "People" : "No md file selected"}</h2>
+    <div>
+      {/* <h2>
+        {people.length > 0
+          ? "People"
+          : "Select an MD file from the navigation bar to display the people list."}
+      </h2>
       <ul>
         {people.map((person) => (
           <li key={person.id} onClick={() => handlePersonClick(person.name)}>
             {person.name}
           </li>
         ))}
-      </ul>
+      </ul> */}
+      <Delegates link = {link}/>
     </div>
   );
 };

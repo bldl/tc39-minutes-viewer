@@ -1,11 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import "react-tabs/style/react-tabs.css";
+
+import Box from "@mui/material/Box";
+import Tab from "@mui/material/Tab";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
 import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
 import { annotate } from "rough-notation";
 import ExtractAllPeople from "./ExtractAllPeople.tsx";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { styled } from "@mui/material/styles";
 
+import { Typography } from "@mui/material";
+import SentimentSatisfiedIcon from "@mui/icons-material/SentimentSatisfied";
+import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
+import SentimentNeutralIcon from "@mui/icons-material/SentimentNeutral";
+
+import SentimentBarChart from "./Sentiment/SentimentBarChart";
+import SentimentPieChart from "./Sentiment/SentimentPieChart";
+import SentimentLineChart from "./Sentiment/SentimentLineChart";
+
+// Styled ToggleButtonGroup for better alignment and spacing
+const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center", // Ensure the buttons are centered
+  marginBottom: theme.spacing(2), // Add some space below the buttons
+}));
+
+const getSentimentIcon = (sentiment) => {
+  if (sentiment.includes("Negative")) {
+    return <SentimentDissatisfiedIcon color="error" sx={{ fontSize: 40 }} />;
+  } else if (sentiment.includes("Positive")) {
+    return <SentimentSatisfiedIcon color="success" sx={{ fontSize: 40 }} />;
+  } else if (sentiment.includes("Neutral")) {
+    return <SentimentNeutralIcon color="action" sx={{ fontSize: 40 }} />;
+  }
+};
 interface Message {
   role: "user" | "assistant";
   content: string;
@@ -40,6 +71,35 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     topic: "",
     time: 0,
   });
+  const [value, setValue] = useState(
+    showGptTab
+      ? "1"
+      : showTopicsTab
+      ? "2"
+      : showSentimentTab
+      ? "3"
+      : showParticipantsTab
+      ? "4"
+      : ""
+  );
+
+  const handleChange = (event: any, newValue: React.SetStateAction<string>) => {
+    setValue(newValue);
+  };
+
+  useEffect(() => {
+    // When the component mounts or when the conditions of the tabs change,
+    // set the value to the first available tab.
+    if (showGptTab) {
+      setValue("1");
+    } else if (showTopicsTab) {
+      setValue("2");
+    } else if (showSentimentTab) {
+      setValue("3");
+    } else if (showParticipantsTab) {
+      setValue("4");
+    }
+  }, [showGptTab, showTopicsTab, showSentimentTab, showParticipantsTab]);
 
   // Calculate and set overall sentiment based on scores
   useEffect(() => {
@@ -106,6 +166,16 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       return "Overall sentiment is Neutral.";
     else return "Overall sentiment is Positive.";
   };
+
+  // State to manage selected chart type
+  const [chartType, setChartType] = useState("pie");
+
+  // Handler for chart type change
+  const handleChartTypeChange = (event, newChartType) => {
+    if (newChartType !== null) {
+      setChartType(newChartType);
+    }
+  };
   // Sentiment end
 
   const scrollToSection = (id: string, topic: string) => {
@@ -170,6 +240,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   }
 
   const handlePerosnClick = (person: string) => {
+    console.log("Clicked on person:", person);
     scrollToSection(toSlug(person), person);
   };
 

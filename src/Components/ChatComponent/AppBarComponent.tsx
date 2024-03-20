@@ -28,8 +28,20 @@ interface Option {
 }
 
 // Styles for group headers
-const GroupHeader = styled(ListSubheader)(({ theme }) => ({
-  backgroundColor: theme.palette.background.paper,
+const GroupHeader = styled("div")(({ theme }) => ({
+  backgroundColor:
+    theme.palette.mode === "light"
+      ? theme.palette.grey[100]
+      : theme.palette.grey[900],
+  fontWeight: theme.typography.fontWeightMedium,
+  padding: theme.spacing(1),
+  paddingLeft: theme.spacing(2),
+  borderRadius: theme.shape.borderRadius,
+  boxShadow:
+    theme.palette.mode === "light"
+      ? "0px 2px 4px rgba(0,0,0,0.1)"
+      : "0px 2px 4px rgba(255,255,255,0.1)",
+  margin: theme.spacing(0.5, 0), // Adjust as needed
 }));
 
 const AppBarComponent: React.FC<AppBarComponentProps> = ({
@@ -233,7 +245,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           renderGroup={(params: AutocompleteRenderGroupParams) => [
             <li key={params.key}>
               <GroupHeader>{params.group}</GroupHeader>
-              {params.children}
+              <ul>{params.children}</ul>
             </li>,
           ]}
           sx={{ width: 950, zIndex: 100 }}
