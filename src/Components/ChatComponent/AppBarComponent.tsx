@@ -79,13 +79,15 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   const filterOptions = (options: Option[], state: any) => {
     const results = _filterOptions(options, state);
 
+    if (!results.some((option) => option.isCommand)) {
+      results.unshift(commandOption);
+    }
+
     if (!results.includes(myDefaultOption)) {
       results.unshift(myDefaultOption);
     }
 
-    if (!results.some((option) => option.isCommand)) {
-      results.unshift(commandOption);
-    }
+
 
     return results;
   };

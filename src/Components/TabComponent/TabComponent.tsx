@@ -44,7 +44,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showGptTab,
   showParticipantsTab,
   handleCloseTab,
-}) => {
+}: TabBoxProps) => {
   const scrollToSection = useScrollToSection();
   const { value, handleChange, setValue } = useTabs(
     showGptTab
