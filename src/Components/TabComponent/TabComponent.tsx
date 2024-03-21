@@ -11,8 +11,16 @@ import { extractFilename, toSlug, useScrollToSection } from "./Utils";
 
 import ChatMessages from "../ChatComponent/ChatMessages";
 import TopicList from "./ExtractingAllHeaders";
+
 import Delegates from "./Delegates/Delegates.tsx";
 import SentimentAnalysisComponent from "./Sentiment/SentimentAnalysisComponent";
+import { IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+
+interface Message {
+  role: "user" | "assistant";
+  content: string;
+}
 
 interface TabBoxProps {
   messages: Message[];
@@ -23,6 +31,8 @@ interface TabBoxProps {
   showGptTab: boolean;
   showParticipantsTab: boolean;
   activeTab: string | null;
+
+  handleCloseTab: (tabType: string) => void;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
@@ -33,6 +43,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showSentimentTab,
   showGptTab,
   showParticipantsTab,
+  handleCloseTab,
 }) => {
   const scrollToSection = useScrollToSection();
   const { value, handleChange } = useTabs(
@@ -67,10 +78,80 @@ const TabsComponent: React.FC<TabBoxProps> = ({
               },
             }}
           >
-            {showGptTab && <Tab label="ChatGPT" value="1" />}
-            {showTopicsTab && <Tab label="Topics" value="2" />}
-            {showSentimentTab && <Tab label="Sentiment" value="3" />}
-            {showParticipantsTab && <Tab label="Persons" value="4" />}
+            {showGptTab && (
+              <Tab
+                label={
+                  <span>
+                    ChatGpt
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Gpt")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="1"
+              />
+            )}
+
+            {showTopicsTab && (
+              <Tab
+                label={
+                  <span>
+                    Topics
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Topics")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="2"
+              />
+            )}
+
+            {showSentimentTab && (
+              <Tab
+                label={
+                  <span>
+                    Sentiment
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Sentiment")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="3"
+              />
+            )}
+            {showParticipantsTab && (
+              <Tab
+                label={
+                  <span>
+                    Participants
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Persons")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="4"
+              />
+            )}
           </TabList>
         </Box>
         {showGptTab && (
