@@ -190,7 +190,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         {
           role: "assistant",
           content: response.data.choices[0].message.content,
-          activeTab: link,
+          activeTab: activeTab,
         },
       ]);
       setInput("");
