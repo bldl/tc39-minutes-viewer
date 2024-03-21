@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ChatComponent from "./ChatComponent/ChatComponent";
 import NavBarComponent from "./NavBar/NavBarComponent";
-import { fetchHashTable } from "./NavBar/FetchMeetings";
+import { fetchHashTable } from "./NavBar/Utils/FetchMeetings";
 import { SelectedTextProvider } from "./SelectedTextContext";
 import createTheme from "@mui/material/styles/createTheme";
 import {
