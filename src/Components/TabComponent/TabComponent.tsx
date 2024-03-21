@@ -78,7 +78,12 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     showParticipantsTab ? (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider",
+          position: "sticky",
+          top: -20,
+          zIndex: 1100, // Ensure it stays above other content
+          backgroundColor: "white", // Or any other color, to ensure text readability
+        }}>
           <TabList
             onChange={handleChange}
             aria-label="lab API tabs example"

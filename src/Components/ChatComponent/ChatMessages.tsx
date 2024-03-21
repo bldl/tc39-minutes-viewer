@@ -55,10 +55,9 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
                 variant="body1"
                 align="left"
                 color={message.role === "user" ? "primary" : "success"}
-                style={{ marginBottom: 4 }}
+                style={{ marginBottom: 20 }}
               >
                 {message.content}
-                <p></p>
               </Typography>
             </div>
           ))

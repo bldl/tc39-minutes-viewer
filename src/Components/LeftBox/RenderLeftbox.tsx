@@ -188,7 +188,21 @@ const RenderMarkdown: React.FC<Props> = ({
 
     setSelectedRange(null);
     setSelectedText("");
+
+    if (markdownRef.current) {
+      markdownRef.current.scrollTop = 0; // Scrolls to the top
+    }
   };
+
+  useEffect(() => {
+    // Ensures that the content scrolls to the top when the activeTab changes
+    if (markdownRef.current) {
+      markdownRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [activeTab]);
 
   const handleCloseTab = (link: string) => {
     setClosingTab(link);
@@ -212,6 +226,12 @@ const RenderMarkdown: React.FC<Props> = ({
     <div>
       {/* Render tabs */}
       <Tabs
+        style={{
+          position: "sticky",
+          top: -20,
+          zIndex: 1100, // Ensure it stays above other content
+          backgroundColor: "white", // Or any other color, to ensure text readability
+        }}
         value={
           activeTab !== null && markdownMap.has(activeTab)
             ? activeTab
