@@ -5,6 +5,10 @@ import CustomTreeView from "./Utils/CustomTreeView";
 interface NavBarComponentProps {
   hashTable: Record<string, Record<string, Record<string, string>>>;
   onSelectDay: (filePath: string) => void;
+  selectedYear?: string | null;
+  selectedMonth?: string | null;
+  onSelectYear?: (year: string) => void;
+  onSelectMonth?: (year: string, month: string) => void;
 }
 
 const NavBarComponent: React.FC<NavBarComponentProps> = ({

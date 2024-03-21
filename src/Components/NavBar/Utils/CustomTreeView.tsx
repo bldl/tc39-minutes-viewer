@@ -17,24 +17,31 @@ const CustomTreeView: React.FC<CustomTreeViewProps> = ({
     data: any,
     nodeIdPrefix: string = ""
   ): JSX.Element[] => {
-    return Object.entries(data).map(([key, value]) => {
-      const nodeId = nodeIdPrefix ? `${nodeIdPrefix}-${key}` : key;
+    return Object.entries(data ?? {}).map(([key, value]) => {
+      const nodeId = nodeIdPrefix
+        ? `${nodeIdPrefix}-${key as string}`
+        : (key as string);
 
-      if (typeof value === "object" && Object.keys(value).length > 0) {
-        // Object: render a parent node with children
+      if (
+        typeof value === "object" &&
+        value !== null &&
+        Object.keys(value).length > 0
+      ) {
         return (
           <StyledTreeItem key={nodeId} nodeId={nodeId} label={key}>
-            {renderTreeItems(value, nodeId)}
+            {renderTreeItems(value as Record<string, any>, nodeId)}
           </StyledTreeItem>
         );
       } else {
-        // Leaf node: render an item without children
+        // TODO:
+        // When value is expected to be a string (e.g., the file path), ensure its type is asserted or checked before using it in a context that expects a string.
+        // Example: onClick={() => onSelectDay(value as string)}
         return (
           <StyledTreeItem
             key={nodeId}
             nodeId={nodeId}
             label={key}
-            onClick={() => onSelectDay(value)}
+            onClick={() => onSelectDay(value as string)}
           />
         );
       }
@@ -42,7 +49,7 @@ const CustomTreeView: React.FC<CustomTreeViewProps> = ({
   };
 
   // This handles the user clicking on md files in the Tree
-  const handleNodeSelect = (event: React.SyntheticEvent, nodeId: string) => {
+  const handleNodeSelect = (_event: React.SyntheticEvent, nodeId: string) => {
     const parts = nodeId.split("-");
     // Check if the user clicked on a meeting file
     if (parts.length === 3) {
