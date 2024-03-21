@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
@@ -46,7 +46,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   handleCloseTab,
 }) => {
   const scrollToSection = useScrollToSection();
-  const { value, handleChange } = useTabs(
+  const { value, handleChange, setValue } = useTabs(
     showGptTab
       ? "1"
       : showTopicsTab
@@ -57,6 +57,20 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       ? "4"
       : "1"
   );
+
+  useEffect(() => {
+    // When the component mounts or when the conditions of the tabs change,
+    // set the value to the first available tab.
+    if (showGptTab) {
+      setValue("1");
+    } else if (showTopicsTab) {
+      setValue("2");
+    } else if (showSentimentTab) {
+      setValue("3");
+    } else if (showParticipantsTab) {
+      setValue("4");
+    }
+  }, [showGptTab, showTopicsTab, showSentimentTab, showParticipantsTab]);
 
   return showGptTab ||
     showTopicsTab ||
