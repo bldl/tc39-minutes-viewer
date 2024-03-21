@@ -71,7 +71,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
     myDefaultOption,
     { label: "Topics", id: 2, category: "List" },
     { label: "Sentiment", id: 3, category: "Analysis" },
-    { label: "Persons", id: 4, category: "List" },
+    { label: "Participants", id: 4, category: "List" },
     // Additional static options...
   ];
 
@@ -79,13 +79,15 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   const filterOptions = (options: Option[], state: any) => {
     const results = _filterOptions(options, state);
 
+    if (!results.some((option) => option.isCommand)) {
+      results.unshift(commandOption);
+    }
+
     if (!results.includes(myDefaultOption)) {
       results.unshift(myDefaultOption);
     }
 
-    if (!results.some((option) => option.isCommand)) {
-      results.unshift(commandOption);
-    }
+
 
     return results;
   };
