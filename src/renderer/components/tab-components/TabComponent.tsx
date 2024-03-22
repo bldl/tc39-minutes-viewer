@@ -6,13 +6,13 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 
-import useTabs from "./UseTabs";
-import { extractFilename, toSlug, useScrollToSection } from "./Utils";
+import useTabs from "./useTabs.ts";
+import { extractFilename, toSlug, useScrollToSection } from "./utils.ts";
 
-import ChatMessages from "../ChatComponent/ChatMessages";
-import TopicList from "./ExtractingAllHeaders";
-import Delegates from "./Delegates/Delegates.tsx";
-import SentimentAnalysisComponent from "./Sentiment/SentimentAnalysisComponent";
+import ChatMessages from "../chat-components/ChatMessages.tsx";
+import TopicList from "./topics/ExtractingAllHeaders.tsx";
+import Delegates from "./delegates/Delegates.tsx";
+import SentimentAnalysisComponent from "./sentiment-analysis/SentimentAnalysisComponent.tsx";
 
 interface TabBoxProps {
   messages: Message[];

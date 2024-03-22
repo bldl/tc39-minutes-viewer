@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid, Paper } from "@mui/material";
-import CustomTreeView from "./Utils/CustomTreeView";
+import CustomTreeView from "./utils/CustomTreeView";
 
 interface NavBarComponentProps {
   hashTable: Record<string, Record<string, Record<string, string>>>;

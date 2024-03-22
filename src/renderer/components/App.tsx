@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import ChatComponent from "./ChatComponent/ChatComponent";
-import NavBarComponent from "./NavBar/NavBarComponent";
-import { fetchHashTable } from "./NavBar/Utils/FetchMeetings";
+import ChatComponent from "./chat-components/ChatComponent";
+import NavBarComponent from "./nav-components/NavBarComponent";
+import { fetchHashTable } from "./nav-components/utils/FetchMeetings";
 import { SelectedTextProvider } from "./SelectedTextContext";
 import createTheme from "@mui/material/styles/createTheme";
 import { PaletteMode } from "@mui/material";

@@ -22,8 +22,15 @@ const monthNames = {
 };
 
 // Handle read-directory event
-ipcMain.handle("read-directory", async (event, basePath) => {
-  const hashTable = {};
+ipcMain.handle("read-directory", async (_event, basePath) => {
+  interface HashTable {
+    [year: string]: {
+      [month: string]: {
+        [day: string]: string;
+      };
+    };
+  }
+  const hashTable: HashTable = {};
   try {
     const directories = await fs.readdir(basePath, { withFileTypes: true });
     for (const directory of directories) {
@@ -31,7 +38,7 @@ ipcMain.handle("read-directory", async (event, basePath) => {
         const dirMatch = directory.name.match(/^(\d{4})-(\d{2})$/);
         if (dirMatch) {
           const year = dirMatch[1];
-          const month = dirMatch[2];
+          const month = dirMatch[2] as keyof typeof monthNames;
           const monthName = monthNames[month];
           if (!hashTable[year]) {
             hashTable[year] = {};
@@ -116,7 +123,7 @@ function createWindow() {
   ipcMain.on("performSentimentAnalysis", (event, arg) => {
     console.log(`Received text for analysis: ${arg}`); // Debug log
     const pythonProcess = spawn("python3", [
-      "electron/sentiment_analysis.py",
+      "src/renderer/scripts/sentiment_analysis.py",
       arg,
     ]);
     pythonProcess.stdout.on("data", (data) => {

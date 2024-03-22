@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
-import ChartToggleButtons from "./Utils/Charts/ChartToggleButtons";
-import SentimentAnalysisDisplay from "./Utils/SentimentAnalysisDisplay";
-import SentimentBarChart from "./Utils/Charts/SentimentBarChart";
-import SentimentPieChart from "./Utils/Charts/SentimentPieChart";
-import SentimentLineChart from "./Utils/Charts/SentimentLineChart";
+import ChartToggleButtons from "./utils/charts/ChartToggleButtons";
+import SentimentAnalysisDisplay from "./utils/SentimentAnalysisDisplay";
+import SentimentBarChart from "./utils/charts/SentimentBarChart";
+import SentimentPieChart from "./utils/charts/SentimentPieChart";
+import SentimentLineChart from "./utils/charts/SentimentLineChart";
 
 interface SentimentAnalysisComponentProps {
   link: string | null;
