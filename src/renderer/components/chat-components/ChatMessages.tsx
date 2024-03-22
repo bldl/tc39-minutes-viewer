@@ -10,6 +10,7 @@ import {
 interface Message {
   role: "user" | "assistant";
   content: string;
+  activeTab?: string | null;
 }
 
 interface ChatMessagesProps {
@@ -24,10 +25,10 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
       <Paper
         elevation={0}
         style={{
-          padding: "20px",
+          padding: "5px",
           overflowY: "auto",
           height: "68vh",
-          width: "100%",
+          width: "105%",
           borderRadius: "20px",
         }}
       >
@@ -44,14 +45,21 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
           </div>
         ) : (
           messages.map((message, index) => (
-            <Typography
-              key={index}
-              variant="body1"
-              align="left"
-              color={message.role === "user" ? "primary" : "success"}
-            >
-              {message.content}
-            </Typography>
+            <div key={index}>
+              {message.activeTab && (
+                <Typography align="left" style={{ fontWeight: "bold" }}>
+                  {`File: ${message.activeTab}`}
+                </Typography>
+              )}
+              <Typography
+                variant="body1"
+                align="left"
+                color={message.role === "user" ? "primary" : "success"}
+                style={{ marginBottom: 20 }}
+              >
+                {message.content}
+              </Typography>
+            </div>
           ))
         )}
       </Paper>

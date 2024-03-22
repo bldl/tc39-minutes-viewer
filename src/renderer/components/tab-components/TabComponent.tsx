@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import { IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 
 import useTabs from "./useTabs.ts";
 import { extractFilename, toSlug, useScrollToSection } from "./utils.ts";
@@ -23,6 +25,8 @@ interface TabBoxProps {
   showGptTab: boolean;
   showParticipantsTab: boolean;
   activeTab: string | null;
+
+  handleCloseTab: (tabType: string) => void;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
@@ -33,9 +37,10 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showSentimentTab,
   showGptTab,
   showParticipantsTab,
-}) => {
+  handleCloseTab,
+}: TabBoxProps) => {
   const scrollToSection = useScrollToSection();
-  const { value, handleChange } = useTabs(
+  const { value, handleChange, setValue } = useTabs(
     showGptTab
       ? "1"
       : showTopicsTab
@@ -47,13 +52,36 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       : "1"
   );
 
+  useEffect(() => {
+    // When the component mounts or when the conditions of the tabs change,
+    // set the value to the first available tab.
+    if (showGptTab) {
+      setValue("1");
+    } else if (showTopicsTab) {
+      setValue("2");
+    } else if (showSentimentTab) {
+      setValue("3");
+    } else if (showParticipantsTab) {
+      setValue("4");
+    }
+  }, [showGptTab, showTopicsTab, showSentimentTab, showParticipantsTab]);
+
   return showGptTab ||
     showTopicsTab ||
     showSentimentTab ||
     showParticipantsTab ? (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+            position: "sticky",
+            top: -20,
+            zIndex: 1100, // Ensure it stays above other content
+            backgroundColor: "white", // Or any other color, to ensure text readability
+          }}
+        >
           <TabList
             onChange={handleChange}
             aria-label="lab API tabs example"
@@ -67,10 +95,80 @@ const TabsComponent: React.FC<TabBoxProps> = ({
               },
             }}
           >
-            {showGptTab && <Tab label="ChatGPT" value="1" />}
-            {showTopicsTab && <Tab label="Topics" value="2" />}
-            {showSentimentTab && <Tab label="Sentiment" value="3" />}
-            {showParticipantsTab && <Tab label="Persons" value="4" />}
+            {showGptTab && (
+              <Tab
+                label={
+                  <span>
+                    ChatGpt
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Gpt")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="1"
+              />
+            )}
+
+            {showTopicsTab && (
+              <Tab
+                label={
+                  <span>
+                    Topics
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Topics")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="2"
+              />
+            )}
+
+            {showSentimentTab && (
+              <Tab
+                label={
+                  <span>
+                    Sentiment
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Sentiment")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="3"
+              />
+            )}
+            {showParticipantsTab && (
+              <Tab
+                label={
+                  <span>
+                    Participants
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Persons")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="4"
+              />
+            )}
           </TabList>
         </Box>
         {showGptTab && (

@@ -79,16 +79,29 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   const filterOptions = (options: Option[], state: any) => {
     const results = _filterOptions(options, state);
 
-    if (!results.includes(myDefaultOption)) {
-      results.unshift(myDefaultOption);
-    }
-
     if (!results.some((option) => option.isCommand)) {
       results.unshift(commandOption);
     }
 
+    if (!results.includes(myDefaultOption)) {
+      results.unshift(myDefaultOption);
+    }
+
     return results;
   };
+
+  const sortOptions = (options: any[]) => {
+    return options.sort((a, b) => {
+      // Sort primarily by category
+      if (a.category < b.category) return -1;
+      if (a.category > b.category) return 1;
+      // If categories are the same, optionally sort by label or any other property
+      return a.label.localeCompare(b.label);
+    });
+  };
+
+  // Usage before passing to Autocomplete
+  const sortedOptions = sortOptions(options);
 
   return (
     <AppBar
@@ -107,7 +120,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
         <Autocomplete
           disablePortal
           filterOptions={filterOptions}
-          options={options}
+          options={sortedOptions}
           groupBy={(option) => option.category}
           getOptionLabel={(option) => option.label}
           isOptionEqualToValue={(option, value) => option.id === value.id}
