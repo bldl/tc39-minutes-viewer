@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import ChatComponent from "./ChatComponent/ChatComponent";
-import NavBarComponent from "./NavBar/NavBarComponent";
-import { fetchHashTable } from "./NavBar/FetchMeetings";
+import { useState, useEffect } from "react";
+import ChatComponent from "./chat-components/ChatComponent";
+import NavBarComponent from "./nav-components/NavBarComponent";
+import { fetchHashTable } from "./nav-components/utils/FetchMeetings";
 import { SelectedTextProvider } from "./SelectedTextContext";
 import createTheme from "@mui/material/styles/createTheme";
+import { PaletteMode } from "@mui/material";
 import {
   ThemeProvider,
   Switch,
@@ -19,10 +20,9 @@ const App = () => {
   const [hashTable, setHashTable] = useState({});
   const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null);
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-  const [themeMode, setThemeMode] = useState(
+  const [themeMode, setThemeMode] = useState<PaletteMode>(
     prefersDarkMode ? "dark" : "light"
   );
 
@@ -48,16 +48,12 @@ const App = () => {
     setSelectedYear(year);
     if (selectedYear !== year) {
       setSelectedMonth(null);
-      setSelectedDay(null);
     }
   };
 
   const handleMonthSelect = (year: string, month: string) => {
     setSelectedYear(year);
     setSelectedMonth(month);
-    if (selectedMonth !== month) {
-      setSelectedDay(null);
-    }
   };
 
   const handleDaySelect = (filePath: string) => {
@@ -111,6 +107,7 @@ const App = () => {
               />
             }
             labelPlacement="end"
+            label={undefined}
           />
         </FormGroup>
 
@@ -125,6 +122,7 @@ const App = () => {
         <ChatComponent
           link={selectedFilePath}
           updateFilePath={setSelectedFilePath}
+          isLoading={false}
         />
       </SelectedTextProvider>
     </ThemeProvider>

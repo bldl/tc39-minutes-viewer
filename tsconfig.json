@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "electron"],
+  "include": ["src", "src/main/electron", "dist-electron/preload.js", "dist-electron/main.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

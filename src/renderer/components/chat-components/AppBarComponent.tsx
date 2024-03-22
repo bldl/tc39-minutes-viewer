@@ -70,8 +70,8 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   const options: Option[] = [
     myDefaultOption,
     { label: "Topics", id: 2, category: "List" },
+    { label: "Persons", id: 4, category: "List" },
     { label: "Sentiment", id: 3, category: "Analysis" },
-    { label: "Participants", id: 4, category: "List" },
     // Additional static options...
   ];
 
@@ -87,8 +87,6 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
       results.unshift(myDefaultOption);
     }
 
-
-
     return results;
   };
 
@@ -101,7 +99,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
       return a.label.localeCompare(b.label);
     });
   };
-  
+
   // Usage before passing to Autocomplete
   const sortedOptions = sortOptions(options);
 

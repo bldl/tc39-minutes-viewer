@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
-import ChartToggleButtons from "./ChartToggleButtons";
-import SentimentAnalysisDisplay from "./SentimentAnalysisDisplay";
-import SentimentBarChart from "./SentimentBarChart";
-import SentimentPieChart from "./SentimentPieChart";
-import SentimentLineChart from "./SentimentLineChart";
+import ChartToggleButtons from "./utils/charts/ChartToggleButtons";
+import SentimentAnalysisDisplay from "./utils/SentimentAnalysisDisplay";
+import SentimentBarChart from "./utils/charts/SentimentBarChart";
+import SentimentPieChart from "./utils/charts/SentimentPieChart";
+import SentimentLineChart from "./utils/charts/SentimentLineChart";
 
 interface SentimentAnalysisComponentProps {
   link: string | null;
@@ -42,9 +42,6 @@ const SentimentAnalysisComponent: React.FC<SentimentAnalysisComponentProps> = ({
 
   useEffect(() => {
     if (!link) return;
-
-    // Placeholder for actual sentiment analysis logic
-    // Replace this with your actual call to window.api.receiveSentimentAnalysis or similar
     window.api.receiveSentimentAnalysis((_event: any, arg: string) => {
       const scores = JSON.parse(arg);
       const sentimentDescriptions = scores.map(interpretSentiment);

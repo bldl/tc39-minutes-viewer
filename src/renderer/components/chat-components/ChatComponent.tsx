@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Container, Paper } from "@mui/material";
 import AppBarComponent from "./AppBarComponent"; // Importing the AppBarComponent
-import LeftBoxContent from "../LeftBox/LeftBoxContent"; // Assuming LeftBoxContent is already a separate component
-import TabsComponent from "../TabComponent/TabComponent"; // Assuming TabsComponent is already a separate component
+import LeftBoxContent from "../left-box/LeftBoxContent"; // Assuming LeftBoxContent is already a separate component
+import TabsComponent from "../tab-components/TabComponent"; // Assuming TabsComponent is already a separate component
 
 // Define the shape of the message object
 interface Message {

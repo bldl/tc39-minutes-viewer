@@ -5,22 +5,16 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-
-import useTabs from "./UseTabs";
-import { extractFilename, toSlug, useScrollToSection } from "./Utils";
-
-import ChatMessages from "../ChatComponent/ChatMessages";
-import TopicList from "./ExtractingAllHeaders";
-
-import Delegates from "./Delegates/Delegates.tsx";
-import SentimentAnalysisComponent from "./Sentiment/SentimentAnalysisComponent";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
+import useTabs from "./useTabs.ts";
+import { extractFilename, toSlug, useScrollToSection } from "./utils.ts";
+
+import ChatMessages from "../chat-components/ChatMessages.tsx";
+import TopicList from "./topics/ExtractingAllHeaders.tsx";
+import Delegates from "./delegates/Delegates.tsx";
+import SentimentAnalysisComponent from "./sentiment-analysis/SentimentAnalysisComponent.tsx";
 
 interface TabBoxProps {
   messages: Message[];
@@ -78,12 +72,16 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     showParticipantsTab ? (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: "divider",
-          position: "sticky",
-          top: -20,
-          zIndex: 1100, // Ensure it stays above other content
-          backgroundColor: "white", // Or any other color, to ensure text readability
-        }}>
+        <Box
+          sx={{
+            borderBottom: 1,
+            borderColor: "divider",
+            position: "sticky",
+            top: -20,
+            zIndex: 1100, // Ensure it stays above other content
+            backgroundColor: "white", // Or any other color, to ensure text readability
+          }}
+        >
           <TabList
             onChange={handleChange}
             aria-label="lab API tabs example"
