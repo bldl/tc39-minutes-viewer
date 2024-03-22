@@ -9,14 +9,14 @@ const useTreeState = ({ defaultExpanded = [] }: UseTreeStateProps) => {
   const [selected, setSelected] = useState<string>("");
 
   const handleToggle = useCallback(
-    (event: React.SyntheticEvent, nodeIds: string[]) => {
+    (_event: React.SyntheticEvent, nodeIds: string[]) => {
       setExpanded(nodeIds);
     },
     []
   );
 
   const handleSelect = useCallback(
-    (event: React.SyntheticEvent, nodeId: string) => {
+    (_event: React.SyntheticEvent, nodeId: string) => {
       setSelected(nodeId);
     },
     []
