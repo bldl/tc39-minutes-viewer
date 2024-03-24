@@ -70,9 +70,8 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   const options: Option[] = [
     myDefaultOption,
     { label: "Topics", id: 2, category: "List" },
-    { label: "Persons", id: 4, category: "List" },
     { label: "Sentiment", id: 3, category: "Analysis" },
-    // Additional static options...
+    { label: "Participants", id: 4, category: "List" },
   ];
 
   const _filterOptions = createFilterOptions<Option>();
