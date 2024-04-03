@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
-import { IconButton, Tab, Tabs } from "@mui/material"; // Import MUI Tab components
+import { IconButton, Paper, Tab, Tabs } from "@mui/material"; // Import MUI Tab components
 import { useSelectedText } from "../contexts/SelectedTextContext";
 import { RoughNotation } from "react-rough-notation";
 import { JSX } from "react/jsx-runtime";
@@ -73,7 +73,7 @@ const RenderMarkdown: React.FC<Props> = ({
 
       if (rangeRect && containerRect) {
         setSelectedTextPosition({
-          top: rangeRect.top - containerRect.top + 105,
+          top: rangeRect.top - containerRect.top + 50,
           left: rangeRect.left - containerRect.left + 10,
         });
       }
@@ -184,14 +184,33 @@ const RenderMarkdown: React.FC<Props> = ({
   }, [markdownMap, activeTab, closingTab]);
 
   return (
-    <div>
-      {/* Render tabs */}
+    <>
+    <Paper
+      elevation={3}
+      style={{
+        padding: "10px",
+        borderRadius: "20px",
+        overflowX: "hidden",
+        position: "relative",
+        width: "40vw",
+        height: "9.5vh",
+      }}
+    >
       <Tabs
         style={{
+
+          padding: "10px",
+          borderRadius: "20px",
+          overflowX: "hidden",
+          position: "relative",
+          width: "40vw",
+          height: "9.5vh",
+
           position: "sticky",
           top: -20,
           zIndex: 1100, // Ensure it stays above other content
           backgroundColor: "white", // Or any other color, to ensure text readability
+
         }}
         value={
           activeTab !== null && markdownMap.has(activeTab)
@@ -250,7 +269,8 @@ const RenderMarkdown: React.FC<Props> = ({
           ></div>
         )}
       </div>
-    </div>
+    </Paper>
+  </>
   );
 };
 

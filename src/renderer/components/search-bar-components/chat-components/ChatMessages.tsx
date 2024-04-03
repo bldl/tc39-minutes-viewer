@@ -19,6 +19,22 @@ interface ChatMessagesProps {
 }
 
 const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
+  const processContent = (content: string): JSX.Element => {
+    // Replace each "-" with a newline ("\n") followed by "-"
+    const updatedContent = content.replace(/-/g, "-");
+    // Splitting the updated content by new lines to wrap each line in a span for correct rendering
+    return (
+      <>
+        {updatedContent.split("\n").map((line, index) => (
+          <React.Fragment key={index}>
+            {line}
+            <br />
+          </React.Fragment>
+        ))}
+      </>
+    );
+  };
+
   return (
     <Grid item xs={6}>
       <Divider orientation="vertical" flexItem />
@@ -32,7 +48,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
           borderRadius: "20px",
         }}
       >
-        {isLoading ? ( // Conditional rendering based on isLoading
+        {isLoading ? (
           <div
             style={{
               display: "flex",
@@ -57,7 +73,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
                 color={message.role === "user" ? "primary" : "success"}
                 style={{ marginBottom: 20 }}
               >
-                {message.content}
+                {/* Process and display content */}
+                {processContent(message.content)}
               </Typography>
             </div>
           ))
@@ -66,4 +83,5 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
     </Grid>
   );
 };
+
 export default ChatMessages;

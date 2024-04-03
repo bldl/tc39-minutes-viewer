@@ -30,7 +30,7 @@ interface FileTabStates {
 }
 
 // ChatComponent is the main component for the chat interface.
-const ChatComponent: React.FC<ChatComponentProps> = ({ isLoading }) => {
+const ChatComponent: React.FC<ChatComponentProps> = ({  }) => {
   // Get the selectedFilePath from the SelectionContext
   const { selectedFilePath, setSelectedFilePath } = useSelection();
   // State variables for the chat component.
@@ -42,10 +42,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ isLoading }) => {
   const [showSentimentTab, setShowSentimentTab] = useState(false);
   const [showGptTab, setShowGptTab] = useState(false);
   const [showPersonsTab, setShowPersonsTab] = useState(false);
-
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
   const [fileTabStates, setFileTabStates] = useState<FileTabStates>({});
+
 
   const handleHighlightedText = (text: string) => {
     setHighlightedText(text);
@@ -85,7 +86,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ isLoading }) => {
         showSentimentTab:
           selectedOption === "Sentiment" ? true : currentState.showSentimentTab,
         showGptTab:
-          selectedOption === "Search with GPT-3.5"
+          selectedOption === ("Search with GPT-3.5" ||
+          "Summarize this" ||
+          "Analyze Argument Types")
             ? true
             : currentState.showGptTab,
         showPersonsTab:
@@ -151,9 +154,25 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ isLoading }) => {
   {
     // Handles sending a message to the chatbot.
   }
-  const handleSendMessage = async () => {
+
+  const handleSendMessage = async (prefix: string) => {
+    setIsLoading(true);
+
     const modelName = "gpt-3.5-turbo";
     const maxTokens = 200;
+
+    let finalInput;
+
+    if (prefix == "Summarize this") {
+      finalInput = `${prefix}`;
+    } else if (
+      prefix ==
+      "Please analyze the types of arguments used in the provided text."
+    ) {
+      finalInput = `For your answer, put a hyphen (not numbers) before each new point you make. ${prefix}`;
+    } else {
+      finalInput = input;
+    }
 
     try {
       // Making a POST request to the OpenAI API.
@@ -164,7 +183,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ isLoading }) => {
             { role: "system", content: "You are a helpful assistant." },
             {
               role: "user",
-              content: `${input}\n\nHighlighted Text: ${highlightedText}`,
+              content: `${finalInput}\n\nBased on this text: ${highlightedText}`,
             },
           ],
           model: modelName,
@@ -207,6 +226,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({ isLoading }) => {
         handleClearMessages={handleClearMessages}
         handleSelectOption={handleSelectOption}
         updateFilePath={useSelection}
+
       />
       <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
         <LeftBoxContent
