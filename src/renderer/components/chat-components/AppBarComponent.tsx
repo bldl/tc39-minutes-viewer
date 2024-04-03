@@ -13,7 +13,7 @@ import CodeIcon from "@mui/icons-material/Code"; // Icon for the execute command
 interface AppBarComponentProps {
   input: string;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSendMessage: () => void;
+  handleSendMessage: (prefix: string) => void;
   handleClearMessages: () => void;
   handleSelectOption: (selectedOption: string) => void;
   updateFilePath: (filePath: string) => void; // Accept this prop
@@ -67,8 +67,22 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
     category: "ChatGPT",
   };
 
+  const summarizeThis = {
+    label: "Summarize This",
+    id: 5,
+    category: "ChatGPT",
+  };
+
+  const argumentTypes = {
+    label: "Analyze Argument Types",
+    id: 6,
+    category: "ChatGPT",
+  };
+
   const options: Option[] = [
     myDefaultOption,
+    summarizeThis,
+    argumentTypes,
     { label: "Topics", id: 2, category: "List" },
     { label: "Sentiment", id: 3, category: "Analysis" },
     { label: "Participants", id: 4, category: "List" },
@@ -91,11 +105,23 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
 
   const sortOptions = (options: any[]) => {
     return options.sort((a, b) => {
-      // Sort primarily by category
-      if (a.category < b.category) return -1;
-      if (a.category > b.category) return 1;
-      // If categories are the same, optionally sort by label or any other property
-      return a.label.localeCompare(b.label);
+      // Ensure "List" category items come first
+      if (a.category === "List" && b.category !== "List") {
+        return -1;
+      } else if (a.category !== "List" && b.category === "List") {
+        return 1;
+      }
+
+      // Within the same category, prioritize "Analyze Argument Types"
+      if (a.category === b.category) {
+        if (a.label === "Analyze Argument Types") return 1;
+
+        // Then sort the rest alphabetically by label
+        return a.label.localeCompare(b.label);
+      }
+
+      // For different categories, sort alphabetically by category
+      return a.category.localeCompare(b.category);
     });
   };
 
@@ -133,7 +159,15 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           )} //if (value?.isCommand) {
           onChange={(_event, value) => {
             if (value && value.label === myDefaultOption.label) {
-              handleSendMessage();
+              handleSendMessage("");
+            }
+            if (value && value.label === summarizeThis.label) {
+              handleSendMessage("Summarize this");
+            }
+            if (value && value.label === argumentTypes.label) {
+              handleSendMessage(
+                "Please analyze the types of arguments used in the provided text."
+              );
             }
             if (value) {
               handleSelectOption(value.label);

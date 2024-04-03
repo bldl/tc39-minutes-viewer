@@ -79,7 +79,7 @@ const RenderMarkdown: React.FC<Props> = ({
 
       if (rangeRect && containerRect) {
         setSelectedTextPosition({
-          top: rangeRect.top - containerRect.top + 105,
+          top: rangeRect.top - containerRect.top + 50,
           left: rangeRect.left - containerRect.left + 10,
         });
       }
@@ -232,6 +232,7 @@ const RenderMarkdown: React.FC<Props> = ({
           overflowX: "hidden",
           position: "relative",
           width: "40vw",
+          height: "9.5vh",
         }}
       >
         <Tabs
