@@ -10,24 +10,11 @@ interface Props {
 const LeftBoxContent = ({ link, onHighlight, onTabChange }: Props) => {
   return (
     <Grid item xs={6}>
-      <Paper
-        elevation={3}
-        style={{
-          padding: "20px",
-          overflowY: "auto",
-          height: "80vh",
-          width: "40vw",
-          borderRadius: "20px",
-          position: "relative",
-          overflowX: "hidden",
-        }}
-      >
-        <RenderMarkdown
-          link={link}
-          onHighlight={onHighlight}
-          onTabChange={onTabChange}
-        />
-      </Paper>
+      <RenderMarkdown
+        link={link}
+        onHighlight={onHighlight}
+        onTabChange={onTabChange}
+      />
     </Grid>
   );
 };

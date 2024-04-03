@@ -185,92 +185,101 @@ const RenderMarkdown: React.FC<Props> = ({
 
   return (
     <>
-    <Paper
-      elevation={3}
-      style={{
-        padding: "10px",
-        borderRadius: "20px",
-        overflowX: "hidden",
-        position: "relative",
-        width: "40vw",
-        height: "9.5vh",
-      }}
-    >
-      <Tabs
+      <Paper
+        elevation={3}
         style={{
-
           padding: "10px",
           borderRadius: "20px",
           overflowX: "hidden",
           position: "relative",
           width: "40vw",
           height: "9.5vh",
-
-          position: "sticky",
-          top: -20,
-          zIndex: 1100, // Ensure it stays above other content
-          backgroundColor: "white", // Or any other color, to ensure text readability
-
         }}
-        value={
-          activeTab !== null && markdownMap.has(activeTab)
-            ? activeTab
-            : markdownMap.keys().next().value
-        }
-        onChange={handleTabChange}
-        variant="scrollable"
-        scrollButtons
-        allowScrollButtonsMobile
-        aria-label="scrollable force tabs example"
       >
-        {[...markdownMap.keys()].map((tabLink) => (
-          <Tab
-            key={tabLink}
-            value={tabLink} // Identify the tab
-            label={
-              <span>
-                {/* {tabLink.replace("public/meetings/", "")} */}
-                {tabLink.replace("public/meetings/", "")}
-                <IconButton
-                  size="small"
-                  component="span"
-                  onClick={() => handleCloseTab(tabLink)}
-                  style={{ marginLeft: "auto" }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </span>
-            }
-          />
-        ))}
-      </Tabs>
-      <div onMouseUp={handleTextHighlight}>
-        <div ref={markdownRef}>
-          <ReactMarkdown
-            className="md"
-            rehypePlugins={[rehypeSlug]}
-            components={components}
-          >
-            {markdownMap.get(activeTab ?? "") ||
-              "Choose a file in the navigation bar."}
-          </ReactMarkdown>
+        <Tabs
+          style={{
+            padding: "10px",
+            borderRadius: "20px",
+            overflowX: "hidden",
+            position: "relative",
+            width: "40vw",
+            height: "9.5vh",
+          }}
+          value={
+            activeTab !== null && markdownMap.has(activeTab)
+              ? activeTab
+              : markdownMap.keys().next().value
+          }
+          onChange={handleTabChange}
+          variant="scrollable"
+          scrollButtons
+          allowScrollButtonsMobile
+          aria-label="scrollable force tabs example"
+        >
+          {[...markdownMap.keys()].map((tabLink) => (
+            <Tab
+              key={tabLink}
+              value={tabLink} // Identify the tab
+              label={
+                <span>
+                  {/* {tabLink.replace("public/meetings/", "")} */}
+                  {tabLink.replace("public/meetings/", "")}
+                  <IconButton
+                    size="small"
+                    component="span"
+                    onClick={() => handleCloseTab(tabLink)}
+                    style={{ marginLeft: "auto" }}
+                  >
+                    <CloseIcon />
+                  </IconButton>
+                </span>
+              }
+            />
+          ))}
+        </Tabs>
+      </Paper>
+      <Paper
+        elevation={3}
+        style={{
+          padding: "20px",
+          overflowY: "auto",
+          height: "70vh",
+          width: "40vw",
+          borderRadius: "20px",
+          position: "relative",
+          overflowX: "hidden",
+          marginTop: "5px",
+        }}
+      >
+        <div>
+          <div onMouseUp={handleTextHighlight}>
+            <div ref={markdownRef}>
+              <ReactMarkdown
+                className="md"
+                rehypePlugins={[rehypeSlug]}
+                components={components}
+              >
+                {markdownMap.get(activeTab ?? "") ||
+                  "Choose a file in the navigation bar."}
+              </ReactMarkdown>
+            </div>
+            {selectedRange && (
+              <div
+                style={{
+                  position: "absolute",
+                  background: "rgba(255, 255, 0, 0.3)",
+                  zIndex: 99,
+                  top: selectedTextPosition.top,
+                  left: selectedTextPosition.left,
+                  width: selectedRange.getBoundingClientRect().width + 15,
+                  height: selectedRange.getBoundingClientRect().height + 15,
+                }}
+              ></div>
+            )}
+          </div>
         </div>
-        {selectedRange && (
-          <div
-            style={{
-              position: "absolute",
-              background: "rgba(255, 255, 0, 0.3)",
-              zIndex: 99,
-              top: selectedTextPosition.top,
-              left: selectedTextPosition.left,
-              width: selectedRange.getBoundingClientRect().width + 15,
-              height: selectedRange.getBoundingClientRect().height + 15,
-            }}
-          ></div>
-        )}
-      </div>
-    </Paper>
-  </>
+      </Paper>
+    </>
   );
 };
 
