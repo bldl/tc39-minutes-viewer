@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
 import { IconButton, Tab, Tabs } from "@mui/material"; // Import MUI Tab components
-import { useSelectedText } from "../SelectedTextContext";
+import { useSelectedText } from "../contexts/SelectedTextContext";
 import { RoughNotation } from "react-rough-notation";
 import { JSX } from "react/jsx-runtime";
 import CloseIcon from "@mui/icons-material/Close";

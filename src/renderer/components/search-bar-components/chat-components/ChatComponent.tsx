@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Container, Paper } from "@mui/material";
-import AppBarComponent from "./AppBarComponent";
-import LeftBoxContent from "../left-box/LeftBoxContent";
-import TabsComponent from "../tab-components/TabComponent";
+import AppBarComponent from "../AppBarComponent";
+import LeftBoxContent from "../../left-box/LeftBoxContent";
+import TabsComponent from "../../tab-components/TabComponent";
+import { useSelection } from "../../contexts/SelectionContext";
 
 // Define the shape of the message object
 interface Message {
@@ -14,9 +15,7 @@ interface Message {
 
 // Props for the ChatComponent.
 interface ChatComponentProps {
-  link: string | null;
   isLoading: true | false;
-  updateFilePath: (filePath: string) => void;
 }
 
 interface TabStates {
@@ -31,16 +30,13 @@ interface FileTabStates {
 }
 
 // ChatComponent is the main component for the chat interface.
-const ChatComponent: React.FC<ChatComponentProps> = ({
-  link = "../public/meetings/2012-05/may-21.md",
-  updateFilePath,
-}) => {
+const ChatComponent: React.FC<ChatComponentProps> = ({ isLoading }) => {
+  // Get the selectedFilePath from the SelectionContext
+  const { selectedFilePath, setSelectedFilePath } = useSelection();
   // State variables for the chat component.
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [clearMessages, setClearMessages] = useState<boolean>(false);
-
   const [highlightedText, setHighlightedText] = useState<string>("");
   const [showTopicsTab, setShowTopicsTab] = useState(false);
   const [showSentimentTab, setShowSentimentTab] = useState(false);
@@ -63,7 +59,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
     // Clears all messages from the chat.
   }
   const handleClearMessages = () => {
-    setIsLoading(false);
     setMessages([]);
     setClearMessages(true);
   };
@@ -157,7 +152,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
     // Handles sending a message to the chatbot.
   }
   const handleSendMessage = async () => {
-    setIsLoading(true);
     const modelName = "gpt-3.5-turbo";
     const maxTokens = 200;
 
@@ -200,7 +194,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
-      setIsLoading(false); // Stop loading regardless of success or error
     }
   };
 
@@ -213,11 +206,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         handleSendMessage={handleSendMessage}
         handleClearMessages={handleClearMessages}
         handleSelectOption={handleSelectOption}
-        updateFilePath={updateFilePath}
+        updateFilePath={useSelection}
       />
       <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
         <LeftBoxContent
-          link={link}
+          link={selectedFilePath}
           onHighlight={handleHighlightedText}
           onTabChange={setActiveTab}
         />
@@ -236,7 +229,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         >
           <TabsComponent
             messages={messages}
-            link={link}
+            link={selectedFilePath}
             isLoading={isLoading}
             showTopicsTab={showTopicsTab}
             showSentimentTab={showSentimentTab}

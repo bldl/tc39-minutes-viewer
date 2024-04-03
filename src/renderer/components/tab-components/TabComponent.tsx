@@ -11,11 +11,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import useTabs from "./useTabs.ts";
 import { extractFilename, toSlug, useScrollToSection } from "./utils.ts";
 
-import ChatMessages from "../chat-components/ChatMessages.tsx";
+import ChatMessages from "../search-bar-components/chat-components/ChatMessages.tsx";
 import TopicList from "./topics/ExtractingAllHeaders.tsx";
 import Delegates from "./delegates/Delegates.tsx";
 import SentimentAnalysisComponent from "./sentiment-analysis/SentimentAnalysisComponent.tsx";
-import { useSelectedText } from "../SelectedTextContext";
+import { useSelectedText } from "../contexts/SelectedTextContext.tsx";
 
 interface TabBoxProps {
   messages: Message[];
