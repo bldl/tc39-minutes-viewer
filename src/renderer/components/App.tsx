@@ -42,7 +42,6 @@ const App = () => {
           </FormGroup>
           <NavBarComponent hashTable={hashTable} />
           <ChatComponent isLoading={false} />
-          {/* Assuming isLoading is still needed as a prop */}
         </SelectionProvider>
       </SelectedTextProvider>
     </ThemeProvider>
