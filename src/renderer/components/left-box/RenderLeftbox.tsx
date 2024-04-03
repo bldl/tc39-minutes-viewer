@@ -3,7 +3,6 @@ import ReactMarkdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
 import { IconButton, Tab, Tabs } from "@mui/material"; // Import MUI Tab components
 import { useSelectedText } from "../SelectedTextContext";
-import ContextMenu from "../ContextMenu";
 import { RoughNotation } from "react-rough-notation";
 import { JSX } from "react/jsx-runtime";
 import CloseIcon from "@mui/icons-material/Close";
@@ -32,11 +31,6 @@ const RenderMarkdown: React.FC<Props> = ({
   const [closingTab, setClosingTab] = useState<string | null>(null); // Track the tab being closed
 
   const { selectedText, setSelectedText } = useSelectedText();
-  const [contextMenu, setContextMenu] = useState({
-    isVisible: false,
-    x: 0,
-    y: 0,
-  });
 
   const markdownRef = useRef<HTMLDivElement>(null);
 
@@ -92,39 +86,6 @@ const RenderMarkdown: React.FC<Props> = ({
       setSelectedText(selection.toString());
       setSelectedRange(selection.getRangeAt(0));
       onHighlight(selection.toString());
-    }
-  };
-
-  const handleContextMenu = (event: {
-    preventDefault: () => void;
-    clientX: any;
-    clientY: any;
-  }) => {
-    event.preventDefault();
-    if (selectedText) {
-      setContextMenu({
-        isVisible: true,
-        x: event.clientX,
-        y: event.clientY,
-      });
-    } else {
-      setContextMenu((prevState) => ({ ...prevState, isVisible: false }));
-    }
-  };
-
-  const handleClose = () => {
-    setContextMenu((prev) => ({ ...prev, isVisible: false }));
-  };
-
-  const handleAnalyzeSentiment = () => {
-    const textToAnalyze = selectedText;
-    if (textToAnalyze) {
-      try {
-        window.api.performSentimentAnalysis(textToAnalyze);
-      } catch (error) {
-        console.error("Error sending data for analysis:", error);
-      }
-      setContextMenu((prevState) => ({ ...prevState, isVisible: false }));
     }
   };
 
@@ -264,7 +225,7 @@ const RenderMarkdown: React.FC<Props> = ({
           />
         ))}
       </Tabs>
-      <div onContextMenu={handleContextMenu} onMouseUp={handleTextHighlight}>
+      <div onMouseUp={handleTextHighlight}>
         <div ref={markdownRef}>
           <ReactMarkdown
             className="md"
@@ -275,15 +236,6 @@ const RenderMarkdown: React.FC<Props> = ({
               "Choose a file in the navigation bar."}
           </ReactMarkdown>
         </div>
-        {contextMenu.isVisible && (
-          <ContextMenu
-            x={contextMenu.x}
-            y={contextMenu.y}
-            isOpen={contextMenu.isVisible}
-            onAnalyzeSentiment={handleAnalyzeSentiment}
-            onClose={handleClose}
-          />
-        )}
         {selectedRange && (
           <div
             style={{

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Container, Paper } from "@mui/material";
-import AppBarComponent from "./AppBarComponent"; // Importing the AppBarComponent
-import LeftBoxContent from "../left-box/LeftBoxContent"; // Assuming LeftBoxContent is already a separate component
-import TabsComponent from "../tab-components/TabComponent"; // Assuming TabsComponent is already a separate component
+import AppBarComponent from "./AppBarComponent";
+import LeftBoxContent from "../left-box/LeftBoxContent";
+import TabsComponent from "../tab-components/TabComponent";
 
 // Define the shape of the message object
 interface Message {
@@ -94,7 +94,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
             ? true
             : currentState.showGptTab,
         showPersonsTab:
-          selectedOption === "Participants" ? true : currentState.showPersonsTab,
+          selectedOption === "Participants"
+            ? true
+            : currentState.showPersonsTab,
       };
 
       // Update the fileTabStates with the new state for activeTab
