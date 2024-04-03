@@ -184,16 +184,25 @@ const RenderMarkdown: React.FC<Props> = ({
   }, [markdownMap, activeTab, closingTab]);
 
   return (
-    <>
-      <Paper
-        elevation={3}
+    <div>
+      {/* Render tabs */}
+      <Tabs
         style={{
-          padding: "10px",
-          borderRadius: "20px",
-          overflowX: "hidden",
-          position: "relative",
-          width: "40vw",
+          position: "sticky",
+          top: -20,
+          zIndex: 1100, // Ensure it stays above other content
+          backgroundColor: "white", // Or any other color, to ensure text readability
         }}
+        value={
+          activeTab !== null && markdownMap.has(activeTab)
+            ? activeTab
+            : markdownMap.keys().next().value
+        }
+        onChange={handleTabChange}
+        variant="scrollable"
+        scrollButtons
+        allowScrollButtonsMobile
+        aria-label="scrollable force tabs example"
       >
         {[...markdownMap.keys()].map((tabLink) => (
           <Tab
@@ -223,39 +232,9 @@ const RenderMarkdown: React.FC<Props> = ({
             rehypePlugins={[rehypeSlug]}
             components={components}
           >
-            <div ref={markdownRef}>
-              <ReactMarkdown
-                className="md"
-                rehypePlugins={[rehypeSlug]}
-                components={components}
-              >
-                {markdownMap.get(activeTab ?? "") ||
-                  "Choose a file in the navigation bar."}
-              </ReactMarkdown>
-            </div>
-            {contextMenu.isVisible && (
-              <ContextMenu
-                x={contextMenu.x}
-                y={contextMenu.y}
-                isOpen={contextMenu.isVisible}
-                onAnalyzeSentiment={handleAnalyzeSentiment}
-                onClose={handleClose}
-              />
-            )}
-            {selectedRange && (
-              <div
-                style={{
-                  position: "absolute",
-                  background: "rgba(255, 255, 0, 0.3)",
-                  zIndex: 99,
-                  top: selectedTextPosition.top,
-                  left: selectedTextPosition.left,
-                  width: selectedRange.getBoundingClientRect().width + 15,
-                  height: selectedRange.getBoundingClientRect().height + 15,
-                }}
-              ></div>
-            )}
-          </div>
+            {markdownMap.get(activeTab ?? "") ||
+              "Choose a file in the navigation bar."}
+          </ReactMarkdown>
         </div>
         {selectedRange && (
           <div
