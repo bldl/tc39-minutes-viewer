@@ -22,6 +22,20 @@ const SentimentLineChart: React.FC<SentimentLineChartProps> = ({
     Sentiment: sentiment === "Positive" ? 2 : sentiment === "Neutral" ? 1 : 0,
   }));
 
+  // Function to format Y-axis ticks
+  const formatYAxis = (tickItem: number) => {
+    switch (tickItem) {
+      case 0:
+        return "Negative";
+      case 1:
+        return "Neutral";
+      case 2:
+        return "Positive";
+      default:
+        return "";
+    }
+  };
+
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart
@@ -29,13 +43,17 @@ const SentimentLineChart: React.FC<SentimentLineChartProps> = ({
         margin={{
           top: 5,
           right: 40,
-          left: -10,
+          left: 15,
           bottom: 5,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
-        <YAxis domain={[0, 2]} ticks={[0, 1, 2]} />
+        <YAxis
+          domain={[0, 2]}
+          ticks={[0, 1, 2]}
+          tickFormatter={formatYAxis} // Use the format function here
+        />
         <Tooltip />
         <Legend />
         <Line

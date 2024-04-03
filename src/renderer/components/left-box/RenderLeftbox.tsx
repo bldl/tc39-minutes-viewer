@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
 import { IconButton, Paper, Tab, Tabs } from "@mui/material"; // Import MUI Tab components
-import { useSelectedText } from "../SelectedTextContext";
-import ContextMenu from "../ContextMenu";
+import { useSelectedText } from "../contexts/SelectedTextContext";
 import { RoughNotation } from "react-rough-notation";
 import { JSX } from "react/jsx-runtime";
 import CloseIcon from "@mui/icons-material/Close";
@@ -32,11 +31,6 @@ const RenderMarkdown: React.FC<Props> = ({
   const [closingTab, setClosingTab] = useState<string | null>(null); // Track the tab being closed
 
   const { selectedText, setSelectedText } = useSelectedText();
-  const [contextMenu, setContextMenu] = useState({
-    isVisible: false,
-    x: 0,
-    y: 0,
-  });
 
   const markdownRef = useRef<HTMLDivElement>(null);
 
@@ -92,39 +86,6 @@ const RenderMarkdown: React.FC<Props> = ({
       setSelectedText(selection.toString());
       setSelectedRange(selection.getRangeAt(0));
       onHighlight(selection.toString());
-    }
-  };
-
-  const handleContextMenu = (event: {
-    preventDefault: () => void;
-    clientX: any;
-    clientY: any;
-  }) => {
-    event.preventDefault();
-    if (selectedText) {
-      setContextMenu({
-        isVisible: true,
-        x: event.clientX,
-        y: event.clientY,
-      });
-    } else {
-      setContextMenu((prevState) => ({ ...prevState, isVisible: false }));
-    }
-  };
-
-  const handleClose = () => {
-    setContextMenu((prev) => ({ ...prev, isVisible: false }));
-  };
-
-  const handleAnalyzeSentiment = () => {
-    const textToAnalyze = selectedText;
-    if (textToAnalyze) {
-      try {
-        window.api.performSentimentAnalysis(textToAnalyze);
-      } catch (error) {
-        console.error("Error sending data for analysis:", error);
-      }
-      setContextMenu((prevState) => ({ ...prevState, isVisible: false }));
     }
   };
 
@@ -224,106 +185,92 @@ const RenderMarkdown: React.FC<Props> = ({
 
   return (
     <>
-      <Paper
-        elevation={3}
+    <Paper
+      elevation={3}
+      style={{
+        padding: "10px",
+        borderRadius: "20px",
+        overflowX: "hidden",
+        position: "relative",
+        width: "40vw",
+        height: "9.5vh",
+      }}
+    >
+      <Tabs
         style={{
+
           padding: "10px",
           borderRadius: "20px",
           overflowX: "hidden",
           position: "relative",
           width: "40vw",
           height: "9.5vh",
+
+          position: "sticky",
+          top: -20,
+          zIndex: 1100, // Ensure it stays above other content
+          backgroundColor: "white", // Or any other color, to ensure text readability
+
         }}
+        value={
+          activeTab !== null && markdownMap.has(activeTab)
+            ? activeTab
+            : markdownMap.keys().next().value
+        }
+        onChange={handleTabChange}
+        variant="scrollable"
+        scrollButtons
+        allowScrollButtonsMobile
+        aria-label="scrollable force tabs example"
       >
-        <Tabs
-          value={
-            activeTab !== null && markdownMap.has(activeTab)
-              ? activeTab
-              : markdownMap.keys().next().value
-          }
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons
-          allowScrollButtonsMobile
-          aria-label="scrollable force tabs example"
-        >
-          {[...markdownMap.keys()].map((tabLink) => (
-            <Tab
-              key={tabLink}
-              value={tabLink} // Identify the tab
-              label={
-                <span>
-                  {/* {tabLink.replace("public/meetings/", "")} */}
-                  {tabLink.replace("public/meetings/", "")}
-                  <IconButton
-                    size="small"
-                    component="span"
-                    onClick={() => handleCloseTab(tabLink)}
-                    style={{ marginLeft: "auto" }}
-                  >
-                    <CloseIcon />
-                  </IconButton>
-                </span>
-              }
-            />
-          ))}
-        </Tabs>
-      </Paper>
-      <Paper
-        elevation={3}
-        style={{
-          padding: "20px",
-          overflowY: "auto",
-          height: "70vh",
-          width: "40vw",
-          borderRadius: "20px",
-          position: "relative",
-          overflowX: "hidden",
-          marginTop: "5px",
-        }}
-      >
-        <div>
-          {/* Render tabs */}
-          <div
-            onContextMenu={handleContextMenu}
-            onMouseUp={handleTextHighlight}
+        {[...markdownMap.keys()].map((tabLink) => (
+          <Tab
+            key={tabLink}
+            value={tabLink} // Identify the tab
+            label={
+              <span>
+                {/* {tabLink.replace("public/meetings/", "")} */}
+                {tabLink.replace("public/meetings/", "")}
+                <IconButton
+                  size="small"
+                  component="span"
+                  onClick={() => handleCloseTab(tabLink)}
+                  style={{ marginLeft: "auto" }}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </span>
+            }
+          />
+        ))}
+      </Tabs>
+      <div onMouseUp={handleTextHighlight}>
+        <div ref={markdownRef}>
+          <ReactMarkdown
+            className="md"
+            rehypePlugins={[rehypeSlug]}
+            components={components}
           >
-            <div ref={markdownRef}>
-              <ReactMarkdown
-                className="md"
-                rehypePlugins={[rehypeSlug]}
-                components={components}
-              >
-                {markdownMap.get(activeTab ?? "") ||
-                  "Choose a file in the navigation bar."}
-              </ReactMarkdown>
-            </div>
-            {contextMenu.isVisible && (
-              <ContextMenu
-                x={contextMenu.x}
-                y={contextMenu.y}
-                isOpen={contextMenu.isVisible}
-                onAnalyzeSentiment={handleAnalyzeSentiment}
-                onClose={handleClose}
-              />
-            )}
-            {selectedRange && (
-              <div
-                style={{
-                  position: "absolute",
-                  background: "rgba(255, 255, 0, 0.3)",
-                  zIndex: 99,
-                  top: selectedTextPosition.top,
-                  left: selectedTextPosition.left,
-                  width: selectedRange.getBoundingClientRect().width + 15,
-                  height: selectedRange.getBoundingClientRect().height + 15,
-                }}
-              ></div>
-            )}
-          </div>
+            {markdownMap.get(activeTab ?? "") ||
+              "Choose a file in the navigation bar."}
+          </ReactMarkdown>
         </div>
-      </Paper>
-    </>
+        {selectedRange && (
+          <div
+            style={{
+              position: "absolute",
+              background: "rgba(255, 255, 0, 0.3)",
+              zIndex: 99,
+              top: selectedTextPosition.top,
+              left: selectedTextPosition.left,
+              width: selectedRange.getBoundingClientRect().width + 15,
+              height: selectedRange.getBoundingClientRect().height + 15,
+            }}
+          ></div>
+        )}
+      </div>
+    </Paper>
+  </>
   );
 };
 
