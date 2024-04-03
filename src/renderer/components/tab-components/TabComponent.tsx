@@ -11,10 +11,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import useTabs from "./useTabs.ts";
 import { extractFilename, toSlug, useScrollToSection } from "./utils.ts";
 
-import ChatMessages from "../chat-components/ChatMessages.tsx";
+import ChatMessages from "../search-bar-components/chat-components/ChatMessages.tsx";
 import TopicList from "./topics/ExtractingAllHeaders.tsx";
 import Delegates from "./delegates/Delegates.tsx";
 import SentimentAnalysisComponent from "./sentiment-analysis/SentimentAnalysisComponent.tsx";
+import { useSelectedText } from "../contexts/SelectedTextContext.tsx";
 
 interface TabBoxProps {
   messages: Message[];
@@ -51,6 +52,30 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       ? "4"
       : "1"
   );
+
+  const { selectedText } = useSelectedText();
+
+  useEffect(() => {
+    // Function to perform sentiment analysis
+    const analyzeSentiment = async () => {
+      if (showSentimentTab && selectedText) {
+        try {
+          // Assuming you have a method to perform sentiment analysis
+          // This could be calling an API endpoint, or another function that handles the analysis
+          const analysisResult = await window.api.performSentimentAnalysis(
+            selectedText
+          );
+          // Process the analysisResult here
+          console.log(analysisResult);
+        } catch (error) {
+          console.error("Failed to perform sentiment analysis:", error);
+        }
+      }
+    };
+
+    // Call the analyzeSentiment function when the component mounts or when showSentimentTab/selectedText changes
+    analyzeSentiment();
+  }, [showSentimentTab, selectedText]); // This effect depends on showSentimentTab and selectedText
 
   useEffect(() => {
     // When the component mounts or when the conditions of the tabs change,
