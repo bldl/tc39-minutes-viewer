@@ -30,9 +30,9 @@ interface FileTabStates {
 }
 
 // ChatComponent is the main component for the chat interface.
-const ChatComponent: React.FC<ChatComponentProps> = ({  }) => {
+const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
   // Get the selectedFilePath from the SelectionContext
-  const { selectedFilePath, setSelectedFilePath } = useSelection();
+  const { selectedFilePath } = useSelection();
   // State variables for the chat component.
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -46,7 +46,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({  }) => {
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
   const [fileTabStates, setFileTabStates] = useState<FileTabStates>({});
-
 
   const handleHighlightedText = (text: string) => {
     setHighlightedText(text);
@@ -86,9 +85,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({  }) => {
         showSentimentTab:
           selectedOption === "Sentiment" ? true : currentState.showSentimentTab,
         showGptTab:
-          selectedOption === ("Search with GPT-3.5" ||
-          "Summarize this" ||
-          "Analyze Argument Types")
+          selectedOption === "Search with GPT-3.5" ||
+          selectedOption === "Summarize This" ||
+          selectedOption === "Analyze Argument Types"
             ? true
             : currentState.showGptTab,
         showPersonsTab:
@@ -213,6 +212,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({  }) => {
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -226,7 +226,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({  }) => {
         handleClearMessages={handleClearMessages}
         handleSelectOption={handleSelectOption}
         updateFilePath={useSelection}
-
       />
       <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
         <LeftBoxContent
