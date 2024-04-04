@@ -191,6 +191,7 @@ const RenderMarkdown: React.FC<Props> = ({
           padding: "10px",
           borderRadius: "20px",
           overflowX: "hidden",
+          overflowY: "hidden",
           position: "relative",
           width: "40vw",
           height: "9.5vh",
@@ -204,6 +205,7 @@ const RenderMarkdown: React.FC<Props> = ({
             position: "relative",
             width: "40vw",
             height: "9.5vh",
+            marginTop: "-5px",
           }}
           value={
             activeTab !== null && markdownMap.has(activeTab)
@@ -234,6 +236,7 @@ const RenderMarkdown: React.FC<Props> = ({
                   </IconButton>
                 </span>
               }
+              style={{ fontSize: "14px" }}
             />
           ))}
         </Tabs>
