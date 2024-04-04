@@ -216,9 +216,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
                 "apr",
                 "may",
                 "jun",
-                "jul",
+                "july",
                 "aug",
-                "sep",
+                "sept",
                 "oct",
                 "nov",
                 "dec",
@@ -243,6 +243,66 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
                 month = monthNumber.toString().padStart(2, "0");
               }
 
+              if (year === "2020" && month === "02") {
+                monthName = "february";
+              }
+
+              if (year === "2016" && month === "03") {
+                monthName = "march";
+              }
+
+              if (year === "2020" && month === "03" && date === "1") {
+                monthName = "april";
+              }
+              if (year === "2020" && month === "03" && date === "2") {
+                monthName = "april";
+              }
+              if (year === "2020" && month === "03" && date === "31") {
+                monthName = "march";
+              }
+              if (year === "2019" && month === "06") {
+                monthName = "june";
+              }
+              if (year === "2020" && month === "06") {
+                monthName = "june";
+              }
+              if (year === "2014" && month === "07") {
+                monthName = "jul";
+              }
+              if (year === "2016" && month === "07") {
+                monthName = "jul";
+              }
+              if (year === "2017" && month === "07") {
+                monthName = "jul";
+              }
+              if (year === "2022" && month === "07") {
+                monthName = "jul";
+              }
+              if (year === "2021" && month === "08" && date === "31") {
+                monthName = "aug";
+              }
+              if (year === "2021" && month === "08" && date === "01") {
+                monthName = "sept";
+              }
+              if (year === "2022" && month === "09") {
+                monthName = "sep";
+              }
+              if (year === "2023" && month === "09") {
+                monthName = "september";
+              }
+              if (year === "2019" && month === "10") {
+                monthName = "october";
+              }
+              if (year === "2016" && month === "11" && date === "1") {
+                monthName = "dec";
+              }
+              if (year === "2022" && month === "11" && date === "1") {
+                monthName = "dec";
+              }
+              if (year === "2019" && month === "12") {
+                monthName = "december";
+              }
+
               // Construct the file path
               const mdFileLink = `${basePath}${year}-${month}/${monthName}-${date}.md`;
 
@@ -261,6 +321,8 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
 
               // check if the mdFileLink is valid before updating the file path
               //check if the file exists with fetch
+
+              updateFilePath(mdFileLink);
 
               fetch(mdFileLink)
                 .then((response) => {
