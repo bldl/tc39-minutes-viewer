@@ -1,4 +1,4 @@
-# ZINF-TC39
+# ZINF-TC39 (In development)
 
 ## About the project
 
@@ -76,13 +76,13 @@ https://www.typescriptlang.org/
 https://www.javascript.com/
 https://openai.com/
 
-
 TODO:
 Our [agile project board](https://trello.com/b/vpTSGlQt/zinf-tc39).
 
 ## Screenshots
 
-![App](image.png)
+<img src="src/renderer/assets/screenshots/dark-mode.png" alt="App - Dark mode" width="550" style="margin:20px"/>
+<img src="src/renderer/assets/screenshots/light-mode.png" alt="App - Light mode" width="550" style="margin:20px"/>
 
 ## Credits
 
@@ -91,7 +91,7 @@ in alphabetical order:
 _Brage Aasen_
 
 _Casper Benjamin Karlsen_
-
+s
 _Elias Hovdenes_
 
 _Magnus Brorby_

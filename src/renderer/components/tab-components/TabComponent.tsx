@@ -57,7 +57,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
   const [isAnalyzingSentiment, setIsAnalyzingSentiment] = useState(false);
 
-  const performSentimentAnalysis = (textToAnalyze) => {
+  const performSentimentAnalysis = (textToAnalyze: string) => {
     return new Promise((resolve, reject) => {
       ipcRenderer.once("sentimentAnalysisResult", (_event, result) => {
         resolve(result);
@@ -89,10 +89,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
     analyzeSentiment();
   }, [showSentimentTab, selectedText]);
-
-  useEffect(() => {
-    console.log("Is analyzing sentiment:", isAnalyzingSentiment);
-  }, [isAnalyzingSentiment]);
 
   useEffect(() => {
     // When the component mounts or when the conditions of the tabs change,
