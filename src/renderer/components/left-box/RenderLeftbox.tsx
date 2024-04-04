@@ -6,6 +6,7 @@ import { useSelectedText } from "../contexts/SelectedTextContext";
 import { RoughNotation } from "react-rough-notation";
 import { JSX } from "react/jsx-runtime";
 import CloseIcon from "@mui/icons-material/Close";
+import { useTheme } from "@mui/material/styles";
 
 interface Props {
   link: string | null;
@@ -30,7 +31,7 @@ const RenderMarkdown: React.FC<Props> = ({
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [closingTab, setClosingTab] = useState<string | null>(null); // Track the tab being closed
 
-  const { selectedText, setSelectedText } = useSelectedText();
+  const { setSelectedText } = useSelectedText();
 
   const markdownRef = useRef<HTMLDivElement>(null);
 
@@ -109,6 +110,7 @@ const RenderMarkdown: React.FC<Props> = ({
 
   const HeaderWithRoughNotation = ({ level, children, ...rest }) => {
     const [showAnnotation, setShowAnnotation] = useState(true);
+    const theme = useTheme();
 
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -121,6 +123,10 @@ const RenderMarkdown: React.FC<Props> = ({
     }, []);
 
     const { animationTimingFunction, otherNonStandardProp, ...domProps } = rest;
+    const highlightColor =
+      theme.palette.mode === "dark"
+        ? theme.palette.primary.dark
+        : theme.palette.primary.main;
 
     const Tag = `h${level}`;
     return (
@@ -128,7 +134,7 @@ const RenderMarkdown: React.FC<Props> = ({
         {...domProps} // Spread only the props that are valid for the DOM element
         type="highlight"
         show={showAnnotation}
-        color="red"
+        color={highlightColor}
         padding={8}
         strokeWidth={2}
         animationDuration={1000}
@@ -142,7 +148,7 @@ const RenderMarkdown: React.FC<Props> = ({
   };
 
   // Handler for tab change
-  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
     setActiveTab(newValue);
 
     onTabChange(newValue);

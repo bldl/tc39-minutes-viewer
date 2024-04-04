@@ -50,7 +50,6 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   handleSendMessage,
   handleClearMessages,
   handleSelectOption,
-  updateFilePath,
 }) => {
   const theme = useTheme();
   const themeMode = theme.palette.mode;

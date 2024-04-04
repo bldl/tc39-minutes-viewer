@@ -104,7 +104,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
             position: "sticky",
             top: -20,
             zIndex: 1100, // Ensure it stays above other content
-            backgroundColor: "white", // Or any other color, to ensure text readability
           }}
         >
           <TabList
