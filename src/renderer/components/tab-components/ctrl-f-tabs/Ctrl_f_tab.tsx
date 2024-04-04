@@ -17,7 +17,7 @@ const CustomSearchComponent: React.FC<CustomSearchComponentProps> = ({
   const matchRefs = useRef<Array<HTMLSpanElement | null>>([]);
 
   const theme = useTheme();
-  const themeMode = theme.palette.mode;
+  
 
   useEffect(() => {
     fetchTextFromMarkdown();

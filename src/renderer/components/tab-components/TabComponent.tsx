@@ -226,7 +226,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
                     <IconButton
                       size="small"
                       component="span"
-                      onClick={() => handleCloseTab("Search in file")}
+                      onClick={() => handleCloseTab("ControlF")}
                       style={{ marginLeft: "auto" }}
                     >
                       <CloseIcon />

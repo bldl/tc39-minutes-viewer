@@ -51,7 +51,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   handleSendMessage,
   handleClearMessages,
   handleSelectOption,
-  updateFilePath,
+  
 }) => {
   const theme = useTheme();
   const themeMode = theme.palette.mode;
@@ -170,7 +170,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
             }
             if (value && value.label === argumentTypes.label) {
               handleSendMessage(
-                "Please analyze the types of arguments used in the provided text."
+                "Please analyze the arguments used in the provided text and categorize them by argument type."
               );
             }
             if (value) {
