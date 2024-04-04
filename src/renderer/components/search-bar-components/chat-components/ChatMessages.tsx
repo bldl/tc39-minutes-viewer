@@ -45,7 +45,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
           overflowY: "auto",
           height: "68vh",
           width: "105%",
-          borderRadius: "20px",
+          borderRadius: "10px",
+          marginLeft: "-10px",
         }}
       >
         {isLoading ? (

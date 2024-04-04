@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
@@ -7,6 +7,7 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { styled, useTheme } from "@mui/material/styles";
 
 import useTabs from "./useTabs.ts";
 import { extractFilename, toSlug, useScrollToSection } from "./utils.ts";
@@ -15,6 +16,7 @@ import ChatMessages from "../search-bar-components/chat-components/ChatMessages.
 import TopicList from "./topics/ExtractingAllHeaders.tsx";
 import Delegates from "./delegates/Delegates.tsx";
 import SentimentAnalysisComponent from "./sentiment-analysis/SentimentAnalysisComponent.tsx";
+import Ctrl_f_tab from "./ctrl-f-tabs/Ctrl_f_tab.tsx";
 import { useSelectedText } from "../contexts/SelectedTextContext.tsx";
 
 interface TabBoxProps {
@@ -22,6 +24,7 @@ interface TabBoxProps {
   link: string | null;
   isLoading: true | false;
   showTopicsTab: boolean;
+  showControlFTab: boolean;
   showSentimentTab: boolean;
   showGptTab: boolean;
   showParticipantsTab: boolean;
@@ -35,6 +38,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   activeTab,
   isLoading,
   showTopicsTab,
+  showControlFTab,
   showSentimentTab,
   showGptTab,
   showParticipantsTab,
@@ -50,10 +54,15 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       ? "3"
       : showParticipantsTab
       ? "4"
+      : showControlFTab
+      ? "7"
       : "1"
   );
 
   const { selectedText } = useSelectedText();
+
+  const theme = useTheme();
+  const themeMode = theme.palette.mode;
 
   useEffect(() => {
     // Function to perform sentiment analysis
@@ -88,13 +97,22 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       setValue("3");
     } else if (showParticipantsTab) {
       setValue("4");
+    } else if (showControlFTab) {
+      setValue("7");
     }
-  }, [showGptTab, showTopicsTab, showSentimentTab, showParticipantsTab]);
+  }, [
+    showGptTab,
+    showTopicsTab,
+    showSentimentTab,
+    showParticipantsTab,
+    showControlFTab,
+  ]);
 
   return showGptTab ||
     showTopicsTab ||
     showSentimentTab ||
-    showParticipantsTab ? (
+    showParticipantsTab ||
+    showControlFTab ? (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
         <Box
@@ -104,8 +122,12 @@ const TabsComponent: React.FC<TabBoxProps> = ({
             position: "sticky",
             top: -20,
             zIndex: 1100, // Ensure it stays above other content
-            backgroundColor: "white", // Or any other color, to ensure text readability
+            ...(themeMode === "light" 
+            ? { background: theme.palette.background.default } // this applies if themeMode is "light"
+            : { background: "#252525" }) 
           }}
+
+ 
         >
           <TabList
             onChange={handleChange}
@@ -119,6 +141,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
                 // Styles for the selected tab
               },
             }}
+            
           >
             {showGptTab && (
               <Tab
@@ -194,6 +217,25 @@ const TabsComponent: React.FC<TabBoxProps> = ({
                 value="4"
               />
             )}
+
+            {showControlFTab && (
+              <Tab
+                label={
+                  <span>
+                    File Search
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("Search in file")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="7"
+              />
+            )}
           </TabList>
         </Box>
         {showGptTab && (
@@ -223,6 +265,13 @@ const TabsComponent: React.FC<TabBoxProps> = ({
           <TabPanel value="4">
             <h3>{extractFilename(activeTab, "persons")}</h3>
             <Delegates link={activeTab} />
+          </TabPanel>
+        )}
+
+        {showControlFTab && (
+          <TabPanel value="7">
+            <h3>{extractFilename(activeTab, "search-in-file")}</h3>
+            <Ctrl_f_tab link={activeTab} />
           </TabPanel>
         )}
       </TabContext>

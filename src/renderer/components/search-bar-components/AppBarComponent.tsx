@@ -9,6 +9,7 @@ import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import ChatIcon from "@mui/icons-material/Chat";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 import CodeIcon from "@mui/icons-material/Code"; // Icon for the execute command
+import SearchIcon from "@mui/icons-material/Search";
 import { useSelection } from "../contexts/SelectionContext";
 
 interface AppBarComponentProps {
@@ -88,6 +89,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
     { label: "Topics", id: 2, category: "List" },
     { label: "Sentiment", id: 3, category: "Analysis" },
     { label: "Participants", id: 4, category: "List" },
+    { label: "Search in file", id: 7, category: "File Search" },
   ];
 
   const _filterOptions = createFilterOptions<Option>();
@@ -354,6 +356,9 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
               )}
               {option.category === "Commands" && (
                 <CodeIcon style={{ marginRight: 8 }} />
+              )}
+              {option.category === "File Search" && (
+                <SearchIcon style={{ marginRight: 8 }} />
               )}
               {option.label}
             </li>
