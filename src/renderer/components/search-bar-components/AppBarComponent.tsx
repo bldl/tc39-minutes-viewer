@@ -9,6 +9,7 @@ import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import ChatIcon from "@mui/icons-material/Chat";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 import CodeIcon from "@mui/icons-material/Code"; // Icon for the execute command
+import { useSelection } from "../contexts/SelectionContext";
 
 interface AppBarComponentProps {
   input: string;
@@ -53,6 +54,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
 }) => {
   const theme = useTheme();
   const themeMode = theme.palette.mode;
+  const { setSelectedFilePath } = useSelection();
 
   const commandOption: Option = {
     label: "Execute link",
@@ -322,7 +324,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
               // check if the mdFileLink is valid before updating the file path
               //check if the file exists with fetch
 
-              updateFilePath(mdFileLink);
+              // setSelectedFilePath(mdFileLink);
 
               fetch(mdFileLink)
                 .then((response) => {
@@ -332,7 +334,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
                   return response.text();
                 })
                 .then(() => {
-                  updateFilePath(mdFileLink);
+                  setSelectedFilePath(mdFileLink);
                 })
                 .catch((error) => {
                   console.error("Error fetching file:", error);
