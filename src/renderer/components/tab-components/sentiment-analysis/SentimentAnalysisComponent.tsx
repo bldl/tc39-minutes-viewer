@@ -5,13 +5,16 @@ import SentimentAnalysisDisplay from "./utils/SentimentAnalysisDisplay";
 import SentimentBarChart from "./utils/charts/SentimentBarChart";
 import SentimentPieChart from "./utils/charts/SentimentPieChart";
 import SentimentLineChart from "./utils/charts/SentimentLineChart";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface SentimentAnalysisComponentProps {
   link: string | null;
+  isAnalyzingSentiment: boolean;
 }
 
 const SentimentAnalysisComponent: React.FC<SentimentAnalysisComponentProps> = ({
   link,
+  isAnalyzingSentiment,
 }) => {
   const [sentimentResult, setSentimentResult] = useState<string[]>([]);
   const [overallSentiment, setOverallSentiment] = useState<string>("");
@@ -52,11 +55,18 @@ const SentimentAnalysisComponent: React.FC<SentimentAnalysisComponentProps> = ({
     });
   }, [link]);
 
+  // Inside SentimentAnalysisComponent
+  useEffect(() => {
+    console.log("Received isAnalyzingSentiment:", isAnalyzingSentiment);
+  }, [isAnalyzingSentiment]);
+
   return (
     <Box>
       <h3>{link && `Sentiment Analysis for ${link}`}</h3>
       <ChartToggleButtons chartType={chartType} setChartType={setChartType} />
-      {sentimentResult.length > 0 ? (
+      {isAnalyzingSentiment ? (
+        <CircularProgress size={100} />
+      ) : sentimentResult.length > 0 ? (
         <>
           <SentimentAnalysisDisplay sentiment={overallSentiment} />
           <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
