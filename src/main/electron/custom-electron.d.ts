@@ -7,6 +7,7 @@ declare global {
   interface Window {
     electronAPI: ElectronAPI;
     api: {
+      [x: string]: any;
       receiveSentimentAnalysis: (
         callback: (event: any, arg: string) => void
       ) => void;

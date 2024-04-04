@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
@@ -61,30 +61,40 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
   const { selectedText } = useSelectedText();
 
-  const theme = useTheme();
-  const themeMode = theme.palette.mode;
+  const [isAnalyzingSentiment, setIsAnalyzingSentiment] = useState(false);
 
+  const performSentimentAnalysis = (textToAnalyze: string) => {
+    return new Promise((resolve, reject) => {
+      ipcRenderer.once("sentimentAnalysisResult", (_event, result) => {
+        resolve(result);
+      });
+
+      ipcRenderer.once("sentimentAnalysisError", (_event, error) => {
+        reject(error);
+      });
+
+      ipcRenderer.send("performSentimentAnalysis", textToAnalyze);
+    });
+  };
+  
   useEffect(() => {
-    // Function to perform sentiment analysis
     const analyzeSentiment = async () => {
       if (showSentimentTab && selectedText) {
+        setIsAnalyzingSentiment(true);
         try {
-          // Assuming you have a method to perform sentiment analysis
-          // This could be calling an API endpoint, or another function that handles the analysis
-          const analysisResult = await window.api.performSentimentAnalysis(
-            selectedText
-          );
-          // Process the analysisResult here
-          console.log(analysisResult);
+          // Assume performSentimentAnalysis is an async function that performs the analysis
+          await performSentimentAnalysis(selectedText);
+          // Here, performSentimentAnalysis would ideally update the state with the results
         } catch (error) {
-          console.error("Failed to perform sentiment analysis:", error);
+          console.error("Sentiment analysis failed", error);
+        } finally {
+          setIsAnalyzingSentiment(false);
         }
       }
     };
 
-    // Call the analyzeSentiment function when the component mounts or when showSentimentTab/selectedText changes
     analyzeSentiment();
-  }, [showSentimentTab, selectedText]); // This effect depends on showSentimentTab and selectedText
+  }, [showSentimentTab, selectedText]);
 
   useEffect(() => {
     // When the component mounts or when the conditions of the tabs change,
@@ -122,9 +132,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
             position: "sticky",
             top: -20,
             zIndex: 1100, // Ensure it stays above other content
-            ...(themeMode === "light" 
-            ? { background: theme.palette.background.default } // this applies if themeMode is "light"
-            : { background: "#252525" }) 
           }}
 
  
@@ -258,7 +265,10 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         {showSentimentTab && (
           <TabPanel value="3">
             <h3>{extractFilename(activeTab, "sentiment")}</h3>
-            <SentimentAnalysisComponent link={activeTab} />
+            <SentimentAnalysisComponent
+              link={activeTab}
+              isAnalyzingSentiment={isAnalyzingSentiment}
+            />
           </TabPanel>
         )}
         {showParticipantsTab && (

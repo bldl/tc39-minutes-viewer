@@ -5,13 +5,16 @@ import SentimentAnalysisDisplay from "./utils/SentimentAnalysisDisplay";
 import SentimentBarChart from "./utils/charts/SentimentBarChart";
 import SentimentPieChart from "./utils/charts/SentimentPieChart";
 import SentimentLineChart from "./utils/charts/SentimentLineChart";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface SentimentAnalysisComponentProps {
   link: string | null;
+  isAnalyzingSentiment: boolean;
 }
 
 const SentimentAnalysisComponent: React.FC<SentimentAnalysisComponentProps> = ({
   link,
+  isAnalyzingSentiment,
 }) => {
   const [sentimentResult, setSentimentResult] = useState<string[]>([]);
   const [overallSentiment, setOverallSentiment] = useState<string>("");
@@ -55,8 +58,23 @@ const SentimentAnalysisComponent: React.FC<SentimentAnalysisComponentProps> = ({
   return (
     <Box>
       <h3>{link && `Sentiment Analysis for ${link}`}</h3>
-      <ChartToggleButtons chartType={chartType} setChartType={setChartType} />
-      {sentimentResult.length > 0 ? (
+      {isAnalyzingSentiment ? (
+        // Display loading indicator and text only while analyzing sentiment
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            mt: 3,
+          }}
+        >
+          <CircularProgress size={50} />
+          <Typography sx={{ mt: 2 }}>
+            Generating sentiment analysis...
+          </Typography>
+        </Box>
+      ) : sentimentResult.length > 0 ? (
+        // Display charts and analysis display after sentiment analysis is complete
         <>
           <SentimentAnalysisDisplay sentiment={overallSentiment} />
           <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
@@ -72,6 +90,7 @@ const SentimentAnalysisComponent: React.FC<SentimentAnalysisComponentProps> = ({
           </Box>
         </>
       ) : (
+        // Display message if no analysis has been performed
         <Typography sx={{ textAlign: "center", marginTop: 2 }}>
           No sentiment analysis has been performed yet.
         </Typography>

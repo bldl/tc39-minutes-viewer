@@ -51,7 +51,6 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   handleSendMessage,
   handleClearMessages,
   handleSelectOption,
-  
 }) => {
   const theme = useTheme();
   const themeMode = theme.palette.mode;
