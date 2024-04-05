@@ -13,6 +13,7 @@ const App = () => {
   const [hashTable, setHashTable] = useState({});
   const { theme, themeMode, toggleThemeMode } = useThemeMode();
 
+  // Load the hashtable (Navigation table) on launch
   useEffect(() => {
     const loadHashTable = async () => {
       const table = await fetchHashTable();
@@ -20,6 +21,7 @@ const App = () => {
     };
     loadHashTable();
   }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

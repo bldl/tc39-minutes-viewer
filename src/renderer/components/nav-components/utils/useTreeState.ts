@@ -22,16 +22,6 @@ const useTreeState = ({ defaultExpanded = [] }: UseTreeStateProps) => {
     []
   );
 
-  // Additional functionality can be implemented here, such as handling expand all/collapse all
-  const handleExpandAll = useCallback(() => {
-    // This would be implemented based on the specific structure of your tree data
-    // For example, you might want to set all node IDs to the expanded state
-  }, []);
-
-  const handleCollapseAll = useCallback(() => {
-    setExpanded([]);
-  }, []);
-
   return {
     expanded,
     setExpanded,
@@ -39,8 +29,6 @@ const useTreeState = ({ defaultExpanded = [] }: UseTreeStateProps) => {
     setSelected,
     handleToggle,
     handleSelect,
-    handleExpandAll,
-    handleCollapseAll,
   };
 };
 

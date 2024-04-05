@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeSlug from "rehype-slug";
 import { IconButton, Paper, Tab, Tabs } from "@mui/material"; // Import MUI Tab components
 import { useSelectedText } from "../contexts/SelectedTextContext";
 import { RoughNotation } from "react-rough-notation";
-import { JSX } from "react/jsx-runtime";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
 
@@ -90,15 +89,23 @@ const RenderMarkdown: React.FC<Props> = ({
     }
   };
 
-  const components = {
-    // Your components' overrides...
-    h1: (
-      props: JSX.IntrinsicAttributes & {
-        [x: string]: any;
-        level: any;
-        children: any;
-      }
-    ) => <HeaderWithRoughNotation {...props} level={1} />,
+  interface HeaderWithRoughNotationProps {
+    level: number; // Assuming level is a number 1 through 6 for h1 through h6
+    children: ReactNode; // ReactNode type covers anything that could be rendered: numbers, strings, elements or an array (or fragment) containing these types.
+    [key: string]: any; // For any other props that might be passed
+  }
+
+  interface CustomComponents {
+    h1: React.ComponentType<any>; // Use a more specific type if known
+    a: React.ComponentType<{ children: ReactNode }>;
+  }
+
+  const components: CustomComponents = {
+    h1: ({ children, ...props }) => (
+      <HeaderWithRoughNotation {...props} level={1}>
+        {children}
+      </HeaderWithRoughNotation>
+    ),
     a: ({ children }) => (
       <span
         style={{ cursor: "not-allowed", color: "gray", textDecoration: "none" }}
@@ -108,8 +115,12 @@ const RenderMarkdown: React.FC<Props> = ({
     ),
   };
 
-  const HeaderWithRoughNotation = ({ level, children, ...rest }) => {
-    const [showAnnotation, setShowAnnotation] = useState(true);
+  const HeaderWithRoughNotation: React.FC<HeaderWithRoughNotationProps> = ({
+    level,
+    children,
+    ...rest
+  }) => {
+    const [showAnnotation, setShowAnnotation] = useState<boolean>(true);
     const theme = useTheme();
 
     useEffect(() => {
@@ -122,16 +133,14 @@ const RenderMarkdown: React.FC<Props> = ({
       };
     }, []);
 
-    const { animationTimingFunction, otherNonStandardProp, ...domProps } = rest;
     const highlightColor =
       theme.palette.mode === "dark"
         ? theme.palette.primary.dark
         : theme.palette.primary.main;
 
-    const Tag = `h${level}`;
     return (
       <RoughNotation
-        {...domProps} // Spread only the props that are valid for the DOM element
+        {...rest} // Spread the remaining props to RoughNotation
         type="highlight"
         show={showAnnotation}
         color={highlightColor}
@@ -140,9 +149,8 @@ const RenderMarkdown: React.FC<Props> = ({
         animationDuration={1000}
         iterations={1}
         animationDelay={300}
-        // animationTimingFunction is not passed here
       >
-        <Tag>{children}</Tag>
+        {React.createElement(`h${level}`, {}, children)}
       </RoughNotation>
     );
   };

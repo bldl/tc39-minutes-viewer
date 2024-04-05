@@ -7,8 +7,6 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { styled, useTheme } from "@mui/material/styles";
-
 import useTabs from "./useTabs.ts";
 import { extractFilename, toSlug, useScrollToSection } from "./utils.ts";
 
@@ -16,7 +14,7 @@ import ChatMessages from "../search-bar-components/chat-components/ChatMessages.
 import TopicList from "./topics/ExtractingAllHeaders.tsx";
 import Delegates from "./delegates/Delegates.tsx";
 import SentimentAnalysisComponent from "./sentiment-analysis/SentimentAnalysisComponent.tsx";
-import Ctrl_f_tab from "./ctrl-f-tabs/Ctrl_f_tab.tsx";
+import Ctrl_f_tab from "./ctrl-f-tabs/CtrlFTab.tsx";
 import { useSelectedText } from "../contexts/SelectedTextContext.tsx";
 
 interface TabBoxProps {
@@ -76,7 +74,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       ipcRenderer.send("performSentimentAnalysis", textToAnalyze);
     });
   };
-  
+
   useEffect(() => {
     const analyzeSentiment = async () => {
       if (showSentimentTab && selectedText) {
@@ -133,8 +131,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
             top: -20,
             zIndex: 1100, // Ensure it stays above other content
           }}
-
- 
         >
           <TabList
             onChange={handleChange}
@@ -148,7 +144,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
                 // Styles for the selected tab
               },
             }}
-            
           >
             {showGptTab && (
               <Tab
