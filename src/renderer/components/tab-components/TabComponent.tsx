@@ -1,33 +1,31 @@
 import React, { useEffect, useState } from "react";
-
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import useTabs from "./useTabs.ts";
-import { extractFilename, toSlug, useScrollToSection } from "./utils.ts";
+import useTabs from "./useTabs";
+import { useScrollToSection } from "./utils";
+import { useSelectedText } from "../contexts/SelectedTextContext";
 
-import ChatMessages from "../search-bar-components/chat-components/ChatMessages.tsx";
-import TopicList from "./topics/ExtractingAllHeaders.tsx";
-import Delegates from "./delegates/Delegates.tsx";
-import SentimentAnalysisComponent from "./sentiment-analysis/SentimentAnalysisComponent.tsx";
-import Ctrl_f_tab from "./ctrl-f-tabs/CtrlFTab.tsx";
-import { useSelectedText } from "../contexts/SelectedTextContext.tsx";
+import GptTab from "./custom-tabs/GptTab";
+import TopicsTab from "./custom-tabs/TopicsTab";
+import SentimentTab from "./custom-tabs/SentimentTab";
+import ParticipantsTab from "./custom-tabs/ParticipantsTab";
+import ControlFTab from "./custom-tabs/ControlFTab";
 
 interface TabBoxProps {
   messages: Message[];
   link: string | null;
-  isLoading: true | false;
+  isLoading: boolean;
   showTopicsTab: boolean;
   showControlFTab: boolean;
   showSentimentTab: boolean;
   showGptTab: boolean;
   showParticipantsTab: boolean;
   activeTab: string | null;
-
   handleCloseTab: (tabType: string) => void;
 }
 
@@ -41,24 +39,11 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showGptTab,
   showParticipantsTab,
   handleCloseTab,
-}: TabBoxProps) => {
-  const scrollToSection = useScrollToSection();
-  const { value, handleChange, setValue } = useTabs(
-    showGptTab
-      ? "1"
-      : showTopicsTab
-      ? "2"
-      : showSentimentTab
-      ? "3"
-      : showParticipantsTab
-      ? "4"
-      : showControlFTab
-      ? "7"
-      : "1"
-  );
-
+}) => {
   const { selectedText } = useSelectedText();
+  const { value, handleChange, setValue } = useTabs("1");
 
+  // Logic for performing sentiment analysis
   const [isAnalyzingSentiment, setIsAnalyzingSentiment] = useState(false);
 
   const performSentimentAnalysis = (textToAnalyze: string) => {
@@ -94,33 +79,24 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     analyzeSentiment();
   }, [showSentimentTab, selectedText]);
 
+  // Setting the initial value of the tab based on the props
   useEffect(() => {
-    // When the component mounts or when the conditions of the tabs change,
-    // set the value to the first available tab.
-    if (showGptTab) {
-      setValue("1");
-    } else if (showTopicsTab) {
-      setValue("2");
-    } else if (showSentimentTab) {
-      setValue("3");
-    } else if (showParticipantsTab) {
-      setValue("4");
-    } else if (showControlFTab) {
-      setValue("7");
-    }
+    if (showGptTab) setValue("1");
+    else if (showTopicsTab) setValue("2");
+    else if (showSentimentTab) setValue("3");
+    else if (showParticipantsTab) setValue("4");
+    else if (showControlFTab) setValue("7");
   }, [
     showGptTab,
     showTopicsTab,
     showSentimentTab,
     showParticipantsTab,
     showControlFTab,
+    setValue,
   ]);
 
-  return showGptTab ||
-    showTopicsTab ||
-    showSentimentTab ||
-    showParticipantsTab ||
-    showControlFTab ? (
+  // Render each type of tab based on the boolean flags
+  return (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
         <Box
@@ -129,164 +105,93 @@ const TabsComponent: React.FC<TabBoxProps> = ({
             borderColor: "divider",
             position: "sticky",
             top: -20,
-            zIndex: 1100, // Ensure it stays above other content
+            zIndex: 1100,
           }}
         >
-          <TabList
-            onChange={handleChange}
-            aria-label="lab API tabs example"
-            sx={{
-              "& .MuiTab-root:focus": {
-                outline: "none",
-                // You can add additional styles for the focused state here
-              },
-              "& .MuiTab-root.Mui-selected": {
-                // Styles for the selected tab
-              },
-            }}
-          >
+          <TabList onChange={handleChange} aria-label="lab API tabs example">
             {showGptTab && (
-              <Tab
-                label={
-                  <span>
-                    ChatGpt
-                    <IconButton
-                      size="small"
-                      component="span"
-                      onClick={() => handleCloseTab("Gpt")}
-                      style={{ marginLeft: "auto" }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </span>
-                }
-                value="1"
-              />
+              <Tab label="ChatGpt" value="1">
+                <IconButton size="small" onClick={() => handleCloseTab("Gpt")}>
+                  <CloseIcon />
+                </IconButton>
+              </Tab>
             )}
-
             {showTopicsTab && (
-              <Tab
-                label={
-                  <span>
-                    Topics
-                    <IconButton
-                      size="small"
-                      component="span"
-                      onClick={() => handleCloseTab("Topics")}
-                      style={{ marginLeft: "auto" }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </span>
-                }
-                value="2"
-              />
+              <Tab label="Topics" value="2">
+                <IconButton
+                  size="small"
+                  onClick={() => handleCloseTab("Topics")}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Tab>
             )}
-
             {showSentimentTab && (
-              <Tab
-                label={
-                  <span>
-                    Sentiment
-                    <IconButton
-                      size="small"
-                      component="span"
-                      onClick={() => handleCloseTab("Sentiment")}
-                      style={{ marginLeft: "auto" }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </span>
-                }
-                value="3"
-              />
+              <Tab label="Sentiment" value="3">
+                <IconButton
+                  size="small"
+                  onClick={() => handleCloseTab("Sentiment")}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Tab>
             )}
             {showParticipantsTab && (
-              <Tab
-                label={
-                  <span>
-                    Participants
-                    <IconButton
-                      size="small"
-                      component="span"
-                      onClick={() => handleCloseTab("Persons")}
-                      style={{ marginLeft: "auto" }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </span>
-                }
-                value="4"
-              />
+              <Tab label="Participants" value="4">
+                <IconButton
+                  size="small"
+                  onClick={() => handleCloseTab("Participants")}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Tab>
             )}
-
             {showControlFTab && (
-              <Tab
-                label={
-                  <span>
-                    File Search
-                    <IconButton
-                      size="small"
-                      component="span"
-                      onClick={() => handleCloseTab("ControlF")}
-                      style={{ marginLeft: "auto" }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </span>
-                }
-                value="7"
-              />
+              <Tab label="File Search" value="7">
+                <IconButton
+                  size="small"
+                  onClick={() => handleCloseTab("ControlF")}
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Tab>
             )}
           </TabList>
         </Box>
         {showGptTab && (
           <TabPanel value="1">
-            <h3>{extractFilename(activeTab, "gpt")}</h3>
-            <ChatMessages messages={messages} isLoading={isLoading} />
+            <GptTab
+              link={activeTab}
+              messages={messages}
+              isLoading={isLoading}
+            />
           </TabPanel>
         )}
         {showTopicsTab && (
           <TabPanel value="2">
-            <h3>{extractFilename(activeTab, "topics")}</h3>{" "}
-            <TopicList
-              onTopicClick={function (topic: string): void {
-                scrollToSection(toSlug(topic), topic);
-              }}
-              link={activeTab}
-            />
+            <TopicsTab link={activeTab} />
           </TabPanel>
         )}
         {showSentimentTab && (
           <TabPanel value="3">
-            <h3>{extractFilename(activeTab, "sentiment")}</h3>
-            <SentimentAnalysisComponent
+            <SentimentTab
               link={activeTab}
-              isAnalyzingSentiment={isAnalyzingSentiment}
+              isAnalyzingSentiment={false} /* Replace with actual state */
             />
           </TabPanel>
         )}
         {showParticipantsTab && (
           <TabPanel value="4">
-            <h3>{extractFilename(activeTab, "persons")}</h3>
-            <Delegates link={activeTab} />
+            <ParticipantsTab link={activeTab} />
           </TabPanel>
         )}
-
         {showControlFTab && (
           <TabPanel value="7">
-            <h3>{extractFilename(activeTab, "search-in-file")}</h3>
-            <Ctrl_f_tab link={activeTab} />
+            <ControlFTab link={activeTab} />
           </TabPanel>
         )}
       </TabContext>
     </Box>
-  ) : (
-    // Render a message or an empty fragment when no tabs are available
-    <Box sx={{ width: "100%", typography: "body1" }}>
-      <h2>Here we can add instructions for the app. </h2>
-    </Box>
   );
 };
-
 export default TabsComponent;
