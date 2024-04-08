@@ -5,6 +5,7 @@ import AppBarComponent from "../AppBarComponent";
 import LeftBoxContent from "../../left-box/LeftBoxContent";
 import TabsComponent from "../../tab-components/TabComponent";
 import { useSelection } from "../../contexts/SelectionContext";
+import { update } from "@react-spring/web";
 
 // Define the shape of the message object
 interface Message {
@@ -63,6 +64,28 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
   const handleClearMessages = () => {
     setMessages([]);
     setClearMessages(true);
+  };
+
+  const updateTab = (tab: string) => {
+    switch (tab) {
+      case "topics":
+        setShowTopicsTab(true);
+        break;
+      case "sentiment":
+        setShowSentimentTab(true);
+        break;
+      case "Search with GPT-3.5":
+      case "Summarize This":
+      case "Analyze Argument Types":
+        setShowGptTab(true);
+        break;
+      case "Participants":
+        setShowPersonsTab(true);
+        break;
+      case "Search in file":
+        setShowControlFTab(true);
+        break;
+    }
   };
 
   const handleSelectOption = (selectedOption: string) => {
@@ -134,20 +157,25 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
   useEffect(() => {
     if (activeTab && fileTabStates[activeTab]) {
       // Load the tab states for the newly selected file
-      const { showTopicsTab, showSentimentTab, showGptTab, showPersonsTab, showControlFTab } =
-        fileTabStates[activeTab];
+      const {
+        showTopicsTab,
+        showSentimentTab,
+        showGptTab,
+        showPersonsTab,
+        showControlFTab,
+      } = fileTabStates[activeTab];
       setShowTopicsTab(showTopicsTab);
       setShowSentimentTab(showSentimentTab);
       setShowGptTab(showGptTab);
       setShowPersonsTab(showPersonsTab);
       setShowControlFTab(showControlFTab);
-    } else {
-      // If the file hasn't been opened before, reset the tab states to false
-      setShowTopicsTab(false);
-      setShowSentimentTab(false);
-      setShowGptTab(false);
-      setShowPersonsTab(false);
-      setShowControlFTab(false);
+      // } else {
+      //   // If the file hasn't been opened before, reset the tab states to false
+      //   setShowTopicsTab(false);
+      //   setShowSentimentTab(false);
+      //   setShowGptTab(false);
+      //   setShowPersonsTab(false);
+      //   setShowControlFTab(false);
     }
   }, [activeTab, fileTabStates]);
 
@@ -236,6 +264,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
         handleClearMessages={handleClearMessages}
         handleSelectOption={handleSelectOption}
         updateFilePath={useSelection}
+        updateTab={updateTab}
       />
       <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
         <LeftBoxContent
