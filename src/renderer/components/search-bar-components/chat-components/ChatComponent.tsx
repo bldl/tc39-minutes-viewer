@@ -74,12 +74,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       case "sentiment":
         setShowSentimentTab(true);
         break;
-      case "Search with GPT-3.5":
-      case "Summarize This":
-      case "Analyze Argument Types":
-        setShowGptTab(true);
-        break;
-      case "Participants":
+      case "persons":
         setShowPersonsTab(true);
         break;
       case "Search in file":
