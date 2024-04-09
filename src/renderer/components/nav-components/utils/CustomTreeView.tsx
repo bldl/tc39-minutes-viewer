@@ -63,7 +63,7 @@ const CustomTreeView: React.FC<CustomTreeViewProps> = ({
       defaultCollapseIcon={<MinusSquare />}
       defaultExpandIcon={<PlusSquare />}
       defaultEndIcon={<CloseSquare />}
-      onNodeSelect={handleNodeSelect} // Use the updated function here
+      onNodeSelect={handleNodeSelect}
       sx={{ flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
     >
       {renderTreeItems(hashTable)}
