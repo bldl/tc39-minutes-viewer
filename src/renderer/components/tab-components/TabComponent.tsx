@@ -7,9 +7,9 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import useTabs from "./useTabs";
-import { useScrollToSection } from "./utils";
 import { useSelectedText } from "../contexts/SelectedTextContext";
 
+// Import components
 import GptTab from "./custom-tabs/GptTab";
 import TopicsTab from "./custom-tabs/TopicsTab";
 import SentimentTab from "./custom-tabs/SentimentTab";
@@ -65,9 +65,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       if (showSentimentTab && selectedText) {
         setIsAnalyzingSentiment(true);
         try {
-          // Assume performSentimentAnalysis is an async function that performs the analysis
           await performSentimentAnalysis(selectedText);
-          // Here, performSentimentAnalysis would ideally update the state with the results
         } catch (error) {
           console.error("Sentiment analysis failed", error);
         } finally {
@@ -110,51 +108,85 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         >
           <TabList onChange={handleChange} aria-label="lab API tabs example">
             {showGptTab && (
-              <Tab label="ChatGpt" value="1">
-                <IconButton size="small" onClick={() => handleCloseTab("Gpt")}>
-                  <CloseIcon />
-                </IconButton>
-              </Tab>
+              <Tab
+                label={
+                  <span>
+                    ChatGpt
+                    <IconButton
+                      size="small"
+                      onClick={() => handleCloseTab("Gpt")}
+                      sx={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="1"
+              />
             )}
             {showTopicsTab && (
-              <Tab label="Topics" value="2">
-                <IconButton
-                  size="small"
-                  onClick={() => handleCloseTab("Topics")}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Tab>
+              <Tab
+                label={
+                  <span>
+                    Topics
+                    <IconButton
+                      size="small"
+                      onClick={() => handleCloseTab("Topics")}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="2"
+              />
             )}
             {showSentimentTab && (
-              <Tab label="Sentiment" value="3">
-                <IconButton
-                  size="small"
-                  onClick={() => handleCloseTab("Sentiment")}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Tab>
+              <Tab
+                label={
+                  <span>
+                    Sentiment
+                    <IconButton
+                      size="small"
+                      onClick={() => handleCloseTab("Sentiment")}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="3"
+              />
             )}
             {showParticipantsTab && (
-              <Tab label="Participants" value="4">
-                <IconButton
-                  size="small"
-                  onClick={() => handleCloseTab("Participants")}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Tab>
+              <Tab
+                label={
+                  <span>
+                    Participants
+                    <IconButton
+                      size="small"
+                      onClick={() => handleCloseTab("Participants")}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="4"
+              />
             )}
             {showControlFTab && (
-              <Tab label="File Search" value="7">
-                <IconButton
-                  size="small"
-                  onClick={() => handleCloseTab("ControlF")}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </Tab>
+              <Tab
+                label={
+                  <span>
+                    File Search
+                    <IconButton
+                      size="small"
+                      onClick={() => handleCloseTab("ControlF")}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="4"
+              />
             )}
           </TabList>
         </Box>
@@ -176,7 +208,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
           <TabPanel value="3">
             <SentimentTab
               link={activeTab}
-              isAnalyzingSentiment={false} /* Replace with actual state */
+              isAnalyzingSentiment={isAnalyzingSentiment}
             />
           </TabPanel>
         )}
