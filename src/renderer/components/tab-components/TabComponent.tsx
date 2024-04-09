@@ -28,6 +28,7 @@ interface TabBoxProps {
   showSentimentTab: boolean;
   showGptTab: boolean;
   showParticipantsTab: boolean;
+  showParticipantSearchTab: boolean;
   activeTab: string | null;
 
   handleCloseTab: (tabType: string) => void;
@@ -42,6 +43,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showSentimentTab,
   showGptTab,
   showParticipantsTab,
+  showParticipantSearchTab,
   handleCloseTab,
 }: TabBoxProps) => {
   const scrollToSection = useScrollToSection();
@@ -55,9 +57,13 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       : showParticipantsTab
       ? "4"
       : showControlFTab
+      ? "5"
+      : showParticipantSearchTab
       ? "7"
       : "1"
   );
+
+  const [personSearch, setPersonSearch] = useState<string>("");
 
   const { selectedText } = useSelectedText();
 
@@ -96,6 +102,11 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     analyzeSentiment();
   }, [showSentimentTab, selectedText]);
 
+  const handlePersonClick = (personName: string) => {
+    setPersonSearch(personName)
+    console.log(personName);
+  };
+
   useEffect(() => {
     // When the component mounts or when the conditions of the tabs change,
     // set the value to the first available tab.
@@ -107,6 +118,8 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       setValue("3");
     } else if (showParticipantsTab) {
       setValue("4");
+    } else if (showParticipantSearchTab) {
+      setValue("4");
     } else if (showControlFTab) {
       setValue("7");
     }
@@ -115,6 +128,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     showTopicsTab,
     showSentimentTab,
     showParticipantsTab,
+    showParticipantSearchTab,
     showControlFTab,
   ]);
 
@@ -122,6 +136,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     showTopicsTab ||
     showSentimentTab ||
     showParticipantsTab ||
+    showParticipantSearchTab ||
     showControlFTab ? (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
@@ -225,6 +240,25 @@ const TabsComponent: React.FC<TabBoxProps> = ({
               />
             )}
 
+            {showParticipantSearchTab && (
+              <Tab
+                label={
+                  <span>
+                    Participants
+                    <IconButton
+                      size="small"
+                      component="span"
+                      onClick={() => handleCloseTab("participant-search")}
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </span>
+                }
+                value="4"
+              />
+            )}
+
             {showControlFTab && (
               <Tab
                 label={
@@ -274,14 +308,18 @@ const TabsComponent: React.FC<TabBoxProps> = ({
         {showParticipantsTab && (
           <TabPanel value="4">
             <h3>{extractFilename(activeTab, "persons")}</h3>
-            <Delegates link={activeTab} />
+            <Delegates 
+              onPersonClick={function (person: string): void {
+                handlePersonClick(person)
+            }}
+            link={activeTab} />
           </TabPanel>
         )}
 
         {showControlFTab && (
           <TabPanel value="7">
             <h3>{extractFilename(activeTab, "search-in-file")}</h3>
-            <Ctrl_f_tab link={activeTab} />
+            <Ctrl_f_tab link={activeTab} person = {personSearch + ":"}/>
           </TabPanel>
         )}
       </TabContext>

@@ -7,10 +7,11 @@ type Delegate = {
 };
 
 interface essentialProps {
+    onPersonClick: (topic: string) => void;
     link: string | null;
   }
 
-  const DelegatesComponent: React.FC<essentialProps> = ({ link }) => {
+  const DelegatesComponent: React.FC<essentialProps> = ({ onPersonClick, link }) => {
     const [initials, setInitials] = useState<string[]>([]);
     
     // Fetches the md-file and sets the initials state to the delegates in this file when the link is updated
@@ -46,6 +47,7 @@ interface essentialProps {
     // Prints the name of the person clicked in the console
     const handlePersonClick = (personName: string) => {
       console.log("Clicked on person:", personName);
+      onPersonClick(personName)
     };
 
     return (

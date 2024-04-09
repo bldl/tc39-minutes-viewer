@@ -3,10 +3,11 @@ import React, { useState, useEffect, useRef } from "react";
 
 interface CustomSearchComponentProps {
   link: string | null;
+  person: string;
 }
 
 const CustomSearchComponent: React.FC<CustomSearchComponentProps> = ({
-  link,
+  person, link,
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -22,6 +23,13 @@ const CustomSearchComponent: React.FC<CustomSearchComponentProps> = ({
   useEffect(() => {
     fetchTextFromMarkdown();
   }, [link]);
+
+  useEffect(() => {
+    if ( person != "") {
+      setSearchTerm(person);
+      searchContent;
+    }
+  }, [person]);
 
   const fetchTextFromMarkdown = async () => {
     try {
@@ -63,6 +71,7 @@ const CustomSearchComponent: React.FC<CustomSearchComponentProps> = ({
   }, [currentIndex, matches]);
 
   const searchContent = () => {
+    console.log("searcing")
     setCurrentIndex(0);
     setMatches([]);
 

@@ -88,6 +88,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
     { label: "Topics", id: 2, category: "List" },
     { label: "Sentiment", id: 3, category: "Analysis" },
     { label: "Participants", id: 4, category: "List" },
+    { label: "Person search", id: 5, category: "File Search" },
     { label: "Search in file", id: 7, category: "File Search" },
   ];
 
