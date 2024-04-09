@@ -24,11 +24,11 @@ const CustomSearchComponent: React.FC<CustomSearchComponentProps> = ({
     fetchTextFromMarkdown();
   }, [link]);
 
+  // Changes the search term to the person that the user wants to search with when user is updated.
   useEffect(() => {
-    if ( person != "") {
       setSearchTerm(person);
+      console.log(searchTerm);
       searchContent;
-    }
   }, [person]);
 
   const fetchTextFromMarkdown = async () => {
@@ -71,7 +71,6 @@ const CustomSearchComponent: React.FC<CustomSearchComponentProps> = ({
   }, [currentIndex, matches]);
 
   const searchContent = () => {
-    console.log("searcing")
     setCurrentIndex(0);
     setMatches([]);
 

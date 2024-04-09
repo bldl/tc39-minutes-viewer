@@ -28,7 +28,6 @@ interface TabBoxProps {
   showSentimentTab: boolean;
   showGptTab: boolean;
   showParticipantsTab: boolean;
-  showParticipantSearchTab: boolean;
   activeTab: string | null;
 
   handleCloseTab: (tabType: string) => void;
@@ -43,7 +42,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showSentimentTab,
   showGptTab,
   showParticipantsTab,
-  showParticipantSearchTab,
   handleCloseTab,
 }: TabBoxProps) => {
   const scrollToSection = useScrollToSection();
@@ -57,8 +55,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       : showParticipantsTab
       ? "4"
       : showControlFTab
-      ? "5"
-      : showParticipantSearchTab
       ? "7"
       : "1"
   );
@@ -118,8 +114,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       setValue("3");
     } else if (showParticipantsTab) {
       setValue("4");
-    } else if (showParticipantSearchTab) {
-      setValue("4");
     } else if (showControlFTab) {
       setValue("7");
     }
@@ -128,7 +122,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     showTopicsTab,
     showSentimentTab,
     showParticipantsTab,
-    showParticipantSearchTab,
     showControlFTab,
   ]);
 
@@ -136,7 +129,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     showTopicsTab ||
     showSentimentTab ||
     showParticipantsTab ||
-    showParticipantSearchTab ||
     showControlFTab ? (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
@@ -240,25 +232,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
               />
             )}
 
-            {showParticipantSearchTab && (
-              <Tab
-                label={
-                  <span>
-                    Participants
-                    <IconButton
-                      size="small"
-                      component="span"
-                      onClick={() => handleCloseTab("participant-search")}
-                      style={{ marginLeft: "auto" }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </span>
-                }
-                value="4"
-              />
-            )}
-
             {showControlFTab && (
               <Tab
                 label={
@@ -311,6 +284,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
             <Delegates 
               onPersonClick={function (person: string): void {
                 handlePersonClick(person)
+                showControlFTab = false;
             }}
             link={activeTab} />
           </TabPanel>
