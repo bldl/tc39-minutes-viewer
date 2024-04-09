@@ -16,6 +16,13 @@ import SentimentTab from "./custom-tabs/SentimentTab";
 import ParticipantsTab from "./custom-tabs/ParticipantsTab";
 import ControlFTab from "./custom-tabs/ControlFTab";
 
+interface TabInfo {
+  key: string;
+  label: string;
+  shouldShow: boolean;
+  component: React.ReactNode;
+}
+
 interface TabBoxProps {
   messages: Message[];
   link: string | null;
@@ -93,6 +100,46 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     setValue,
   ]);
 
+  const tabs: TabInfo[] = [
+    {
+      key: "1",
+      label: "ChatGpt",
+      shouldShow: showGptTab,
+      component: (
+        <GptTab link={activeTab} messages={messages} isLoading={isLoading} />
+      ),
+    },
+    {
+      key: "2",
+      label: "Topics",
+      shouldShow: showTopicsTab,
+      component: <TopicsTab link={activeTab} />,
+    },
+    {
+      key: "3",
+      label: "Sentiment",
+      shouldShow: showSentimentTab,
+      component: (
+        <SentimentTab
+          link={activeTab}
+          isAnalyzingSentiment={isAnalyzingSentiment}
+        />
+      ),
+    },
+    {
+      key: "4",
+      label: "Participants",
+      shouldShow: showParticipantsTab,
+      component: <ParticipantsTab link={activeTab} />,
+    },
+    {
+      key: "7",
+      label: "File Search",
+      shouldShow: showControlFTab,
+      component: <ControlFTab link={activeTab} />,
+    },
+  ];
+
   // Render each type of tab based on the boolean flags
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
@@ -107,121 +154,35 @@ const TabsComponent: React.FC<TabBoxProps> = ({
           }}
         >
           <TabList onChange={handleChange} aria-label="lab API tabs example">
-            {showGptTab && (
-              <Tab
-                label={
-                  <span>
-                    ChatGpt
-                    <IconButton
-                      size="small"
-                      onClick={() => handleCloseTab("Gpt")}
-                      sx={{ marginLeft: "auto" }}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </span>
-                }
-                value="1"
-              />
-            )}
-            {showTopicsTab && (
-              <Tab
-                label={
-                  <span>
-                    Topics
-                    <IconButton
-                      size="small"
-                      onClick={() => handleCloseTab("Topics")}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </span>
-                }
-                value="2"
-              />
-            )}
-            {showSentimentTab && (
-              <Tab
-                label={
-                  <span>
-                    Sentiment
-                    <IconButton
-                      size="small"
-                      onClick={() => handleCloseTab("Sentiment")}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </span>
-                }
-                value="3"
-              />
-            )}
-            {showParticipantsTab && (
-              <Tab
-                label={
-                  <span>
-                    Participants
-                    <IconButton
-                      size="small"
-                      onClick={() => handleCloseTab("Participants")}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </span>
-                }
-                value="4"
-              />
-            )}
-            {showControlFTab && (
-              <Tab
-                label={
-                  <span>
-                    File Search
-                    <IconButton
-                      size="small"
-                      onClick={() => handleCloseTab("ControlF")}
-                    >
-                      <CloseIcon />
-                    </IconButton>
-                  </span>
-                }
-                value="4"
-              />
-            )}
+            {tabs
+              .filter((tab) => tab.shouldShow)
+              .map(({ key, label }) => (
+                <Tab
+                  key={key}
+                  label={
+                    <span>
+                      {label}
+                      <IconButton
+                        size="small"
+                        onClick={() => handleCloseTab(label)}
+                        sx={{ marginLeft: "auto" }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </span>
+                  }
+                  value={key}
+                />
+              ))}
           </TabList>
         </Box>
-        {showGptTab && (
-          <TabPanel value="1">
-            <GptTab
-              link={activeTab}
-              messages={messages}
-              isLoading={isLoading}
-            />
-          </TabPanel>
-        )}
-        {showTopicsTab && (
-          <TabPanel value="2">
-            <TopicsTab link={activeTab} />
-          </TabPanel>
-        )}
-        {showSentimentTab && (
-          <TabPanel value="3">
-            <SentimentTab
-              link={activeTab}
-              isAnalyzingSentiment={isAnalyzingSentiment}
-            />
-          </TabPanel>
-        )}
-        {showParticipantsTab && (
-          <TabPanel value="4">
-            <ParticipantsTab link={activeTab} />
-          </TabPanel>
-        )}
-        {showControlFTab && (
-          <TabPanel value="7">
-            <ControlFTab link={activeTab} />
-          </TabPanel>
-        )}
+        {tabs
+          .filter((tab) => tab.shouldShow)
+          .map(({ key, component }) => (
+            <TabPanel key={key} value={key}>
+              {component}
+            </TabPanel>
+          ))}
       </TabContext>
     </Box>
   );
