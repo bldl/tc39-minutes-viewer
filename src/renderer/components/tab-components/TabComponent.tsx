@@ -15,6 +15,7 @@ import TopicsTab from "./custom-tabs/TopicsTab";
 import SentimentTab from "./custom-tabs/SentimentTab";
 import ParticipantsTab from "./custom-tabs/ParticipantsTab";
 import ControlFTab from "./custom-tabs/ControlFTab";
+import { useTheme } from "@mui/material/styles";
 
 interface TabInfo {
   key: string;
@@ -46,14 +47,13 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showGptTab,
   showParticipantsTab,
   handleCloseTab,
-
 }) => {
   const { selectedText } = useSelectedText();
   const { value, handleChange, setValue } = useTabs("1");
 
   // Logic for performing sentiment analysis
-
   const [isAnalyzingSentiment, setIsAnalyzingSentiment] = useState(false);
+  const theme = useTheme();
 
   const performSentimentAnalysis = (textToAnalyze: string) => {
     return new Promise((resolve, reject) => {
@@ -68,6 +68,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       ipcRenderer.send("performSentimentAnalysis", textToAnalyze);
     });
   };
+
 
   useEffect(() => {
     const analyzeSentiment = async () => {
@@ -93,7 +94,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     else if (showSentimentTab) setValue("3");
     else if (showParticipantsTab) setValue("4");
     else if (showFileSearchTab) setValue("7");
-
   }, [
     showGptTab,
     showTopicsTab,
@@ -154,7 +154,11 @@ const TabsComponent: React.FC<TabBoxProps> = ({
             position: "sticky",
             top: -20,
             zIndex: 1100,
+            background: theme.palette.mode === "light"
+            ? "white"
+            : "#242424",
           }}
+          
         >
           <TabList onChange={handleChange} aria-label="lab API tabs example">
             {tabs
