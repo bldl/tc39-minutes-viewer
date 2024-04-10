@@ -135,7 +135,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
     else if (tabType === "Topics") setShowTopicsTab(false);
     else if (tabType === "Sentiment") setShowSentimentTab(false);
     else if (tabType === "Persons") setShowPersonsTab(false);
-    else if (tabType == "ControlF") setShowFileSearchTab(false);
+    else if (tabType == "FileSearch") setShowFileSearchTab(false);
 
     // Then, update the fileTabStates for the active tab if it exists
     if (activeTab && fileTabStates[activeTab]) {

@@ -60,7 +60,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   );
 
   const { selectedText } = useSelectedText();
-
+  const theme = useTheme();
   const [isAnalyzingSentiment, setIsAnalyzingSentiment] = useState(false);
 
   const performSentimentAnalysis = (textToAnalyze: string) => {
@@ -76,7 +76,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       ipcRenderer.send("performSentimentAnalysis", textToAnalyze);
     });
   };
-  
+
   useEffect(() => {
     const analyzeSentiment = async () => {
       if (showSentimentTab && selectedText) {
@@ -132,9 +132,11 @@ const TabsComponent: React.FC<TabBoxProps> = ({
             position: "sticky",
             top: -20,
             zIndex: 1100, // Ensure it stays above other content
+            background:
+              theme.palette.mode === "light"
+                ? "white"
+                : "#242424",
           }}
-
- 
         >
           <TabList
             onChange={handleChange}
@@ -148,7 +150,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
                 // Styles for the selected tab
               },
             }}
-            
           >
             {showGptTab && (
               <Tab
@@ -233,7 +234,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
                     <IconButton
                       size="small"
                       component="span"
-                      onClick={() => handleCloseTab("ControlF")}
+                      onClick={() => handleCloseTab("FileSearch")}
                       style={{ marginLeft: "auto" }}
                     >
                       <CloseIcon />
