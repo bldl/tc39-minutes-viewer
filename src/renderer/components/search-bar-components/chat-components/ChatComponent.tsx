@@ -118,7 +118,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       }));
     }
   };
-
+ 
   const handleCloseTab = (tabType: string) => {
     // Update the local visibility state based on the tabType
     if (tabType === "Gpt") setShowGptTab(false);
