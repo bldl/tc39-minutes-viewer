@@ -103,7 +103,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   const tabs: TabInfo[] = [
     {
       key: "1",
-      label: "ChatGpt",
+      label: "Gpt",
       shouldShow: showGptTab,
       component: (
         <GptTab link={activeTab} messages={messages} isLoading={isLoading} />
@@ -128,13 +128,13 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     },
     {
       key: "4",
-      label: "Participants",
+      label: "Persons",
       shouldShow: showParticipantsTab,
       component: <ParticipantsTab link={activeTab} />,
     },
     {
       key: "7",
-      label: "File Search",
+      label: "ControlF",
       shouldShow: showControlFTab,
       component: <ControlFTab link={activeTab} />,
     },
