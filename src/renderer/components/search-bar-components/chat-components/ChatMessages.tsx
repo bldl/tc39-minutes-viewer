@@ -5,6 +5,7 @@ import {
   Typography,
   Divider,
   CircularProgress,
+  Button,
 } from "@mui/material";
 
 interface Message {
@@ -16,9 +17,10 @@ interface Message {
 interface ChatMessagesProps {
   messages: Message[];
   isLoading: boolean;
+  handleClearMessages: () => void;
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
+const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading, handleClearMessages }) => {
   const processContent = (content: string): JSX.Element => {
     // Replace each "-" with a newline ("\n") followed by "-"
     const updatedContent = content.replace(/-/g, "-");
@@ -38,6 +40,10 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
   return (
     <Grid item xs={6}>
       <Divider orientation="vertical" flexItem />
+      <Button style={{ marginLeft: "85%" }} variant="contained" color="primary" onClick={handleClearMessages}>
+        Clear
+      </Button>
+
       <Paper
         elevation={0}
         style={{
@@ -65,6 +71,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
             <div key={index}>
               {message.activeTab && (
                 <Typography align="left" style={{ fontWeight: "bold" }}>
+                  <p></p>
                   {`File: ${message.activeTab}`}
                 </Typography>
               )}

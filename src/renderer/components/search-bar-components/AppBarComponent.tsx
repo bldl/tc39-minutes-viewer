@@ -1,5 +1,5 @@
 import React from "react";
-import { AppBar, Toolbar, Button, TextField } from "@mui/material";
+import { AppBar, Toolbar, TextField } from "@mui/material";
 import Autocomplete, {
   createFilterOptions,
   AutocompleteRenderGroupParams,
@@ -11,13 +11,11 @@ import AnalyticsIcon from "@mui/icons-material/Analytics";
 import CodeIcon from "@mui/icons-material/Code"; // Icon for the execute command
 import SearchIcon from "@mui/icons-material/Search";
 import { useSelection } from "../contexts/SelectionContext";
-import { update } from "@react-spring/web";
 
 interface AppBarComponentProps {
   input: string;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSendMessage: (prefix: string) => void;
-  handleClearMessages: () => void;
   handleSelectOption: (selectedOption: string) => void;
   updateFilePath: (filePath: string) => void; // Accept this prop
   updateTab: (tab: string) => void; // Accept this prop
@@ -51,7 +49,6 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   input,
   handleInputChange,
   handleSendMessage,
-  handleClearMessages,
   handleSelectOption,
   updateTab,
 }) => {
@@ -375,14 +372,6 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
           sx={{ width: 950, zIndex: 100 }}
           inputValue={input}
         />
-        <Button
-          style={{ marginLeft: "50px" }}
-          variant="contained"
-          color="primary"
-          onClick={handleClearMessages}
-        >
-          Clear
-        </Button>
       </Toolbar>
     </AppBar>
   );

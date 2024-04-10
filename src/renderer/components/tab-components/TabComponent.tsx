@@ -31,10 +31,11 @@ interface TabBoxProps {
   showTopicsTab: boolean;
   showFileSearchTab: boolean;
   showSentimentTab: boolean;
-  showGptTab: boolean;
+  showChatGPTTab: boolean;
   showParticipantsTab: boolean;
   activeTab: string | null;
   handleCloseTab: (tabType: string) => void;
+  handleClearMessages: () => void;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
@@ -44,9 +45,10 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   showTopicsTab,
   showFileSearchTab,
   showSentimentTab,
-  showGptTab,
+  showChatGPTTab,
   showParticipantsTab,
   handleCloseTab,
+  handleClearMessages,
 }) => {
   const { selectedText } = useSelectedText();
   const { value, handleChange, setValue } = useTabs("1");
@@ -69,7 +71,6 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     });
   };
 
-
   useEffect(() => {
     const analyzeSentiment = async () => {
       if (showSentimentTab && selectedText) {
@@ -89,13 +90,13 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
   // Setting the initial value of the tab based on the props
   useEffect(() => {
-    if (showGptTab) setValue("1");
+    if (showChatGPTTab) setValue("1");
     else if (showTopicsTab) setValue("2");
     else if (showSentimentTab) setValue("3");
     else if (showParticipantsTab) setValue("4");
     else if (showFileSearchTab) setValue("7");
   }, [
-    showGptTab,
+    showChatGPTTab,
     showTopicsTab,
     showSentimentTab,
     showParticipantsTab,
@@ -106,10 +107,15 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   const tabs: TabInfo[] = [
     {
       key: "1",
-      label: "Gpt",
-      shouldShow: showGptTab,
+      label: "ChatGPT",
+      shouldShow: showChatGPTTab,
       component: (
-        <GptTab link={activeTab} messages={messages} isLoading={isLoading} />
+        <GptTab
+          link={activeTab}
+          messages={messages}
+          isLoading={isLoading}
+          handleClearMessages={handleClearMessages}
+        />
       ),
     },
     {
@@ -131,13 +137,13 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     },
     {
       key: "4",
-      label: "Persons",
+      label: "Participants",
       shouldShow: showParticipantsTab,
       component: <ParticipantsTab link={activeTab} />,
     },
     {
       key: "7",
-      label: "ControlF",
+      label: "FileSearch",
       shouldShow: showFileSearchTab,
       component: <ControlFTab link={activeTab} />,
     },
@@ -147,42 +153,81 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
-        <Box
-          sx={{
-            borderBottom: 1,
-            borderColor: "divider",
-            position: "sticky",
-            top: -20,
-            zIndex: 1100,
-            background: theme.palette.mode === "light"
-            ? "white"
-            : "#242424",
-          }}
-          
-        >
-          <TabList onChange={handleChange} aria-label="lab API tabs example">
-            {tabs
-              .filter((tab) => tab.shouldShow)
-              .map(({ key, label }) => (
-                <Tab
-                  key={key}
-                  label={
-                    <span>
-                      {label}
-                      <IconButton
-                        size="small"
-                        onClick={() => handleCloseTab(label)}
-                        sx={{ marginLeft: "auto" }}
-                      >
-                        <CloseIcon />
-                      </IconButton>
-                    </span>
-                  }
-                  value={key}
-                />
-              ))}
-          </TabList>
-        </Box>
+        {tabs.some((tab) => tab.shouldShow) && (
+          <Box
+            sx={{
+              borderBottom: 1,
+              borderColor: "divider",
+              position: "sticky",
+              top: -20,
+              zIndex: 1100,
+              background: theme.palette.mode === "light" ? "white" : "#242424",
+            }}
+          >
+            <TabList onChange={handleChange} aria-label="lab API tabs example">
+              {tabs
+                .filter((tab) => tab.shouldShow)
+                .map(({ key, label }) => (
+                  <Tab
+                    key={key}
+                    label={
+                      <span>
+                        {label}
+                        <IconButton
+                          size="small"
+                          onClick={() => handleCloseTab(label)}
+                          sx={{ marginLeft: "auto" }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </span>
+                    }
+                    value={key}
+                  />
+                ))}
+            </TabList>
+          </Box>
+        )}
+        {tabs.every((tab) => !tab.shouldShow) && (
+          <Box>
+            <Box sx={{ textAlign: "center" }}>
+              <h2>Instructions</h2>
+            </Box>
+            <p>
+              This is an application designed to simplify the browsing of
+              meeting files related to the TC39 committee. It aims to simplify
+              tasks such as searching, navigating, and accessing specific
+              information within the committee's documents.
+            </p>
+            <p>
+              To begin, select a meeting file from the navigation bar. Once
+              selected, you'll have several options. You can browse the file and
+              utilize the features in the search bar for further inspection.
+            </p>
+            <p>
+              <b>Participants</b> displays all meeting participants, allowing
+              you to click on a name to view that person's comments.
+            </p>
+            <p>
+              <b>Topics</b> showcases all topics discussed in the meeting,
+              enabling you to click on them to automatically scroll to the
+              corresponding section.
+            </p>
+            <p>
+              <b>Sentiment</b> analyzes the tone of the conversation,
+              categorizing it as positive, neutral, or negative.
+            </p>
+            <p>
+              <b>Search with ChatGPT</b> allows you to search with ChatGPT as
+              you would normally. Additionally, there are two pre-made prompts
+              available below.
+            </p>
+            <p>
+              <b>Search in file</b> enables you to perform a "Control F" search
+              within the file as plain text.
+            </p>
+          </Box>
+        )}
         {tabs
           .filter((tab) => tab.shouldShow)
           .map(({ key, component }) => (
