@@ -6,10 +6,7 @@ const useTabs = (defaultTab = "1") => {
     setValue(newValue);
   };
 
-  
-
   return { value, setValue, handleChange };
 };
 
 export default useTabs;
-

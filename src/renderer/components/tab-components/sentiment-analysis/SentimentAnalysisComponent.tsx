@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+
+// Import components / utilities
 import ChartToggleButtons from "./utils/charts/ChartToggleButtons";
 import SentimentAnalysisDisplay from "./utils/SentimentAnalysisDisplay";
 import SentimentBarChart from "./utils/charts/SentimentBarChart";
 import SentimentPieChart from "./utils/charts/SentimentPieChart";
 import SentimentLineChart from "./utils/charts/SentimentLineChart";
-import CircularProgress from "@mui/material/CircularProgress";
 
 interface SentimentAnalysisComponentProps {
   link: string | null;
@@ -20,19 +22,7 @@ const SentimentAnalysisComponent: React.FC<SentimentAnalysisComponentProps> = ({
   const [overallSentiment, setOverallSentiment] = useState<string>("");
   const [chartType, setChartType] = useState("pie");
 
-  // Convert sentiment analysis numeric result to a descriptive message
-  type SentimentScore = "0" | "1" | "2";
-  const interpretSentiment = (score: SentimentScore) => {
-    const sentimentMap: { [key in SentimentScore]: string } = {
-      "0": "Negative",
-      "1": "Neutral",
-      "2": "Positive",
-    };
-
-    return sentimentMap[score] || "Unknown";
-  };
-
-  const interpretOverallSentiment = (scores: any[]) => {
+  const interpretOverallSentiment = (scores: GLfloat[]) => {
     if (scores.length === 0) return "No sentiment analysis performed yet.";
     const averageScore =
       scores.reduce((acc, cur) => acc + cur, 0) / scores.length;
@@ -44,6 +34,18 @@ const SentimentAnalysisComponent: React.FC<SentimentAnalysisComponentProps> = ({
   };
 
   useEffect(() => {
+    // Convert sentiment analysis numeric result to a descriptive message
+    type SentimentScore = "0" | "1" | "2";
+    const interpretSentiment = (score: SentimentScore) => {
+      const sentimentMap: { [key in SentimentScore]: string } = {
+        "0": "Negative",
+        "1": "Neutral",
+        "2": "Positive",
+      };
+
+      return sentimentMap[score] || "Unknown";
+    };
+
     if (!link) return;
     window.api.receiveSentimentAnalysis((_event: any, arg: string) => {
       const scores = JSON.parse(arg);
@@ -57,7 +59,7 @@ const SentimentAnalysisComponent: React.FC<SentimentAnalysisComponentProps> = ({
 
   return (
     <Box>
-      <h3>{link && `Sentiment Analysis for ${link}`}</h3>
+      <ChartToggleButtons chartType={chartType} setChartType={setChartType} />
       {isAnalyzingSentiment ? (
         // Display loading indicator and text only while analyzing sentiment
         <Box
