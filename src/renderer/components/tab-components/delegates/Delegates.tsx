@@ -54,7 +54,7 @@ const Modal: React.FC<{ comments: string[]; onClose: () => void }> = ({
           cursor: "pointer",
         }}
       >
-        <CloseIcon></CloseIcon>
+        <CloseIcon style={{color:"black"}}></CloseIcon>
       </button>
       <h3>Comments:</h3>
       {comments.map((comment, index) => (
