@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@mui/material/styles";
+import CloseIcon from '@mui/icons-material/Close';
 // Defining the delegate type
 type Delegate = {
   name: string;
@@ -53,7 +54,7 @@ const Modal: React.FC<{ comments: string[]; onClose: () => void }> = ({
           cursor: "pointer",
         }}
       >
-        X
+        <CloseIcon></CloseIcon>
       </button>
       <h3>Comments:</h3>
       {comments.map((comment, index) => (
