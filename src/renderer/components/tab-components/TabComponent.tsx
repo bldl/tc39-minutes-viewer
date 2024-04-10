@@ -151,7 +151,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
 
   // Render each type of tab based on the boolean flags
   return (
-    <Box sx={{ width: "100%", typography: "body1" }}>
+    <Box sx={{ width: "100%", typography: "body1", overflowX: "auto" }}>
       <TabContext value={value}>
         {tabs.some((tab) => tab.shouldShow) && (
           <Box
@@ -164,7 +164,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
               background: theme.palette.mode === "light" ? "white" : "#242424",
             }}
           >
-            <TabList onChange={handleChange} aria-label="lab API tabs example">
+            <TabList onChange={handleChange} aria-label="lab API tabs example" variant="scrollable" scrollButtons="auto">
               {tabs
                 .filter((tab) => tab.shouldShow)
                 .map(({ key, label }) => (
