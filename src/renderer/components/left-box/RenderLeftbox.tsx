@@ -197,6 +197,15 @@ const RenderMarkdown: React.FC<Props> = ({
     }
   }, [markdownMap, activeTab, closingTab]);
 
+  const handleTabName = (tabLink: string) => {
+    //remove the file path and keep only the file name
+
+    let baseStart = "http://tc39/";
+    const fileName = tabLink.substring(16);
+
+    return fileName;
+  };
+
   return (
     <>
       <Paper
@@ -238,8 +247,8 @@ const RenderMarkdown: React.FC<Props> = ({
               value={tabLink} // Identify the tab
               label={
                 <span>
-                  {/* {tabLink.replace("public/meetings/", "")} */}
-                  {tabLink.replace("public/meetings/", "")}
+                  {handleTabName(tabLink)}
+
                   <IconButton
                     size="small"
                     component="span"
