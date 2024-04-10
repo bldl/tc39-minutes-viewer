@@ -164,13 +164,13 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       setShowGptTab(showGptTab);
       setShowPersonsTab(showPersonsTab);
       setShowControlFTab(showControlFTab);
-      // } else {
-      //   // If the file hasn't been opened before, reset the tab states to false
-      //   setShowTopicsTab(false);
-      //   setShowSentimentTab(false);
-      //   setShowGptTab(false);
-      //   setShowPersonsTab(false);
-      //   setShowControlFTab(false);
+      } else {
+      //If the file hasn't been opened before, reset the tab states to false
+      setShowTopicsTab(false);
+      setShowSentimentTab(false);
+      setShowGptTab(false);
+      setShowPersonsTab(false);
+      setShowControlFTab(false);
     }
   }, [activeTab, fileTabStates]);
 
