@@ -24,7 +24,7 @@ interface TabBoxProps {
   link: string | null;
   isLoading: true | false;
   showTopicsTab: boolean;
-  showControlFTab: boolean;
+  showFileSearchTab: boolean;
   showSentimentTab: boolean;
   showGptTab: boolean;
   showParticipantsTab: boolean;
@@ -38,7 +38,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   activeTab,
   isLoading,
   showTopicsTab,
-  showControlFTab,
+  showFileSearchTab,
   showSentimentTab,
   showGptTab,
   showParticipantsTab,
@@ -54,7 +54,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       ? "3"
       : showParticipantsTab
       ? "4"
-      : showControlFTab
+      : showFileSearchTab
       ? "7"
       : "1"
   );
@@ -107,7 +107,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       setValue("3");
     } else if (showParticipantsTab) {
       setValue("4");
-    } else if (showControlFTab) {
+    } else if (showFileSearchTab) {
       setValue("7");
     }
   }, [
@@ -115,14 +115,14 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     showTopicsTab,
     showSentimentTab,
     showParticipantsTab,
-    showControlFTab,
+    showFileSearchTab,
   ]);
 
   return showGptTab ||
     showTopicsTab ||
     showSentimentTab ||
     showParticipantsTab ||
-    showControlFTab ? (
+    showFileSearchTab ? (
     <Box sx={{ width: "100%", typography: "body1" }}>
       <TabContext value={value}>
         <Box
@@ -225,7 +225,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
               />
             )}
 
-            {showControlFTab && (
+            {showFileSearchTab && (
               <Tab
                 label={
                   <span>
@@ -278,7 +278,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
           </TabPanel>
         )}
 
-        {showControlFTab && (
+        {showFileSearchTab && (
           <TabPanel value="7">
             <h3>{extractFilename(activeTab, "search-in-file")}</h3>
             <Ctrl_f_tab link={activeTab} />

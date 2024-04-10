@@ -24,7 +24,7 @@ interface TabStates {
   showSentimentTab: boolean;
   showGptTab: boolean;
   showPersonsTab: boolean;
-  showControlFTab: boolean;
+  showFileSearchTab: boolean;
 }
 
 interface FileTabStates {
@@ -41,7 +41,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
   const [clearMessages, setClearMessages] = useState<boolean>(false);
   const [highlightedText, setHighlightedText] = useState<string>("");
   const [showTopicsTab, setShowTopicsTab] = useState(false);
-  const [showControlFTab, setShowControlFTab] = useState(false);
+  const [showFileSearchTab, setShowFileSearchTab] = useState(false);
   const [showSentimentTab, setShowSentimentTab] = useState(false);
   const [showGptTab, setShowGptTab] = useState(false);
   const [showPersonsTab, setShowPersonsTab] = useState(false);
@@ -78,7 +78,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
         setShowPersonsTab(true);
         break;
       case "Search in file":
-        setShowControlFTab(true);
+        setShowFileSearchTab(true);
         break;
     }
   };
@@ -92,7 +92,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
         showSentimentTab: false,
         showGptTab: false,
         showPersonsTab: false,
-        showControlFTab: false,
+        showFileSearchTab: false,
       };
 
       // Get the current state for activeTab, or default to all false if not set
@@ -115,10 +115,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
           selectedOption === "Participants"
             ? true
             : currentState.showPersonsTab,
-        showControlFTab:
+        showFileSearchTab:
           selectedOption === "Search in file"
             ? true
-            : currentState.showControlFTab,
+            : currentState.showFileSearchTab,
       };
 
       // Update the fileTabStates with the new state for activeTab
@@ -135,7 +135,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
     else if (tabType === "Topics") setShowTopicsTab(false);
     else if (tabType === "Sentiment") setShowSentimentTab(false);
     else if (tabType === "Persons") setShowPersonsTab(false);
-    else if (tabType == "ControlF") setShowControlFTab(false);
+    else if (tabType == "ControlF") setShowFileSearchTab(false);
 
     // Then, update the fileTabStates for the active tab if it exists
     if (activeTab && fileTabStates[activeTab]) {
@@ -157,20 +157,20 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
         showSentimentTab,
         showGptTab,
         showPersonsTab,
-        showControlFTab,
+        showFileSearchTab,
       } = fileTabStates[activeTab];
       setShowTopicsTab(showTopicsTab);
       setShowSentimentTab(showSentimentTab);
       setShowGptTab(showGptTab);
       setShowPersonsTab(showPersonsTab);
-      setShowControlFTab(showControlFTab);
+      setShowFileSearchTab(showFileSearchTab);
       } else {
       //If the file hasn't been opened before, reset the tab states to false
       setShowTopicsTab(false);
       setShowSentimentTab(false);
       setShowGptTab(false);
       setShowPersonsTab(false);
-      setShowControlFTab(false);
+      setShowFileSearchTab(false);
     }
   }, [activeTab, fileTabStates]);
 
@@ -285,7 +285,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
             link={selectedFilePath}
             isLoading={isLoading}
             showTopicsTab={showTopicsTab}
-            showControlFTab={showControlFTab}
+            showFileSearchTab={showFileSearchTab}
             showSentimentTab={showSentimentTab}
             showGptTab={showGptTab}
             showParticipantsTab={showPersonsTab}
