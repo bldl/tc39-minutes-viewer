@@ -77,58 +77,48 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       case "persons":
         setShowPersonsTab(true);
         break;
-      case "Search in file":
+      case "search-in-file":
         setShowControlFTab(true);
         break;
     }
   };
 
   const handleSelectOption = (selectedOption: string) => {
-    if (activeTab) {
-      // Make sure activeTab is a string
-      // Default state if this tab hasn't been opened before
-      const defaultState: TabStates = {
-        showTopicsTab: false,
-        showSentimentTab: false,
-        showGptTab: false,
-        showPersonsTab: false,
-        showControlFTab: false,
-      };
+    // Ensuring activeTab is not null or undefined
+    if (!activeTab) return;
 
-      // Get the current state for activeTab, or default to all false if not set
-      const currentState = fileTabStates[activeTab] || defaultState;
+    // Retrieve the current state or initialize it if not present
+    const currentState = fileTabStates[activeTab] || {
+      showTopicsTab: false,
+      showSentimentTab: false,
+      showGptTab: false,
+      showPersonsTab: false,
+      showControlFTab: false,
+    };
 
-      // Update the state based on selectedOption
-      const newState = {
-        ...currentState,
-        showTopicsTab:
-          selectedOption === "Topics" ? true : currentState.showTopicsTab,
-        showSentimentTab:
-          selectedOption === "Sentiment" ? true : currentState.showSentimentTab,
-        showGptTab:
-          selectedOption === "Search with GPT-3.5" ||
-          selectedOption === "Summarize This" ||
-          selectedOption === "Analyze Argument Types"
-            ? true
-            : currentState.showGptTab,
-        showPersonsTab:
-          selectedOption === "Participants"
-            ? true
-            : currentState.showPersonsTab,
-        showControlFTab:
-          selectedOption === "Search in file"
-            ? true
-            : currentState.showControlFTab,
-      };
+    // Determine which tab should be updated based on the selected option
+    const tabToUpdate = {
+      Topics: "showTopicsTab",
+      Sentiment: "showSentimentTab",
+      "Search with GPT-3.5": "showGptTab", // Assuming this as a placeholder
+      "Summarize This": "showGptTab", // Assuming this affects the same GPT tab
+      "Analyze Argument Types": "showGptTab", // Assuming this affects the same GPT tab
+      Participants: "showPersonsTab",
+      "Search in file": "showControlFTab",
+    }[selectedOption];
 
-      // Update the fileTabStates with the new state for activeTab
-      setFileTabStates({
-        ...fileTabStates,
+    // If there's a tab to update, toggle its visibility
+    if (tabToUpdate) {
+      const newState = { ...currentState, [tabToUpdate]: true };
+
+      // Update the fileTabStates with the new state
+      setFileTabStates((prev) => ({
+        ...prev,
         [activeTab]: newState,
-      });
+      }));
     }
   };
-
+ 
   const handleCloseTab = (tabType: string) => {
     // Update the local visibility state based on the tabType
     if (tabType === "Gpt") setShowGptTab(false);
@@ -166,6 +156,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       setShowControlFTab(showControlFTab);
       } else {
       //If the file hasn't been opened before, reset the tab states to false
+
       setShowTopicsTab(false);
       setShowSentimentTab(false);
       setShowGptTab(false);

@@ -16,15 +16,15 @@ export const extractFilename = (
   if (!match) return "Invalid link format";
 
   // Extracted filename will be something like '2019-03/26.md'
-  let [yearMonth, dayWithExtension] = match[1].split("/");
+  const [yearMonth, dayWithExtension] = match[1].split("/");
   if (!dayWithExtension) return "Invalid link format";
 
   // Split the year and month, and remove the '.md' extension from day
-  let [year, month] = yearMonth.split("-");
+  const [year, month] = yearMonth.split("-");
 
   //remove also the .md from the day and letters
-  let part = dayWithExtension.replace(".md", "");
-  let day = part.replace(/[a-zA-Z--]/g, "");
+  const part = dayWithExtension.replace(".md", "");
+  const day = part.replace(/[a-zA-Z--]/g, "");
 
   // Reconstruct the URL with the type
   const reconstructedUrl = `http://tc39/${year}/${month}/${day}/${type}`;
