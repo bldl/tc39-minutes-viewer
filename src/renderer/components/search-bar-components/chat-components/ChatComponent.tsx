@@ -5,7 +5,6 @@ import AppBarComponent from "../AppBarComponent";
 import LeftBoxContent from "../../left-box/LeftBoxContent";
 import TabsComponent from "../../tab-components/TabComponent";
 import { useSelection } from "../../contexts/SelectionContext";
-import { update } from "@react-spring/web";
 
 // Define the shape of the message object
 interface Message {
@@ -22,8 +21,8 @@ interface ChatComponentProps {
 interface TabStates {
   showTopicsTab: boolean;
   showSentimentTab: boolean;
-  showGptTab: boolean;
-  showPersonsTab: boolean;
+  showChatGPTTab: boolean;
+  showParticipantsTab: boolean;
   showFileSearchTab: boolean;
 }
 
@@ -43,8 +42,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
   const [showTopicsTab, setShowTopicsTab] = useState(false);
   const [showFileSearchTab, setShowFileSearchTab] = useState(false);
   const [showSentimentTab, setShowSentimentTab] = useState(false);
-  const [showGptTab, setShowGptTab] = useState(false);
-  const [showPersonsTab, setShowPersonsTab] = useState(false);
+  const [showChatGPTTab, setShowChatGPTTab] = useState(false);
+  const [showParticipantsTab, setShowParticipantsTab] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
@@ -75,11 +74,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
         setShowSentimentTab(true);
         break;
       case "persons":
-        setShowPersonsTab(true);
+        setShowParticipantsTab(true);
         break;
       case "Search in file":
         setShowFileSearchTab(true);
-
 
         break;
     }
@@ -93,8 +91,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
     const currentState = fileTabStates[activeTab] || {
       showTopicsTab: false,
       showSentimentTab: false,
-      showGptTab: false,
-      showPersonsTab: false,
+      showChatGPTTab: false,
+      showParticipantsTab: false,
       showFileSearchTab: false,
     };
 
@@ -102,13 +100,12 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
     const tabToUpdate = {
       Topics: "showTopicsTab",
       Sentiment: "showSentimentTab",
-      "Search with GPT-3.5": "showGptTab", // Assuming this as a placeholder
-      "Summarize This": "showGptTab", // Assuming this affects the same GPT tab
-      "Analyze Argument Types": "showGptTab", // Assuming this affects the same GPT tab
-      Participants: "showPersonsTab",
+      "Search with GPT-3.5": "showChatGPTTab", // Assuming this as a placeholder
+      "Summarize This": "showChatGPTTab", // Assuming this affects the same GPT tab
+      "Analyze Argument Types": "showChatGPTTab", // Assuming this affects the same GPT tab
+      Participants: "showParticipantsTab",
       "Search in file": "showFileSearchTab",
     }[selectedOption];
-
 
     // If there's a tab to update, toggle its visibility
     if (tabToUpdate) {
@@ -121,13 +118,13 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       }));
     }
   };
- 
+
   const handleCloseTab = (tabType: string) => {
     // Update the local visibility state based on the tabType
-    if (tabType === "Gpt") setShowGptTab(false);
+    if (tabType === "ChatGPT") setShowChatGPTTab(false);
     else if (tabType === "Topics") setShowTopicsTab(false);
     else if (tabType === "Sentiment") setShowSentimentTab(false);
-    else if (tabType === "Persons") setShowPersonsTab(false);
+    else if (tabType === "Participants") setShowParticipantsTab(false);
     else if (tabType == "FileSearch") setShowFileSearchTab(false);
 
     // Then, update the fileTabStates for the active tab if it exists
@@ -148,22 +145,22 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       const {
         showTopicsTab,
         showSentimentTab,
-        showGptTab,
-        showPersonsTab,
+        showChatGPTTab,
+        showParticipantsTab,
         showFileSearchTab,
       } = fileTabStates[activeTab];
       setShowTopicsTab(showTopicsTab);
       setShowSentimentTab(showSentimentTab);
-      setShowGptTab(showGptTab);
-      setShowPersonsTab(showPersonsTab);
+      setShowChatGPTTab(showChatGPTTab);
+      setShowParticipantsTab(showParticipantsTab);
       setShowFileSearchTab(showFileSearchTab);
-      } else {
+    } else {
       //If the file hasn't been opened before, reset the tab states to false
 
       setShowTopicsTab(false);
       setShowSentimentTab(false);
-      setShowGptTab(false);
-      setShowPersonsTab(false);
+      setShowChatGPTTab(false);
+      setShowParticipantsTab(false);
       setShowFileSearchTab(false);
     }
   }, [activeTab, fileTabStates]);
@@ -193,7 +190,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       finalInput = `${prefix}`;
     } else if (
       prefix ==
-      "Please analyze the types of arguments used in the provided text."
+      "Please analyze the arguments used in the provided text and categorize them by argument type."
     ) {
       finalInput = `For your answer, put a hyphen (not numbers) before each new point you make. ${prefix}`;
     } else {
@@ -250,7 +247,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
         input={input}
         handleInputChange={handleInputChange}
         handleSendMessage={handleSendMessage}
-        handleClearMessages={handleClearMessages}
         handleSelectOption={handleSelectOption}
         updateFilePath={useSelection}
         updateTab={updateTab}
@@ -281,10 +277,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
             showTopicsTab={showTopicsTab}
             showFileSearchTab={showFileSearchTab}
             showSentimentTab={showSentimentTab}
-            showGptTab={showGptTab}
-            showParticipantsTab={showPersonsTab}
+            showChatGPTTab={showChatGPTTab}
+            showParticipantsTab={showParticipantsTab}
             activeTab={activeTab}
             handleCloseTab={handleCloseTab}
+            handleClearMessages={handleClearMessages}
           />
         </Paper>
       </div>
