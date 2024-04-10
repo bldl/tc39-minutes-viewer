@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { useTheme } from "@mui/material/styles";
 // Defining the delegate type
 type Delegate = {
   name: string;
@@ -15,6 +15,7 @@ const Modal: React.FC<{ comments: string[]; onClose: () => void }> = ({
   comments,
   onClose,
 }) => {
+  const theme = useTheme();
   if (comments.length === 0) return null; // Do not display modal if there are no comments
 
   return (
@@ -23,7 +24,10 @@ const Modal: React.FC<{ comments: string[]; onClose: () => void }> = ({
         position: "fixed",
         top: "28%",
         transform: "translate(-7.8%, 0%)",
-        backgroundColor: "white",
+        backgroundColor:
+        theme.palette.mode === "light"
+          ? "white"
+          : "#242424",
         padding: "20px",
         zIndex: 1000,
         border: "1px solid #ccc",

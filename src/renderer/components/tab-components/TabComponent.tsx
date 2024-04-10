@@ -28,7 +28,7 @@ interface TabBoxProps {
   link: string | null;
   isLoading: boolean;
   showTopicsTab: boolean;
-  showControlFTab: boolean;
+  showFileSearchTab: boolean;
   showSentimentTab: boolean;
   showGptTab: boolean;
   showParticipantsTab: boolean;
@@ -41,16 +41,18 @@ const TabsComponent: React.FC<TabBoxProps> = ({
   activeTab,
   isLoading,
   showTopicsTab,
-  showControlFTab,
+  showFileSearchTab,
   showSentimentTab,
   showGptTab,
   showParticipantsTab,
   handleCloseTab,
+
 }) => {
   const { selectedText } = useSelectedText();
   const { value, handleChange, setValue } = useTabs("1");
 
   // Logic for performing sentiment analysis
+
   const [isAnalyzingSentiment, setIsAnalyzingSentiment] = useState(false);
 
   const performSentimentAnalysis = (textToAnalyze: string) => {
@@ -91,6 +93,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     else if (showSentimentTab) setValue("3");
     else if (showParticipantsTab) setValue("4");
     else if (showControlFTab) setValue("7");
+
   }, [
     showGptTab,
     showTopicsTab,
