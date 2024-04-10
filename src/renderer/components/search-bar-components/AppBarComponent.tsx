@@ -11,6 +11,7 @@ import AnalyticsIcon from "@mui/icons-material/Analytics";
 import CodeIcon from "@mui/icons-material/Code"; // Icon for the execute command
 import SearchIcon from "@mui/icons-material/Search";
 import { useSelection } from "../contexts/SelectionContext";
+import { update } from "@react-spring/web";
 
 interface AppBarComponentProps {
   input: string;
@@ -19,6 +20,7 @@ interface AppBarComponentProps {
   handleClearMessages: () => void;
   handleSelectOption: (selectedOption: string) => void;
   updateFilePath: (filePath: string) => void; // Accept this prop
+  updateTab: (tab: string) => void; // Accept this prop
 }
 
 interface Option {
@@ -51,6 +53,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
   handleSendMessage,
   handleClearMessages,
   handleSelectOption,
+  updateTab,
 }) => {
   const theme = useTheme();
   const themeMode = theme.palette.mode;
@@ -336,6 +339,7 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
                 })
                 .then(() => {
                   setSelectedFilePath(mdFileLink);
+                  updateTab(parts[3]);
                 })
                 .catch((error) => {
                   console.error("Error fetching file:", error);

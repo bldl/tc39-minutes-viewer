@@ -5,6 +5,7 @@ import AppBarComponent from "../AppBarComponent";
 import LeftBoxContent from "../../left-box/LeftBoxContent";
 import TabsComponent from "../../tab-components/TabComponent";
 import { useSelection } from "../../contexts/SelectionContext";
+import { update } from "@react-spring/web";
 
 // Define the shape of the message object
 interface Message {
@@ -65,49 +66,56 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
     setClearMessages(true);
   };
 
+  const updateTab = (tab: string) => {
+    switch (tab) {
+      case "topics":
+        setShowTopicsTab(true);
+        break;
+      case "sentiment":
+        setShowSentimentTab(true);
+        break;
+      case "persons":
+        setShowPersonsTab(true);
+        break;
+      case "search-in-file":
+        setShowControlFTab(true);
+        break;
+    }
+  };
+
   const handleSelectOption = (selectedOption: string) => {
-    if (activeTab) {
-      // Make sure activeTab is a string
-      // Default state if this tab hasn't been opened before
-      const defaultState: TabStates = {
-        showTopicsTab: false,
-        showSentimentTab: false,
-        showGptTab: false,
-        showPersonsTab: false,
-        showControlFTab: false,
-      };
+    // Ensuring activeTab is not null or undefined
+    if (!activeTab) return;
 
-      // Get the current state for activeTab, or default to all false if not set
-      const currentState = fileTabStates[activeTab] || defaultState;
+    // Retrieve the current state or initialize it if not present
+    const currentState = fileTabStates[activeTab] || {
+      showTopicsTab: false,
+      showSentimentTab: false,
+      showGptTab: false,
+      showPersonsTab: false,
+      showControlFTab: false,
+    };
 
-      // Update the state based on selectedOption
-      const newState = {
-        ...currentState,
-        showTopicsTab:
-          selectedOption === "Topics" ? true : currentState.showTopicsTab,
-        showSentimentTab:
-          selectedOption === "Sentiment" ? true : currentState.showSentimentTab,
-        showGptTab:
-          selectedOption === "Search with GPT-3.5" ||
-          selectedOption === "Summarize This" ||
-          selectedOption === "Analyze Argument Types"
-            ? true
-            : currentState.showGptTab,
-        showPersonsTab:
-          selectedOption === "Participants"
-            ? true
-            : currentState.showPersonsTab,
-        showControlFTab:
-          selectedOption === "Search in file"
-            ? true
-            : currentState.showControlFTab,
-      };
+    // Determine which tab should be updated based on the selected option
+    const tabToUpdate = {
+      Topics: "showTopicsTab",
+      Sentiment: "showSentimentTab",
+      "Search with GPT-3.5": "showGptTab", // Assuming this as a placeholder
+      "Summarize This": "showGptTab", // Assuming this affects the same GPT tab
+      "Analyze Argument Types": "showGptTab", // Assuming this affects the same GPT tab
+      Participants: "showPersonsTab",
+      "Search in file": "showControlFTab",
+    }[selectedOption];
 
-      // Update the fileTabStates with the new state for activeTab
-      setFileTabStates({
-        ...fileTabStates,
+    // If there's a tab to update, toggle its visibility
+    if (tabToUpdate) {
+      const newState = { ...currentState, [tabToUpdate]: true };
+
+      // Update the fileTabStates with the new state
+      setFileTabStates((prev) => ({
+        ...prev,
         [activeTab]: newState,
-      });
+      }));
     }
   };
 
@@ -134,8 +142,13 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
   useEffect(() => {
     if (activeTab && fileTabStates[activeTab]) {
       // Load the tab states for the newly selected file
-      const { showTopicsTab, showSentimentTab, showGptTab, showPersonsTab, showControlFTab } =
-        fileTabStates[activeTab];
+      const {
+        showTopicsTab,
+        showSentimentTab,
+        showGptTab,
+        showPersonsTab,
+        showControlFTab,
+      } = fileTabStates[activeTab];
       setShowTopicsTab(showTopicsTab);
       setShowSentimentTab(showSentimentTab);
       setShowGptTab(showGptTab);
@@ -236,6 +249,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
         handleClearMessages={handleClearMessages}
         handleSelectOption={handleSelectOption}
         updateFilePath={useSelection}
+        updateTab={updateTab}
       />
       <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
         <LeftBoxContent
