@@ -92,14 +92,14 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     else if (showTopicsTab) setValue("2");
     else if (showSentimentTab) setValue("3");
     else if (showParticipantsTab) setValue("4");
-    else if (showControlFTab) setValue("7");
+    else if (showFileSearchTab) setValue("7");
 
   }, [
     showGptTab,
     showTopicsTab,
     showSentimentTab,
     showParticipantsTab,
-    showControlFTab,
+    showFileSearchTab,
     setValue,
   ]);
 
@@ -138,7 +138,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     {
       key: "7",
       label: "ControlF",
-      shouldShow: showControlFTab,
+      shouldShow: showFileSearchTab,
       component: <ControlFTab link={activeTab} />,
     },
   ];

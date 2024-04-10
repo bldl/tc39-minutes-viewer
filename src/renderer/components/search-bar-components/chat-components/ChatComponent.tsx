@@ -95,7 +95,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       showSentimentTab: false,
       showGptTab: false,
       showPersonsTab: false,
-      showControlFTab: false,
+      showFileSearchTab: false,
     };
 
     // Determine which tab should be updated based on the selected option
@@ -106,7 +106,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       "Summarize This": "showGptTab", // Assuming this affects the same GPT tab
       "Analyze Argument Types": "showGptTab", // Assuming this affects the same GPT tab
       Participants: "showPersonsTab",
-      "Search in file": "showControlFTab",
+      "Search in file": "showFileSearchTab",
     }[selectedOption];
 
 
