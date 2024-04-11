@@ -39,12 +39,12 @@ To install what is needed do this:
 npm i
 ```
 
-### Configurtion - Insert Chatgpt API
+### Configuration - Insert ChatGPT API Key
 
 This application uses ChatGPT API. If you want to have these features, which is recommended for the full experience of the application, please do as follows:
 
-Obtain a ChatGPT API key and insert it into the ".env_sample.txt".
-After the key has been insertet the file name needs to be changed to ".env.txt"
+Obtain a ChatGPT API key and insert it into the file ".env_sample.txt".
+After the key has been inserted, the filename needs to be changed to ".env". It will be automatically hidden from git in ".gitignore".
 
 Chat API should now work.
 
@@ -102,12 +102,12 @@ Our [agile project board](https://trello.com/b/vpTSGlQt/zinf-tc39).
 
 in alphabetical order:
 
-_Brage Aasen_
+_Brage Løvfall Aasen_
 
 _Casper Benjamin Karlsen_
-s
+
 _Elias Hovdenes_
 
-_Magnus Brorby_
+_Magnus Sponnich Brorby_
 
-_Vetle Knutsen_
+_Vetle Mathiesen Knutsen_
