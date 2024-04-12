@@ -15,6 +15,9 @@ dist-electron
 release
 *.local
 
+# Hide delegates list
+/src/renderer/components/tab-components/delegates/delegates_list.ts
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
