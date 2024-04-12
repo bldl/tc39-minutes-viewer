@@ -26,11 +26,11 @@ const Modal: React.FC<{ comments: string[]; onClose: () => void }> = ({
         zIndex: 1000,
         border: "1px solid #ccc",
         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-        width: "68.7vh",
-        height: "69.5vh",
-        borderRadius: "20px",
-        overflowY: "auto",
-        maxWidth: "40%",
+      width: "68.7vh",
+      height: "69.5vh",
+      borderRadius: "20px",
+      overflowY: "auto",
+      maxWidth: "40%",
         maxHeight: "70%",
       }}
     >
@@ -61,13 +61,13 @@ const DelegatesComponent: React.FC<EssentialProps> = ({ link }) => {
   const [initials, setInitials] = useState<string[]>([]);
   const [selectedComments, setSelectedComments] = useState<string[]>([]);
   const [markdownContent, setMarkdownContent] = useState<string>("");
-  const [showModal, setShowModal] = useState(false);
+const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    const fetchFromMarkdown = async () => {
-      if (link) {
-        try {
-          const response = await fetch(link);
+useEffect(() => {
+  const fetchFromMarkdown = async () => {
+    if (link) {
+      try {
+        const response = await fetch(link);
           const text = await response.text();
           setMarkdownContent(text);
 
