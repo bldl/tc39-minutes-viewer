@@ -3,7 +3,7 @@ import { annotate } from "rough-notation";
 
 export const extractFilename = (
   link: string | null,
-  type: "topics" | "sentiment" | "persons" | "gpt" | "search-in-file"
+  type: "topics" | "sentiment" | "persons" | "gpt" | "search-in-file" | "summarize"
 ): string => {
   if (!link) return "";
 

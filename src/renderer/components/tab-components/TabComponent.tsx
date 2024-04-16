@@ -11,6 +11,8 @@ import { useSelectedText } from "../contexts/SelectedTextContext";
 
 // Import components
 import GptTab from "./custom-tabs/GptTab";
+import AnalyzeTab from "./custom-tabs/AnalyzeTab";
+import SummarizeTab from "./custom-tabs/SummarizeTab";
 import TopicsTab from "./custom-tabs/TopicsTab";
 import SentimentTab from "./custom-tabs/SentimentTab";
 import ParticipantsTab from "./custom-tabs/ParticipantsTab";
@@ -26,24 +28,32 @@ interface TabInfo {
 
 interface TabBoxProps {
   messages: Message[];
+  summarizeMessage: Message[];
+  analyzeMessage: Message[];
   link: string | null;
   isLoading: boolean;
   showTopicsTab: boolean;
   showFileSearchTab: boolean;
+  showSummarizeTab: boolean;
+  showAnalyzeTab: boolean;
   showSentimentTab: boolean;
   showChatGPTTab: boolean;
   showParticipantsTab: boolean;
   activeTab: string | null;
   handleCloseTab: (tabType: string) => void;
-  handleClearMessages: () => void;
+  handleClearMessages: (type: string) => void;
 }
 
 const TabsComponent: React.FC<TabBoxProps> = ({
   messages,
+  summarizeMessage,
+  analyzeMessage,
   activeTab,
   isLoading,
   showTopicsTab,
   showFileSearchTab,
+  showSummarizeTab,
+  showAnalyzeTab,
   showSentimentTab,
   showChatGPTTab,
   showParticipantsTab,
@@ -95,12 +105,16 @@ const TabsComponent: React.FC<TabBoxProps> = ({
     else if (showSentimentTab) setValue("3");
     else if (showParticipantsTab) setValue("4");
     else if (showFileSearchTab) setValue("7");
+    else if (showSummarizeTab) setValue("8");
+    else if (showAnalyzeTab) setValue("9");
   }, [
     showChatGPTTab,
     showTopicsTab,
     showSentimentTab,
     showParticipantsTab,
     showFileSearchTab,
+    showSummarizeTab,
+    showAnalyzeTab,
     setValue,
   ]);
 
@@ -114,7 +128,7 @@ const TabsComponent: React.FC<TabBoxProps> = ({
           link={activeTab}
           messages={messages}
           isLoading={isLoading}
-          handleClearMessages={handleClearMessages}
+          handleClearMessages={() => handleClearMessages("GPT")}
         />
       ),
     },
@@ -147,11 +161,37 @@ const TabsComponent: React.FC<TabBoxProps> = ({
       shouldShow: showFileSearchTab,
       component: <ControlFTab link={activeTab} />,
     },
+    {
+      key: "8",
+      label: "Summarize",
+      shouldShow: showSummarizeTab,
+      component: (
+        <SummarizeTab
+          link={activeTab}
+          messages={summarizeMessage}
+          isLoading={isLoading}
+          handleClearMessages={() => handleClearMessages("Summarize")}
+        ></SummarizeTab>
+      ),
+    },
+    {
+      key: "9",
+      label: "Analyze",
+      shouldShow: showAnalyzeTab,
+      component: (
+        <AnalyzeTab
+          link={activeTab}
+          messages={analyzeMessage}
+          isLoading={isLoading}
+          handleClearMessages={() => handleClearMessages("Analyze")}
+        ></AnalyzeTab>
+      ),
+    },
   ];
 
   // Render each type of tab based on the boolean flags
   return (
-    <Box sx={{ width: "100%", typography: "body1", overflowX: "auto" }}>
+    <Box sx={{ width: "100%", typography: "body1"}}>
       <TabContext value={value}>
         {tabs.some((tab) => tab.shouldShow) && (
           <Box
@@ -164,7 +204,12 @@ const TabsComponent: React.FC<TabBoxProps> = ({
               background: theme.palette.mode === "light" ? "white" : "#242424",
             }}
           >
-            <TabList onChange={handleChange} aria-label="lab API tabs example" variant="scrollable" scrollButtons="auto">
+            <TabList
+              onChange={handleChange}
+              aria-label="lab API tabs example"
+              variant="scrollable"
+              scrollButtons="auto"
+            >
               {tabs
                 .filter((tab) => tab.shouldShow)
                 .map(({ key, label }) => (

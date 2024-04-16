@@ -20,12 +20,36 @@ interface ChatMessagesProps {
   handleClearMessages: () => void;
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading, handleClearMessages }) => {
+const ChatAnalyze: React.FC<ChatMessagesProps> = ({
+  messages,
+  isLoading,
+  handleClearMessages,
+}) => {
+  const processContent = (content: string): JSX.Element => {
+    // Replace each "-" with a newline ("\n") followed by "-"
+    const updatedContent = content.replace(/-/g, "-");
+    // Splitting the updated content by new lines to wrap each line in a span for correct rendering
+    return (
+      <>
+        {updatedContent.split("\n").map((line, index) => (
+          <React.Fragment key={index}>
+            {line}
+            <br />
+          </React.Fragment>
+        ))}
+      </>
+    );
+  };
 
   return (
     <Grid item xs={6}>
       <Divider orientation="vertical" flexItem />
-      <Button style={{ marginLeft: "85%" }} variant="contained" color="primary" onClick={handleClearMessages}>
+      <Button
+        style={{ marginLeft: "85%" }}
+        variant="contained"
+        color="primary"
+        onClick={handleClearMessages}
+      >
         Clear
       </Button>
 
@@ -66,7 +90,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading, handle
                 color={message.role === "user" ? "primary" : "success"}
                 style={{ marginBottom: 20 }}
               >
-                {message.content}
+                {" "}
+                {processContent(message.content)}
               </Typography>
             </div>
           ))
@@ -76,4 +101,4 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading, handle
   );
 };
 
-export default ChatMessages;
+export default ChatAnalyze;

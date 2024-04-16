@@ -20,7 +20,7 @@ interface ChatMessagesProps {
   handleClearMessages: () => void;
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading, handleClearMessages }) => {
+const ChatSummarize: React.FC<ChatMessagesProps> = ({ messages, isLoading, handleClearMessages }) => {
 
   return (
     <Grid item xs={6}>
@@ -76,4 +76,4 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading, handle
   );
 };
 
-export default ChatMessages;
+export default ChatSummarize;
