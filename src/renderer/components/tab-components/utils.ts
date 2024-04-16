@@ -27,7 +27,7 @@ export const extractFilename = (
   const day = part.replace(/[a-zA-Z--]/g, "");
 
   // Reconstruct the URL with the type
-  const reconstructedUrl = `http://tc39/${year}/${month}/${day}/${type}`;
+  const reconstructedUrl = `tc39://${year}/${month}/${day}/${type}`;
 
   return reconstructedUrl;
 };
