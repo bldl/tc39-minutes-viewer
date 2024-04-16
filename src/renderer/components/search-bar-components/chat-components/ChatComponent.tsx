@@ -24,6 +24,8 @@ interface TabStates {
   showChatGPTTab: boolean;
   showParticipantsTab: boolean;
   showFileSearchTab: boolean;
+  showSummarizeTab: boolean;
+  showAnalyzeTab: boolean;
 }
 
 interface FileTabStates {
@@ -37,10 +39,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
   // State variables for the chat component.
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [summarizeMessage, setSummarizeMessage] = useState<Message[]>([]);
+  const [analyzeMessage, setAnalyzeMessage] = useState<Message[]>([]);
   const [clearMessages, setClearMessages] = useState<boolean>(false);
   const [highlightedText, setHighlightedText] = useState<string>("");
   const [showTopicsTab, setShowTopicsTab] = useState(false);
   const [showFileSearchTab, setShowFileSearchTab] = useState(false);
+  const [showSummarizeTab, setShowSummarizeTab] = useState(false);
+  const [showAnalyzeTab, setShowAnalyzeTab] = useState(false);
   const [showSentimentTab, setShowSentimentTab] = useState(false);
   const [showChatGPTTab, setShowChatGPTTab] = useState(false);
   const [showParticipantsTab, setShowParticipantsTab] = useState(false);
@@ -60,8 +66,16 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
   {
     // Clears all messages from the chat.
   }
-  const handleClearMessages = () => {
+  const handleClearMessages = (type: string) => {
+    if (type == "Analyze"){
+      setAnalyzeMessage([]);
+    }
+    else if (type == "Summarize"){
+      setSummarizeMessage([]);
+    }
+    else {
     setMessages([]);
+    }
     setClearMessages(true);
   };
 
@@ -83,6 +97,12 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       case "gpt":
         setShowChatGPTTab(true);
         break;
+      case "summarize":
+        setShowSummarizeTab(true);
+        break;
+      case "analyze":
+        setShowAnalyzeTab(true);
+        break;
     }
   };
 
@@ -97,6 +117,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       showChatGPTTab: false,
       showParticipantsTab: false,
       showFileSearchTab: false,
+      showSummarizeTab: false,
+      showAnalyzeTab: false,
     };
 
     // Determine which tab should be updated based on the selected option
@@ -104,8 +126,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       Topics: "showTopicsTab",
       Sentiment: "showSentimentTab",
       "Search with GPT-3.5": "showChatGPTTab", // Assuming this as a placeholder
-      "Summarize This": "showChatGPTTab", // Assuming this affects the same GPT tab
-      "Analyze Argument Types": "showChatGPTTab", // Assuming this affects the same GPT tab
+      "Summarize This": "showSummarizeTab", // Assuming this affects the same GPT tab
+      "Analyze Argument Types": "showAnalyzeTab", // Assuming this affects the same GPT tab
       Participants: "showParticipantsTab",
       "Search in file": "showFileSearchTab",
     }[selectedOption];
@@ -129,6 +151,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
     else if (tabType === "Sentiment") setShowSentimentTab(false);
     else if (tabType === "Participants") setShowParticipantsTab(false);
     else if (tabType == "FileSearch") setShowFileSearchTab(false);
+    else if (tabType == "Summarize") setShowSummarizeTab(false);
+    else if (tabType == "Analyze") setShowAnalyzeTab(false);
 
     // Then, update the fileTabStates for the active tab if it exists
     if (activeTab && fileTabStates[activeTab]) {
@@ -151,12 +175,16 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
         showChatGPTTab,
         showParticipantsTab,
         showFileSearchTab,
+        showSummarizeTab,
+        showAnalyzeTab,
       } = fileTabStates[activeTab];
       setShowTopicsTab(showTopicsTab);
       setShowSentimentTab(showSentimentTab);
       setShowChatGPTTab(showChatGPTTab);
       setShowParticipantsTab(showParticipantsTab);
       setShowFileSearchTab(showFileSearchTab);
+      setShowSummarizeTab(showSummarizeTab);
+      setShowAnalyzeTab(showAnalyzeTab);
     } else {
       //If the file hasn't been opened before, reset the tab states to false
 
@@ -165,6 +193,8 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       setShowChatGPTTab(false);
       setShowParticipantsTab(false);
       setShowFileSearchTab(false);
+      setShowSummarizeTab(false);
+      setShowAnalyzeTab(false);
     }
   }, [activeTab, fileTabStates]);
 
@@ -181,6 +211,11 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
     // Handles sending a message to the chatbot.
   }
 
+  const summarizePrefix = "Summarize this";
+  const analyzePrefix =
+    "Please analyze the arguments used in the provided text and categorize them by argument type.";
+
+
   const handleSendMessage = async (prefix: string) => {
     setIsLoading(true);
 
@@ -189,12 +224,9 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
 
     let finalInput;
 
-    if (prefix == "Summarize this") {
+    if (prefix == summarizePrefix) {
       finalInput = `${prefix}`;
-    } else if (
-      prefix ==
-      "Please analyze the arguments used in the provided text and categorize them by argument type."
-    ) {
+    } else if (prefix == analyzePrefix) {
       finalInput = `For your answer, put a hyphen (not numbers) before each new point you make. ${prefix}`;
     } else {
       finalInput = input;
@@ -225,15 +257,35 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
         }
       );
 
-      // Updating the messages state with the response.
-      setMessages([
-        ...messages,
-        {
-          role: "assistant",
-          content: response.data.choices[0].message.content,
-          activeTab: activeTab,
-        },
-      ]);
+      if (prefix == summarizePrefix) {
+        setSummarizeMessage([
+          ...summarizeMessage,
+          {
+            role: "assistant",
+            content: response.data.choices[0].message.content,
+            activeTab: activeTab,
+          },
+        ]);
+      } else if (prefix == analyzePrefix) {
+        setAnalyzeMessage([
+          ...analyzeMessage,
+          {
+            role: "assistant",
+            content: response.data.choices[0].message.content,
+            activeTab: activeTab,
+          },
+        ]);
+      } else {
+        // Updating the messages state with the response.
+        setMessages([
+          ...messages,
+          {
+            role: "assistant",
+            content: response.data.choices[0].message.content,
+            activeTab: activeTab,
+          },
+        ]);
+      }
       setInput("");
       setHighlightedText("");
     } catch (error) {
@@ -275,10 +327,14 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
         >
           <TabsComponent
             messages={messages}
+            summarizeMessage={summarizeMessage}
+            analyzeMessage={analyzeMessage}
             link={selectedFilePath}
             isLoading={isLoading}
             showTopicsTab={showTopicsTab}
             showFileSearchTab={showFileSearchTab}
+            showSummarizeTab={showSummarizeTab}
+            showAnalyzeTab={showAnalyzeTab}
             showSentimentTab={showSentimentTab}
             showChatGPTTab={showChatGPTTab}
             showParticipantsTab={showParticipantsTab}

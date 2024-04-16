@@ -141,7 +141,7 @@ const CustomSearchComponent: React.FC<CustomSearchComponentProps> = ({
         <button onClick={searchContent}>Search</button>
         <button onClick={() => navigateMatches(-1)}>Prev</button>
         <button onClick={() => navigateMatches(1)}>Next</button>
-        <span>
+        <span style={{color: "black"}}>
           {matches.length > 0 ? `${currentIndex + 1}/${matches.length}` : "0/0"}
         </span>
       </div>
