@@ -181,13 +181,13 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
               let tabs = [];
 
               // Validate the base format of the input
-              if (!input.startsWith("http://tc39/")) {
+              if (!input.startsWith("tc39://")) {
                 console.error("Invalid input format");
                 return;
               }
 
               // Split the input by '/' and capture the parts after "tc39/"
-              const linker = input.replace("http://tc39/", "");
+              const linker = input.replace("tc39://", "");
               const parts = linker.split("/");
 
               if (parts.length < 3) {

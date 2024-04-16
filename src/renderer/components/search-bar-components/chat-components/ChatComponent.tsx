@@ -76,9 +76,12 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       case "persons":
         setShowParticipantsTab(true);
         break;
-      case "Search in file":
+      case "search-in-file":
         setShowFileSearchTab(true);
 
+        break;
+      case "gpt":
+        setShowChatGPTTab(true);
         break;
     }
   };

@@ -200,7 +200,7 @@ const RenderMarkdown: React.FC<Props> = ({
   const handleTabName = (tabLink: string) => {
     //remove the file path and keep only the file name
 
-    let baseStart = "http://tc39/";
+    let baseStart = "tc39://";
     const fileName = tabLink.substring(16);
 
     return fileName;
