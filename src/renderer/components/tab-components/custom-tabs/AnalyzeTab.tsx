@@ -9,11 +9,20 @@ interface GptTabProps {
   handleClearMessages: () => void;
 }
 
-const AnalyzeTab: React.FC<GptTabProps> = ({ link, messages, isLoading, handleClearMessages }) => {
+const AnalyzeTab: React.FC<GptTabProps> = ({
+  link,
+  messages,
+  isLoading,
+  handleClearMessages,
+}) => {
   return (
     <>
-      <h3>{extractFilename(link, "gpt")}</h3>
-      <ChatAnalyze messages={messages} isLoading={isLoading} handleClearMessages={handleClearMessages}/>
+      <h3>{extractFilename(link, "gpt/analyze")}</h3>
+      <ChatAnalyze
+        messages={messages}
+        isLoading={isLoading}
+        handleClearMessages={handleClearMessages}
+      />
     </>
   );
 };

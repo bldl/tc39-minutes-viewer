@@ -336,7 +336,13 @@ const AppBarComponent: React.FC<AppBarComponentProps> = ({
                 })
                 .then(() => {
                   setSelectedFilePath(mdFileLink);
-                  updateTab(parts[3]);
+                  if (parts[3] === "gpt" && parts[4] === "analyze") {
+                    updateTab(parts[3] + "/" + parts[4]);
+                  } else if (parts[3] === "gpt" && parts[4] === "summarize") {
+                    updateTab(parts[3] + "/" + parts[4]);
+                  } else {
+                    updateTab(parts[3]);
+                  }
                 })
                 .catch((error) => {
                   console.error("Error fetching file:", error);

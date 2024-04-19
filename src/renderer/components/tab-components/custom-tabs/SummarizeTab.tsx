@@ -9,11 +9,20 @@ interface GptTabProps {
   handleClearMessages: () => void;
 }
 
-const SummarizeTab: React.FC<GptTabProps> = ({ link, messages, isLoading, handleClearMessages }) => {
+const SummarizeTab: React.FC<GptTabProps> = ({
+  link,
+  messages,
+  isLoading,
+  handleClearMessages,
+}) => {
   return (
     <>
-      <h3>{extractFilename(link, "gpt")}</h3>
-      <ChatSummarize messages={messages} isLoading={isLoading} handleClearMessages={handleClearMessages}/>
+      <h3>{extractFilename(link, "gpt/summarize")}</h3>
+      <ChatSummarize
+        messages={messages}
+        isLoading={isLoading}
+        handleClearMessages={handleClearMessages}
+      />
     </>
   );
 };

@@ -67,14 +67,12 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
     // Clears all messages from the chat.
   }
   const handleClearMessages = (type: string) => {
-    if (type == "Analyze"){
+    if (type == "Analyze") {
       setAnalyzeMessage([]);
-    }
-    else if (type == "Summarize"){
+    } else if (type == "Summarize") {
       setSummarizeMessage([]);
-    }
-    else {
-    setMessages([]);
+    } else {
+      setMessages([]);
     }
     setClearMessages(true);
   };
@@ -97,10 +95,10 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
       case "gpt":
         setShowChatGPTTab(true);
         break;
-      case "summarize":
+      case "gpt/summarize":
         setShowSummarizeTab(true);
         break;
-      case "analyze":
+      case "gpt/analyze":
         setShowAnalyzeTab(true);
         break;
     }
@@ -214,7 +212,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({}) => {
   const summarizePrefix = "Summarize this";
   const analyzePrefix =
     "Please analyze the arguments used in the provided text and categorize them by argument type.";
-
 
   const handleSendMessage = async (prefix: string) => {
     setIsLoading(true);
