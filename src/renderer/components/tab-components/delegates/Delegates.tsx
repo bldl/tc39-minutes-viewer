@@ -20,7 +20,7 @@ const Modal: React.FC<{ comments: string[]; onClose: () => void }> = ({
       style={{
         position: "fixed",
         top: "28%",
-        transform: "translate(-7.8%, 0%)",
+        transform: "translate(-5.5%, -1%)",
         backgroundColor: theme.palette.mode === "light" ? "white" : "#242424",
         padding: "20px",
         zIndex: 1000,
