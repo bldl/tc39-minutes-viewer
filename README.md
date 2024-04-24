@@ -29,15 +29,14 @@ use the command 'npm i [Name of Missing Component]' to install them individually
 
 ### Example:
 
-```java
-pip install stanza
-```
+
+>>> pip install stanza
+
 
 To install what is needed do this:
 
-```java
-npm i
-```
+>>> npm i
+
 
 ### Configuration - Insert ChatGPT API Key
 
@@ -45,6 +44,12 @@ This application uses ChatGPT API. If you want to have these features, which is 
 
 Obtain a ChatGPT API key and insert it into the file ".env_sample.txt".
 After the key has been inserted, the filename needs to be changed to ".env". It will be automatically hidden from git in ".gitignore".
+
+If the .env_sample.txt file is nowhere to be found, you will have to make the file ".env" in the outermost directory (TC39-Meeting-Minutes-Viewer). In this file you need to insert the following code and insert your ChatGPT API Key at [Insert your key here]
+
+```Typescript
+VITE_REACT_APP_OPENAI_API_KEY = [Insert your key here]
+```
 
 Chat API should now work.
 
